@@ -1,8 +1,8 @@
 # @ridi/tracking
 
-[![npm](https://img.shields.io/npm/v/@ridi/ridi-tracking.svg)](https://www.npmjs.com/package/@ridi/ridi-tracking)
-[![Build Status](https://travis-ci.org/ridi/ridi-tracking.svg?branch=master)](https://travis-ci.org/ridi/ridi-tracking)
-[![Greenkeeper badge](https://badges.greenkeeper.io/ridi/ridi-tracking.svg)](https://greenkeeper.io/)
+[![npm](https://img.shields.io/npm/v/@ridi/tracking.svg)](https://www.npmjs.com/package/@ridi/tracking)
+[![Build Status](https://travis-ci.org/ridi/tracking.svg?branch=master)](https://travis-ci.org/ridi/tracking)
+[![Greenkeeper badge](https://badges.greenkeeper.io/ridi/tracking.svg)](https://greenkeeper.io/)
 
 Provides tracking API that helps to send events to various logging services like Google Analytics, RIDI beacon system
 
@@ -77,7 +77,7 @@ Allow to set (change) `MainTrackerOptions `'s attributes
 ## Development
 
 ```bash
-$ git clone https://github.com/ridi/ridi-tracking && cd ridi-tracking
+$ git clone https://github.com/ridi/tracking && cd tracking
 $ npm install
 $ npm watch
 ```
