@@ -1,5 +1,5 @@
 {
-  "name": "@ridi/tracking.js",
+  "name": "@ridi/tracking",
   "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
