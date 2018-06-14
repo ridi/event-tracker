@@ -4,6 +4,7 @@
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "repository": "https://github.com/ridi/ridi-tracking",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint --config .tslintrc.js 'src/**/*.ts' --fix",
