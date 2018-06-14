@@ -1,0 +1,35 @@
+{
+  "name": "@ridi/tracking.js",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "tslint --config .tslintrc.js 'src/**/*.ts' --fix",
+    "build": "tsc",
+    "watch": "webpack --watch"
+  },
+  "pre-commit": [
+    "lint"
+  ],
+  "author": "mskim@ridi.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@ridi/tslint-config": "^0.1.0",
+    "@types/google.analytics": "0.0.39",
+    "@types/js-cookie": "^2.1.0",
+    "@types/url-parse": "^1.1.0",
+    "js-cookie": "^2.2.0",
+    "performance-now": "^2.1.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "1.13.4",
+    "ts-loader": "^4.4.1",
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "typescript": "^2.9.1",
+    "url-parse": "^1.4.1",
+    "webpack": "^4.12.0",
+    "webpack-cli": "^3.0.6"
+  }
+}
