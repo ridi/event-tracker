@@ -1,21 +1,21 @@
-# @ridi/tracking
+# @ridi/event-tracker
 
-[![npm](https://img.shields.io/npm/v/@ridi/tracking.svg)](https://www.npmjs.com/package/@ridi/tracking)
-[![Build Status](https://travis-ci.org/ridi/tracking.svg?branch=master)](https://travis-ci.org/ridi/tracking)
-[![Greenkeeper badge](https://badges.greenkeeper.io/ridi/tracking.svg)](https://greenkeeper.io/)
+[![npm](https://img.shields.io/npm/v/@ridi/event-tracker.svg)](https://www.npmjs.com/package/@ridi/event-tracker)
+[![Build Status](https://travis-ci.org/ridi/event-tracker.svg?branch=master)](https://travis-ci.org/ridi/event-tracker)
+[![Greenkeeper badge](https://badges.greenkeeper.io/ridi/event-tracker.svg)](https://greenkeeper.io/)
 
 Provides tracking API that helps to send events to various logging services like Google Analytics, RIDI beacon system
 
 ## Install
 
 ```bash
-$ npm install @ridi/tracking
+$ npm install @ridi/event-tracker
 ```
 
 ## Usage
 
 ```javascript
-import { Tracker, DeviceType } from '@ridi/tracking';
+import { Tracker, DeviceType } from '@ridi/event-tracker';
 
 const tracker = new Tracker({
   deviceType: DeviceType.PC,
@@ -52,7 +52,7 @@ tracker.sendPageView(location.href);
 
 ### `Tracker.initialize()`
 
-`@ridi/tracking` must be initialized by using this method before any of the other tracking functions will record any data. 
+`@ridi/event-tracker` must be initialized by using this method before any of the other tracking functions will record any data. 
 
 ### `Tracker.sendPageView(href, referrer)`
 
@@ -77,9 +77,9 @@ Allow to set (change) `MainTrackerOptions `'s attributes
 ## Development
 
 ```bash
-$ git clone https://github.com/ridi/tracking && cd tracking
+$ git clone https://github.com/ridi/event-tracker && cd tracking
 $ npm install
-$ npm watch
+$ npm run watch
 ```
 
 ## Test

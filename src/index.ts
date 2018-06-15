@@ -56,7 +56,7 @@ export class Tracker {
       ...meta
     };
 
-    console.group(`[@ridi/tracking] Sending '${eventType}' event`);
+    console.group(`[@ridi/event-tracker] Sending '${eventType}' event`);
     for (const [key, value] of Object.entries(meta)) {
       console.log(`${key}\t ${JSON.stringify(value)}`);
     }
@@ -65,7 +65,7 @@ export class Tracker {
 
   private throwIfInitializeIsNotCalled(): void {
     if (this.trackers.some(tracker => !tracker.isInitialized())) {
-      throw Error("[@ridi/tracking] this.initialize must be called first.");
+      throw Error("[@ridi/event-tracker] this.initialize must be called first.");
     }
   }
 

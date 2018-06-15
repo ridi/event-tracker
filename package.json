@@ -1,10 +1,10 @@
 {
-  "name": "@ridi/tracking",
-  "version": "0.1.0",
+  "name": "@ridi/event-tracker",
+  "version": "0.1.1",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/ridi/tracking",
+  "repository": "https://github.com/ridi/event-tracker",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "tslint --config .tslintrc.js 'src/**/*.ts' --fix",
