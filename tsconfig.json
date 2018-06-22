@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
     "rootDir": "src",
-    "declaration": true,
     "lib": ["esnext", "dom"],
     "module": "commonjs",
-    "outDir": "dist",
-    "declarationDir": "dist",
+    "outDir": "./dist/cjs",
+    "declarationDir": "./dist/typings",
+    "declaration": true,
     "noEmitOnError": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
