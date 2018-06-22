@@ -1,23 +1,46 @@
-const path = require('path');
+const path = require("path");
+const webpack = require("webpack");
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+
 
 module.exports = {
-  mode: "development",
-  entry: './src/index.ts',
-  devtool: 'inline-source-map',
+  mode: "production",
+  entry: {
+    "bundle": [
+      'promise-polyfill',
+      'whatwg-fetch',
+      path.resolve(__dirname, "src/index.ts")
+    ]
+  },
+  devtool: "source-map",
   module: {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader',
+        use: [
+          {
+            loader: "ts-loader",
+            options: {
+              transpileOnly: true
+            }
+          }
+        ],
         exclude: /node_modules/
       }
     ]
   },
   resolve: {
-    extensions: [ '.ts', '.js' ]
+    extensions: [".ts", ".js"]
   },
   output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist')
-  }
+    filename: "[name].min.js",
+    path: path.resolve(__dirname, "dist/umd"),
+    libraryTarget: "umd"
+  },
+  plugins: [
+    new UglifyJsPlugin({
+      sourceMap: true,
+      include: /\.min\.js$/
+    })
+  ]
 };

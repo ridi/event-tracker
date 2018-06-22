@@ -8,8 +8,14 @@ Provides tracking API that helps to send events to various logging services like
 
 ## Install
 
+### NPM
 ```bash
 $ npm install @ridi/event-tracker
+```
+
+### Browser
+```html
+<script src="./node_modules/@ridi/event-tracker/dist/umd/bundle.min.js"></script>
 ```
 
 ## Usage
