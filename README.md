@@ -28,6 +28,7 @@ const tracker = new Tracker({
   userId: 'ridi',
   gaOptions: {
     trackingId: 'UA-XXXXXXXX-X',
+    pathPrefix: '/PAPERSHOP',
     fields: {
       contentGroup5: 'PAPERSHOP'
     }
@@ -52,6 +53,7 @@ tracker.sendPageView(location.href);
 | `deviceType`              | true     | `DeviceType`    | Type of connected user's device. Please refer `DeviceType` type |
 | `gaOptions`               | true     | `GAOptions`     | Options related with Google Analytics tracking module        |
 | `gaOptions.trackingId`    | true     | `string`        | GA Tracking ID like `UA-000000-01`.                          |
+| `gaOptions.pathPrefix`    | flase    | `string`        | Pathname prefix for manual content grouping.                          |
 | `gaOptions.fields`        | false    | `string`        | [GA configurable create only fields.](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference) |
 | `beaconOptions`           | false    | `BeaconOptions` | Options related with Beacon tracking module                  |
 | `beaconOptions.beaconSrc` | false    | `string`        | Source of the image to be used as a beacon                   |
