@@ -36,7 +36,7 @@ export class Tracker {
 
   private getPageMeta(href: string, referrer: string = ''): PageMeta {
     const url = new URL(href, {}, true);
-    const path = url.pathname + new URL(href, {}, false).query;
+    const path = url.pathname;
     return {
       page: url.pathname.split("/")[1] || "index",
       device: this.options.deviceType,

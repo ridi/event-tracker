@@ -1,3 +1,5 @@
+import URL from "url-parse";
+
 import { RUID } from "../uid";
 import { UIDFactory } from "../uid/factory";
 import { BaseTracker, PageMeta } from "./base";
@@ -34,12 +36,14 @@ export class BeaconTracker extends BaseTracker {
 
   private sendEvent(eventName: BeaconEventName, pageMeta: PageMeta) {
     const ruid = new UIDFactory(RUID).getOrCreate();
+    const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
 
     const log: BeaconLog = {
       event: eventName,
       user_id: this.mainOptions.userId,
       ruid: ruid.value,
-      ...pageMeta
+      ...pageMeta,
+      path: `${pageMeta.path}${search}`
     };
 
     fetch(this.makeBeaconURL(log));
