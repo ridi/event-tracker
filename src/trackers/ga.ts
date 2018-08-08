@@ -14,7 +14,11 @@ export class GATracker extends BaseTracker {
 
   private refinePath(originalPath: string): string {
     const refiners: Array<(path: string) => string> = [
-      path => (this.options.pathPrefix ? this.options.pathPrefix + path : path)
+      path => (this.options.pathPrefix ? this.options.pathPrefix + path : path),
+
+      // Pathname in some browsers doesn't start with slash character (/)
+      // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449
+      path => (path.startsWith("/") ? path : `/${path}`)
     ];
 
     return refiners.reduce((value, refiner) => {
