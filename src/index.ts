@@ -34,7 +34,7 @@ export class Tracker {
 
   private trackers: BaseTracker[] = [];
 
-  private getPageMeta(href: string, referrer?: string): PageMeta {
+  private getPageMeta(href: string, referrer: string = ''): PageMeta {
     const url = new URL(href, {}, true);
     const path = url.pathname + new URL(href, {}, false).query;
     return {
@@ -43,7 +43,7 @@ export class Tracker {
       query_params: url.query,
       path,
       href,
-      referrer: referrer || document.referrer
+      referrer,
     };
   }
 
