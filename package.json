@@ -23,12 +23,12 @@
     "@types/google.analytics": "0.0.39",
     "js-cookie": "^2.2.0",
     "performance-now": "^2.1.0",
-    "url-parse": "^1.4.1"
+    "url-parse": "^1.4.3"
   },
   "devDependencies": {
     "@ridi/tslint-config": "^0.1.0",
     "@types/js-cookie": "^2.1.0",
-    "@types/url-parse": "^1.1.0",
+    "@types/url-parse": "^1.4.1",
     "pre-commit": "^1.2.2",
     "prettier": "1.13.4",
     "ts-loader": "^4.4.1",
