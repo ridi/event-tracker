@@ -1,6 +1,13 @@
 import URL from "url-parse";
 
-import { BeaconOptions, BeaconTracker, GAOptions, GATracker } from "./trackers";
+import {
+  BeaconOptions,
+  BeaconTracker,
+  GAOptions,
+  GATracker,
+  PixelOptions,
+  PixelTracker
+} from "./trackers";
 import { BaseTracker, PageMeta } from "./trackers/base";
 
 export enum DeviceType {
@@ -15,6 +22,7 @@ export interface MainTrackerOptions {
   deviceType: DeviceType;
   gaOptions: GAOptions;
   beaconOptions?: BeaconOptions;
+  pixelOptions: PixelOptions;
 }
 
 export interface ChangeableTrackerOptions {
@@ -26,6 +34,7 @@ export class Tracker {
   constructor(private options: MainTrackerOptions) {
     this.trackers.push(new GATracker(options.gaOptions));
     this.trackers.push(new BeaconTracker(options.beaconOptions));
+    this.trackers.push(new PixelTracker(options.pixelOptions));
 
     for (const tracker of this.trackers) {
       tracker.mainOptions = options;
