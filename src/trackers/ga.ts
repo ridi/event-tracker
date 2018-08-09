@@ -3,12 +3,27 @@ import { BaseTracker, PageMeta } from "./base";
 
 export interface GAOptions {
   trackingId: string;
+  pathPrefix?: string;
   fields?: UniversalAnalytics.FieldsObject;
 }
 
 export class GATracker extends BaseTracker {
   constructor(private options: GAOptions) {
     super();
+  }
+
+  private refinePath(originalPath: string): string {
+    const refiners: Array<(path: string) => string> = [
+      path => (this.options.pathPrefix ? this.options.pathPrefix + path : path),
+
+      // Pathname in some browsers doesn't start with slash character (/)
+      // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449
+      path => (path.startsWith("/") ? path : `/${path}`)
+    ];
+
+    return refiners.reduce((value, refiner) => {
+      return refiner(value);
+    }, originalPath);
   }
 
   public initialize(): void {
@@ -25,7 +40,9 @@ export class GATracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta): void {
-    ga("send", "pageview", pageMeta.path, {
+    const refinedPath = this.refinePath(pageMeta.path);
+
+    ga("send", "pageview", refinedPath, {
       dimension1: this.mainOptions.deviceType
     });
   }

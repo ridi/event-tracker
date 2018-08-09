@@ -1,4 +1,4 @@
-import parse from "url-parse";
+import URL from "url-parse";
 
 import { BeaconOptions, BeaconTracker, GAOptions, GATracker } from "./trackers";
 import { BaseTracker, PageMeta } from "./trackers/base";
@@ -34,16 +34,16 @@ export class Tracker {
 
   private trackers: BaseTracker[] = [];
 
-  private getPageMeta(href: string, referrer?: string): PageMeta {
-    const url = parse(href, true);
-    const path = url.pathname + parse(href, false).query;
+  private getPageMeta(href: string, referrer: string = ''): PageMeta {
+    const url = new URL(href, {}, true);
+    const path = url.pathname;
     return {
       page: url.pathname.split("/")[1] || "index",
       device: this.options.deviceType,
       query_params: url.query,
       path,
       href,
-      referrer: referrer || document.referrer
+      referrer,
     };
   }
 
