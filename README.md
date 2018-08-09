@@ -61,7 +61,7 @@ tracker.sendPageView(location.href);
 | `beaconOptions`           | false    | `BeaconOptions` | Options related with Beacon tracking module                  |
 | `beaconOptions.beaconSrc` | false    | `string`        | Source of the image to be used as a beacon                   |
 | `pixelOptions`            | true     | `PixelOptions`  | Options related with Pixel tracking module                   |
-| `pixelOptions.trackingId` | true     | `string`        | Facebook Pixel Tracking ID like `1000000000`.                |
+| `pixelOptions.pixelId`    | true     | `string`        | Facebook Pixel Tracking ID like `1000000000`.                |
 
 ### `Tracker.initialize()`
 
