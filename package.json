@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@ridi/tslint-config": "^0.1.0",
+    "@types/facebook-pixel": "0.0.19",
     "@types/js-cookie": "^2.1.0",
     "@types/url-parse": "^1.4.1",
     "pre-commit": "^1.2.2",

@@ -32,6 +32,9 @@ const tracker = new Tracker({
     fields: {
       contentGroup5: 'PAPERSHOP'
     }
+  },
+  pixelOptions: {
+    pixelId: '1000000000'
   }
 });
 
@@ -57,6 +60,8 @@ tracker.sendPageView(location.href);
 | `gaOptions.fields`        | false    | `string`        | [GA configurable create only fields.](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference) |
 | `beaconOptions`           | false    | `BeaconOptions` | Options related with Beacon tracking module                  |
 | `beaconOptions.beaconSrc` | false    | `string`        | Source of the image to be used as a beacon                   |
+| `pixelOptions`            | true     | `PixelOptions`  | Options related with Pixel tracking module                   |
+| `pixelOptions.pixelId`    | true     | `string`        | Facebook Pixel Tracking ID like `1000000000`.                |
 
 ### `Tracker.initialize()`
 
