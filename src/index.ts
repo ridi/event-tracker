@@ -6,7 +6,9 @@ import {
   GAOptions,
   GATracker,
   PixelOptions,
-  PixelTracker
+  PixelTracker,
+  TagManagerOptions,
+  TagManagerTracker
 } from "./trackers";
 import { BaseTracker, PageMeta } from "./trackers/base";
 
@@ -23,6 +25,7 @@ export interface MainTrackerOptions {
   gaOptions?: GAOptions;
   beaconOptions?: BeaconOptions;
   pixelOptions?: PixelOptions;
+  tagManagerOptions?: TagManagerOptions;
 }
 
 export interface ChangeableTrackerOptions {
@@ -41,15 +44,18 @@ export class Tracker {
     if (options.pixelOptions) {
       this.trackers.push(new PixelTracker(options.pixelOptions));
     }
+    if (options.tagManagerOptions) {
+      this.trackers.push(new TagManagerTracker(options.tagManagerOptions));
+    }
 
     for (const tracker of this.trackers) {
-      tracker.mainOptions = options;
+      tracker.setMainOptions(options);
     }
   }
 
   private trackers: BaseTracker[] = [];
 
-  private getPageMeta(href: string, referrer: string = ''): PageMeta {
+  private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
     const path = url.pathname;
     return {
@@ -58,7 +64,7 @@ export class Tracker {
       query_params: url.query,
       path,
       href,
-      referrer,
+      referrer
     };
   }
 
@@ -80,7 +86,9 @@ export class Tracker {
 
   private throwIfInitializeIsNotCalled(): void {
     if (this.trackers.some(tracker => !tracker.isInitialized())) {
-      throw Error("[@ridi/event-tracker] this.initialize must be called first.");
+      throw Error(
+        "[@ridi/event-tracker] this.initialize must be called first."
+      );
     }
   }
 
@@ -91,7 +99,7 @@ export class Tracker {
     };
 
     for (const tracker of this.trackers) {
-      tracker.mainOptions = this.options;
+      tracker.setMainOptions(this.options);
     }
   }
 
@@ -112,5 +120,15 @@ export class Tracker {
     }
 
     this.log("PageView", pageMeta);
+  }
+
+  public sendEvent(name: string, data: any = {}) {
+    this.throwIfInitializeIsNotCalled();
+
+    for (const tracker of this.trackers) {
+      tracker.sendEvent(name, data);
+    }
+
+    this.log(`Event:${name}`, data);
   }
 }

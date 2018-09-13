@@ -9,11 +9,13 @@ Provides tracking API that helps to send events to various logging services like
 ## Install
 
 ### NPM
+
 ```bash
 $ npm install @ridi/event-tracker
 ```
 
 ### Browser
+
 ```html
 <script src="./node_modules/@ridi/event-tracker/dist/umd/bundle.min.js"></script>
 ```
@@ -21,26 +23,34 @@ $ npm install @ridi/event-tracker
 ## Usage
 
 ```javascript
-import { Tracker, DeviceType } from '@ridi/event-tracker';
+import { Tracker, DeviceType } from "@ridi/event-tracker";
 
 const tracker = new Tracker({
   deviceType: DeviceType.PC,
-  userId: 'ridi',
+  userId: "ridi",
   gaOptions: {
-    trackingId: 'UA-XXXXXXXX-X',
-    pathPrefix: '/PAPERSHOP',
+    trackingId: "UA-XXXXXXXX-X",
+    pathPrefix: "/PAPERSHOP",
     fields: {
-      contentGroup5: 'PAPERSHOP'
+      contentGroup5: "PAPERSHOP"
     }
   },
   pixelOptions: {
-    pixelId: '1000000000'
+    pixelId: "1000000000"
+  },
+  tagManagerOptions: {
+    trackingId: "GTM-XXXX00"
   }
 });
 
 tracker.initialize();
 
 tracker.sendPageView(location.href);
+
+tracker.sendEvent("Purchased", {
+  t_id: "201808180210135",
+  value: 29000
+});
 ```
 
 ## API
@@ -62,10 +72,12 @@ tracker.sendPageView(location.href);
 | `beaconOptions.beaconSrc`      | false    | `string`            | Source of the image to be used as a beacon                                                                                      |
 | `pixelOptions`                 | false    | `PixelOptions`      | Options related with Pixel tracking module                                                                                      |
 | `pixelOptions.pixelId`         | true     | `string`            | Facebook Pixel Tracking ID like `1000000000`.                                                                                   |
+| `tagManagerOptions`            | false    | `TagManagerOptions` | Options related with Google Tag Manager tracking module                                                                         |
+| `tagManagerOptions.trackingId` | true     | `string`            | Google Tag Manager Tracking ID like `GTM-XXXX00`                                                                                |
 
 ### `Tracker.initialize()`
 
-`@ridi/event-tracker` must be initialized by using this method before any of the other tracking functions will record any data. 
+`@ridi/event-tracker` must be initialized by using this method before any of the other tracking functions will record any data.
 
 ### `Tracker.sendPageView(href, referrer)`
 
@@ -74,9 +86,16 @@ tracker.sendPageView(location.href);
 | `href`     | true     | string | e.g `https://example.com/path?key=value#hash` |
 | `referrer` | false    | string | e.g `https://google.com/search?q=example`     |
 
+### `Tracker.sendEvent(name, data)`
+
+| Key    | Required | Type   | Description                                                   |
+| ------ | -------- | ------ | ------------------------------------------------------------- |
+| `name` | true     | string | Indicating what the given event is                            |
+| `data` | false    | object | Data object to be sent with the event. e.g `{ color: 'red' }` |
+
 ### `Tracker.set(ChangeableTrackerOptions)`
 
-Allow to set (change) `MainTrackerOptions `'s attributes
+Allow to set (change) `MainTrackerOptions`'s attributes
 
 #### ChangeableTrackerOptions
 
@@ -84,8 +103,6 @@ Allow to set (change) `MainTrackerOptions `'s attributes
 | ------------ | -------- | ------------ | ----------- |
 | `userId`     | false    | `string`     |             |
 | `deviceType` | false    | `DeviceType` |             |
-
-
 
 ## Development
 

@@ -16,5 +16,15 @@ export abstract class BaseTracker {
 
   public abstract initialize(): void;
 
-  public abstract sendPageView(pageMeta: PageMeta): void;
+  public setMainOptions(newOptions: MainTrackerOptions): void {
+    this.mainOptions = newOptions;
+  }
+
+  public sendPageView(pageMeta: PageMeta): void {
+    // Default behavior
+  }
+
+  public sendEvent(name: string, data: object = {}): void {
+    // Default behavior
+  }
 }
