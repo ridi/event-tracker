@@ -20,9 +20,9 @@ export interface MainTrackerOptions {
   debug?: boolean;
   userId?: string;
   deviceType: DeviceType;
-  gaOptions: GAOptions;
+  gaOptions?: GAOptions;
   beaconOptions?: BeaconOptions;
-  pixelOptions: PixelOptions;
+  pixelOptions?: PixelOptions;
 }
 
 export interface ChangeableTrackerOptions {
@@ -32,9 +32,15 @@ export interface ChangeableTrackerOptions {
 
 export class Tracker {
   constructor(private options: MainTrackerOptions) {
-    this.trackers.push(new GATracker(options.gaOptions));
-    this.trackers.push(new BeaconTracker(options.beaconOptions));
-    this.trackers.push(new PixelTracker(options.pixelOptions));
+    if (options.gaOptions) {
+      this.trackers.push(new GATracker(options.gaOptions));
+    }
+    if (options.beaconOptions) {
+      this.trackers.push(new BeaconTracker(options.beaconOptions));
+    }
+    if (options.pixelOptions) {
+      this.trackers.push(new PixelTracker(options.pixelOptions));
+    }
 
     for (const tracker of this.trackers) {
       tracker.mainOptions = options;
