@@ -34,7 +34,7 @@ export class BeaconTracker extends BaseTracker {
     return `${beaconSrc}?${queryString}`;
   }
 
-  private sendEvent(eventName: BeaconEventName, pageMeta: PageMeta) {
+  private sendBeacon(eventName: BeaconEventName, pageMeta: PageMeta) {
     const ruid = new UIDFactory(RUID).getOrCreate();
     const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
 
@@ -58,7 +58,7 @@ export class BeaconTracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta): void {
-    this.sendEvent(BeaconEventName.PageView, pageMeta);
+    this.sendBeacon(BeaconEventName.PageView, pageMeta);
   }
 }
 

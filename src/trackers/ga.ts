@@ -1,4 +1,4 @@
-import { loadGA } from "../utils/loadGA";
+import { loadGA } from "../utils/externalServices";
 import { BaseTracker, PageMeta } from "./base";
 
 export interface GAOptions {
