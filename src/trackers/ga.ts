@@ -42,7 +42,9 @@ export class GATracker extends BaseTracker {
   public sendPageView(pageMeta: PageMeta): void {
     const refinedPath = this.refinePath(pageMeta.path);
 
-    ga("send", "pageview", refinedPath, {
+    ga("set", "page", refinedPath);
+
+    ga("send", "pageview", {
       dimension1: this.mainOptions.deviceType
     });
   }
