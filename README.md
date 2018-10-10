@@ -28,6 +28,9 @@ import { Tracker, DeviceType } from "@ridi/event-tracker";
 const tracker = new Tracker({
   deviceType: DeviceType.PC,
   userId: "ridi",
+  beaconOptions: {
+    use: true
+  },
   gaOptions: {
     trackingId: "UA-XXXXXXXX-X",
     pathPrefix: "/PAPERSHOP",
@@ -69,6 +72,7 @@ tracker.sendEvent("Purchased", {
 | `gaOptions.pathPrefix`         | flase    | `string`            | Pathname prefix for manual content grouping.                                                                                    |
 | `gaOptions.fields`             | false    | `string`            | [GA configurable create only fields.](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference) |
 | `beaconOptions`                | false    | `BeaconOptions`     | Options related with Beacon tracking module                                                                                     |
+| `beaconOptions.use`            | false    | `boolean`           | Defaults to `false`, Specifies whether to send log data to beacon system                                                        |
 | `beaconOptions.beaconSrc`      | false    | `string`            | Source of the image to be used as a beacon                                                                                      |
 | `pixelOptions`                 | false    | `PixelOptions`      | Options related with Pixel tracking module                                                                                      |
 | `pixelOptions.pixelId`         | true     | `string`            | Facebook Pixel Tracking ID like `1000000000`.                                                                                   |
