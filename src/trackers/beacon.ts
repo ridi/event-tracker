@@ -6,13 +6,15 @@ import { BaseTracker, PageMeta } from "./base";
 
 export interface BeaconOptions {
   beaconSrc?: string;
+  use?: boolean;
 }
 
 export class BeaconTracker extends BaseTracker {
   constructor(
     private options: BeaconOptions = {
       beaconSrc:
-        "https://s3.ap-northeast-2.amazonaws.com/beacon-select/beacon_select.gif"
+        "https://s3.ap-northeast-2.amazonaws.com/beacon-select/beacon_select.gif",
+      use: false
     }
   ) {
     super();
