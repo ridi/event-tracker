@@ -1,7 +1,7 @@
 # @ridi/event-tracker
 
 [![npm](https://img.shields.io/npm/v/@ridi/event-tracker.svg)](https://www.npmjs.com/package/@ridi/event-tracker)
-[![Build Status](https://travis-ci.org/ridi/event-tracker.svg?branch=master)](https://travis-ci.org/ridi/event-tracker)
+[![Build Status](https://travis-ci.com/ridi/event-tracker.svg?branch=master)](https://travis-ci.com/ridi/event-tracker)
 [![Greenkeeper badge](https://badges.greenkeeper.io/ridi/event-tracker.svg)](https://greenkeeper.io/)
 
 Provides tracking API that helps to send events to various logging services like Google Analytics, RIDI beacon system
