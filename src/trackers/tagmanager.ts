@@ -1,7 +1,7 @@
 import { MainTrackerOptions } from "..";
 
 import { loadTagManager } from "../utils/externalServices";
-import { BaseTracker } from "./base";
+import { BaseTracker, PageMeta } from "./base";
 
 export interface TagManagerOptions {
   trackingId: string;
@@ -45,6 +45,10 @@ export class TagManagerTracker extends BaseTracker {
 
   public isInitialized(): boolean {
     return this.tagCalled;
+  }
+
+  public sendPageView(pageMeta: PageMeta): void {
+    this.sendEvent("Page View", pageMeta);
   }
 
   public sendEvent(name: string, data: object = {}): void {
