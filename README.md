@@ -119,7 +119,7 @@ $ npm run watch
 ## Test
 
 ```bash
-$ npm run test // TBD
+$ npm run test
 ```
 
 ## LICENSE
