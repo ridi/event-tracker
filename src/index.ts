@@ -38,7 +38,7 @@ export class Tracker {
     if (options.gaOptions) {
       this.trackers.push(new GATracker(options.gaOptions));
     }
-    if (options.beaconOptions.use) {
+    if (options.beaconOptions && options.beaconOptions.use) {
       this.trackers.push(new BeaconTracker(options.beaconOptions));
     }
     if (options.pixelOptions) {
