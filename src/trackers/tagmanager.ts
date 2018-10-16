@@ -50,7 +50,7 @@ export class TagManagerTracker extends BaseTracker {
   public sendEvent(name: string, data: object = {}): void {
     this.dataLayer.push({
       event: name,
-      ...data
+      data
     });
   }
 }
