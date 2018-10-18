@@ -10,15 +10,17 @@ export interface BeaconOptions {
 }
 
 export class BeaconTracker extends BaseTracker {
-  constructor(
-    private options: BeaconOptions = {
-      beaconSrc:
-        "https://s3.ap-northeast-2.amazonaws.com/beacon-select/beacon_select.gif",
-      use: false
-    }
-  ) {
+  constructor({
+    beaconSrc = "https://s3.ap-northeast-2.amazonaws.com/beacon-select/beacon_select.gif",
+    use = true
+  }: BeaconOptions) {
     super();
+    this.options = {
+      beaconSrc,
+      use
+    };
   }
+  private options: BeaconOptions;
   private lastPageMeta: PageMeta;
 
   private makeBeaconURL(log: BeaconLog): string {
