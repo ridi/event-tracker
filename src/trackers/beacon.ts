@@ -19,6 +19,7 @@ export class BeaconTracker extends BaseTracker {
   ) {
     super();
   }
+  private lastPageMeta: PageMeta;
 
   private makeBeaconURL(log: BeaconLog): string {
     const beaconSrc = this.options.beaconSrc;
@@ -36,7 +37,7 @@ export class BeaconTracker extends BaseTracker {
     return `${beaconSrc}?${queryString}`;
   }
 
-  private sendBeacon(eventName: BeaconEventName, pageMeta: PageMeta) {
+  private sendBeacon(eventName: string, pageMeta: PageMeta, data: object = {}) {
     const ruid = new UIDFactory(RUID).getOrCreate();
     const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
 
@@ -45,7 +46,8 @@ export class BeaconTracker extends BaseTracker {
       user_id: this.mainOptions.userId,
       ruid: ruid.value,
       ...pageMeta,
-      path: `${pageMeta.path}${search}`
+      path: `${pageMeta.path}${search}`,
+      data
     };
 
     fetch(this.makeBeaconURL(log));
@@ -61,6 +63,17 @@ export class BeaconTracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta): void {
     this.sendBeacon(BeaconEventName.PageView, pageMeta);
+    this.lastPageMeta = pageMeta;
+  }
+
+  public sendEvent(name: string, data: object = {}): void {
+    if (this.lastPageMeta === undefined) {
+      throw Error(
+        "[@ridi/event-tracker] Please call sendPageView method first."
+      );
+    }
+
+    this.sendBeacon(name, this.lastPageMeta, data);
   }
 }
 
@@ -69,7 +82,8 @@ enum BeaconEventName {
 }
 
 interface BeaconLog extends PageMeta {
-  event: BeaconEventName;
+  event: string;
   user_id: string;
   ruid: string;
+  data: object;
 }
