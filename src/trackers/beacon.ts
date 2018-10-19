@@ -1,6 +1,6 @@
 import URL from "url-parse";
 
-import { RUID } from "../uid";
+import { PVID, RUID } from "../uid";
 import { UIDFactory } from "../uid/factory";
 import { BaseTracker, PageMeta } from "./base";
 
@@ -21,6 +21,9 @@ export class BeaconTracker extends BaseTracker {
     };
   }
   private options: BeaconOptions;
+
+  private ruid: RUID;
+  private pvid: PVID;
   private lastPageMeta: PageMeta;
 
   private makeBeaconURL(log: BeaconLog): string {
@@ -40,13 +43,13 @@ export class BeaconTracker extends BaseTracker {
   }
 
   private sendBeacon(eventName: string, pageMeta: PageMeta, data: object = {}) {
-    const ruid = new UIDFactory(RUID).getOrCreate();
     const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
 
     const log: BeaconLog = {
       event: eventName,
       user_id: this.mainOptions.userId,
-      ruid: ruid.value,
+      ruid: this.ruid.value,
+      pvid: this.pvid.value,
       ...pageMeta,
       path: `${pageMeta.path}${search}`,
       data
@@ -56,7 +59,7 @@ export class BeaconTracker extends BaseTracker {
   }
 
   public initialize(): void {
-    // Make some noise
+    this.ruid = new UIDFactory(RUID).getOrCreate();
   }
 
   public isInitialized(): boolean {
@@ -64,6 +67,7 @@ export class BeaconTracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta): void {
+    this.pvid = new UIDFactory(PVID).create();
     this.sendBeacon(BeaconEventName.PageView, pageMeta);
     this.lastPageMeta = pageMeta;
   }
@@ -87,5 +91,6 @@ interface BeaconLog extends PageMeta {
   event: string;
   user_id: string;
   ruid: string;
+  pvid: string;
   data: object;
 }
