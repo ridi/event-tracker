@@ -60,7 +60,6 @@ export class BeaconTracker extends BaseTracker {
 
   public initialize(): void {
     this.ruid = new UIDFactory(RUID).getOrCreate();
-    this.pvid = new UIDFactory(PVID).create();
   }
 
   public isInitialized(): boolean {
