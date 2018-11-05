@@ -20,6 +20,7 @@ export enum DeviceType {
 
 export interface MainTrackerOptions {
   debug?: boolean;
+  development?: boolean;
   userId?: string;
   deviceType: DeviceType;
   gaOptions?: GAOptions;

@@ -65,6 +65,7 @@ tracker.sendEvent("Purchased", {
 | Key                            | Required | Type                | Description                                                                                                                     |
 | ------------------------------ | -------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `debug`                        | false    | `boolean`           | Defaults to `false` If set to `true`, All fired events are logged to browser via `console.log`                                  |
+| `development`                  | false    | `boolean`           | Represents the state of the system environment your application                                                                 |
 | `userId`                       | false    | `string`            | Logged user's identifier.                                                                                                       |
 | `deviceType`                   | true     | `DeviceType`        | Type of connected user's device. Please refer `DeviceType` type                                                                 |
 | `gaOptions`                    | false    | `GAOptions`         | Options related with Google Analytics tracking module                                                                           |
