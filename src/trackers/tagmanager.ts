@@ -21,7 +21,7 @@ export class TagManagerTracker extends BaseTracker {
 
   private get dataLayer() {
     if (!this.tagCalled) {
-      window.dataLayer = [];
+      window.dataLayer = window.dataLayer || [];
     }
 
     return window.dataLayer;
