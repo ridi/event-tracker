@@ -1,10 +1,14 @@
 import { loadGA } from "../utils/externalServices";
 import { BaseTracker, PageMeta } from "./base";
 
+interface GAFields extends UniversalAnalytics.FieldsObject {
+  allowAdFeatures?: boolean;
+}
+
 export interface GAOptions {
   trackingId: string;
   pathPrefix?: string;
-  fields?: UniversalAnalytics.FieldsObject;
+  fields?: GAFields;
 }
 
 export class GATracker extends BaseTracker {
