@@ -62,23 +62,23 @@ tracker.sendEvent("Purchased", {
 
 #### MainTrackerOptions
 
-| Key                            | Required | Type                | Description                                                                                                                     |
-| ------------------------------ | -------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `debug`                        | false    | `boolean`           | Defaults to `false` If set to `true`, All fired events are logged to browser via `console.log`                                  |
-| `development`                  | false    | `boolean`           | Represents the state of the system environment your application                                                                 |
-| `userId`                       | false    | `string`            | Logged user's identifier.                                                                                                       |
-| `deviceType`                   | true     | `DeviceType`        | Type of connected user's device. Please refer `DeviceType` type                                                                 |
-| `gaOptions`                    | false    | `GAOptions`         | Options related with Google Analytics tracking module                                                                           |
-| `gaOptions.trackingId`         | true     | `string`            | GA Tracking ID like `UA-000000-01`.                                                                                             |
-| `gaOptions.pathPrefix`         | flase    | `string`            | Pathname prefix for manual content grouping.                                                                                    |
-| `gaOptions.fields`             | false    | `string`            | [GA configurable create only fields.](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference) |
-| `beaconOptions`                | false    | `BeaconOptions`     | Options related with Beacon tracking module                                                                                     |
-| `beaconOptions.use`            | false    | `boolean`           | Defaults to `true`, Specifies whether to send log data to beacon system                                                         |
-| `beaconOptions.beaconSrc`      | false    | `string`            | Source of the image to be used as a beacon                                                                                      |
-| `pixelOptions`                 | false    | `PixelOptions`      | Options related with Pixel tracking module                                                                                      |
-| `pixelOptions.pixelId`         | true     | `string`            | Facebook Pixel Tracking ID like `1000000000`.                                                                                   |
-| `tagManagerOptions`            | false    | `TagManagerOptions` | Options related with Google Tag Manager tracking module                                                                         |
-| `tagManagerOptions.trackingId` | true     | `string`            | Google Tag Manager Tracking ID like `GTM-XXXX00`                                                                                |
+| Key                            | Required | Type                                                                                  | Description                                                                                                                     |
+| ------------------------------ | -------- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `debug`                        | false    | `boolean`                                                                             | Defaults to `false` If set to `true`, All fired events are logged to browser via `console.log`                                  |
+| `development`                  | false    | `boolean`                                                                             | Represents the state of the system environment your application                                                                 |
+| `userId`                       | false    | `string`                                                                              | Logged user's identifier.                                                                                                       |
+| `deviceType`                   | true     | `DeviceType`                                                                          | Type of connected user's device. Please refer `DeviceType` type                                                                 |
+| `gaOptions`                    | false    | `GAOptions`                                                                           | Options related with Google Analytics tracking module                                                                           |
+| `gaOptions.trackingId`         | true     | `string`                                                                              | GA Tracking ID like `UA-000000-01`.                                                                                             |
+| `gaOptions.pathPrefix`         | flase    | `string`                                                                              | Pathname prefix for manual content grouping.                                                                                    |
+| `gaOptions.fields`             | false    | [`GAFields`](https://github.com/ridi/event-tracker/blob/master/src/trackers/ga.ts#L4) | [GA configurable create only fields.](https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference) |
+| `beaconOptions`                | false    | `BeaconOptions`                                                                       | Options related with Beacon tracking module                                                                                     |
+| `beaconOptions.use`            | false    | `boolean`                                                                             | Defaults to `true`, Specifies whether to send log data to beacon system                                                         |
+| `beaconOptions.beaconSrc`      | false    | `string`                                                                              | Source of the image to be used as a beacon                                                                                      |
+| `pixelOptions`                 | false    | `PixelOptions`                                                                        | Options related with Pixel tracking module                                                                                      |
+| `pixelOptions.pixelId`         | true     | `string`                                                                              | Facebook Pixel Tracking ID like `1000000000`.                                                                                   |
+| `tagManagerOptions`            | false    | `TagManagerOptions`                                                                   | Options related with Google Tag Manager tracking module                                                                         |
+| `tagManagerOptions.trackingId` | true     | `string`                                                                              | Google Tag Manager Tracking ID like `GTM-XXXX00`                                                                                |
 
 ### `Tracker.initialize()`
 
