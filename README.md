@@ -79,6 +79,8 @@ tracker.sendEvent("Purchased", {
 | `pixelOptions.pixelId`         | true     | `string`                                                                              | Facebook Pixel Tracking ID like `1000000000`.                                                                                   |
 | `tagManagerOptions`            | false    | `TagManagerOptions`                                                                   | Options related with Google Tag Manager tracking module                                                                         |
 | `tagManagerOptions.trackingId` | true     | `string`                                                                              | Google Tag Manager Tracking ID like `GTM-XXXX00`                                                                                |
+| `gTagOptions`                  | false    | `GTagOptions`                                                                         | Options related with GTag tracking module                                                                                       |
+| `gTagOptions.trackingId`       | true     | `string`                                                                              | GTag Tracking ID like `AW-XXXX00`                                                                                               |
 
 ### `Tracker.initialize()`
 
