@@ -5,6 +5,8 @@ import {
   BeaconTracker,
   GAOptions,
   GATracker,
+  GTagOptions,
+  GTagTracker,
   PixelOptions,
   PixelTracker,
   TagManagerOptions,
@@ -27,6 +29,7 @@ export interface MainTrackerOptions {
   beaconOptions?: BeaconOptions;
   pixelOptions?: PixelOptions;
   tagManagerOptions?: TagManagerOptions;
+  gTagOptions?: GTagOptions;
 }
 
 export interface ChangeableTrackerOptions {
@@ -47,6 +50,9 @@ export class Tracker {
     }
     if (options.tagManagerOptions) {
       this.trackers.push(new TagManagerTracker(options.tagManagerOptions));
+    }
+    if (options.gTagOptions) {
+      this.trackers.push(new GTagTracker(options.gTagOptions));
     }
 
     for (const tracker of this.trackers) {

@@ -38,3 +38,12 @@ export function loadPixel() {
   })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
   // tslint:enable
 }
+
+export function loadGTag(id: string) {
+  // tslint:disable
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push(['js', new Date()]);w[l].push(['config', id] );
+  var f=d.getElementsByTagName(s)[0],j:any=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+  j.async=true;j.src='https://www.googletagmanager.com/gtag/js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window as any,document,'script','dataLayer',id);
+  // tslint:enable
+}
