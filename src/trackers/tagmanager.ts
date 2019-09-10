@@ -27,17 +27,19 @@ export class TagManagerTracker extends BaseTracker {
     return window.dataLayer;
   }
 
-  private setVariables(data: object): void {
+  private pushDataLayer(data: object): void {
     this.dataLayer.push(data);
   }
 
   public setMainOptions(newOptions: MainTrackerOptions): void {
-    this.setVariables(newOptions);
     super.setMainOptions(newOptions);
+
+    this.pushDataLayer(newOptions);
+    this.sendEvent("Options Changed", newOptions);
   }
 
   public initialize(): void {
-    this.setVariables(this.mainOptions);
+    this.pushDataLayer(this.mainOptions);
 
     loadTagManager(this.options.trackingId);
     this.tagCalled = true;
