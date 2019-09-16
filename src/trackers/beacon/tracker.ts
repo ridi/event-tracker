@@ -1,12 +1,14 @@
 import URL from "url-parse";
-
-import { PVID, RUID } from "../uid";
-import { UIDFactory } from "../uid/factory";
-import { BaseTracker, PageMeta } from "./base";
+import { PVID, RUID } from "../../uid";
+import { UIDFactory } from "../../uid/factory";
+import { QueueManager } from "../../utils/queue";
+import { BaseTracker, PageMeta } from "../base";
+import { BeaconLog } from "./log";
 
 export interface BeaconOptions {
   beaconSrc?: string;
   use?: boolean;
+  queueSize?: number;
 }
 
 export class BeaconTracker extends BaseTracker {
@@ -21,41 +23,30 @@ export class BeaconTracker extends BaseTracker {
     };
   }
   private options: BeaconOptions;
+  private queueManager = new QueueManager<BeaconLog>(3, 5000);
 
   private ruid: RUID;
   private pvid: PVID;
   private lastPageMeta: PageMeta;
 
-  private makeBeaconURL(log: BeaconLog): string {
-    const beaconSrc = this.options.beaconSrc;
-    const queryString = Object.entries(log)
-      .map(([key, value]) => {
-        if (typeof value === "object") {
-          value = JSON.stringify(value);
-        } else {
-          value = value.toString();
-        }
-        return [key, value].map(encodeURIComponent).join("=");
-      })
-      .join("&");
-
-    return `${beaconSrc}?${queryString}`;
-  }
-
   private sendBeacon(eventName: string, pageMeta: PageMeta, data: object = {}) {
     const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
+    const log = new BeaconLog(
+      {
+        event: eventName,
+        user_id: this.mainOptions.userId,
+        ruid: this.ruid.value,
+        pvid: this.pvid.value,
+        ...pageMeta,
+        path: `${pageMeta.path}${search}`,
+        data
+      },
+      {
+        beaconSrc: this.options.beaconSrc
+      }
+    );
 
-    const log: BeaconLog = {
-      event: eventName,
-      user_id: this.mainOptions.userId,
-      ruid: this.ruid.value,
-      pvid: this.pvid.value,
-      ...pageMeta,
-      path: `${pageMeta.path}${search}`,
-      data
-    };
-
-    fetch(this.makeBeaconURL(log));
+    this.queueManager.enqueue(log);
   }
 
   public initialize(): void {
@@ -85,12 +76,4 @@ export class BeaconTracker extends BaseTracker {
 
 enum BeaconEventName {
   PageView = "pageView"
-}
-
-interface BeaconLog extends PageMeta {
-  event: string;
-  user_id: string;
-  ruid: string;
-  pvid: string;
-  data: object;
 }

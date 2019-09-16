@@ -1,5 +1,4 @@
 import URL from "url-parse";
-
 import {
   BeaconOptions,
   BeaconTracker,
