@@ -2,7 +2,7 @@ import { loadPixel } from "../utils/externalServices";
 import { BaseTracker, PageMeta } from "./base";
 
 export interface PixelOptions {
-  pixelId: string;
+  pixelId: string | Array<string>;
 }
 
 export class PixelTracker extends BaseTracker {
@@ -14,7 +14,12 @@ export class PixelTracker extends BaseTracker {
 
   public initialize(): void {
     loadPixel();
-    fbq("init", this.options.pixelId);
+    const pixelIds =
+      typeof this.options.pixelId === "string"
+        ? [this.options.pixelId]
+        : this.options.pixelId;
+
+    pixelIds.forEach(id => fbq("init", id));
   }
 
   public isInitialized(): boolean {
