@@ -112,6 +112,9 @@ export class Tracker {
 
   public initialize(): void {
     for (const tracker of this.trackers) {
+      if (tracker.isInitialized) {
+        continue;
+      }
       tracker.initialize();
     }
 
