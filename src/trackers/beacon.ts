@@ -63,7 +63,7 @@ export class BeaconTracker extends BaseTracker {
   }
 
   public isInitialized(): boolean {
-    return true;
+    return !!this.ruid;
   }
 
   public sendPageView(pageMeta: PageMeta): void {
