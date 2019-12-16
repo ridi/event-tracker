@@ -48,11 +48,13 @@ export class BeaconTracker extends BaseTracker {
     const log: BeaconLog = {
       event: eventName,
       user_id: this.mainOptions.userId,
+      u_id: this.mainOptions.userId,
       ruid: this.ruid.value,
       pvid: this.pvid.value,
       ...pageMeta,
       path: `${pageMeta.path}${search}`,
-      data
+      data,
+      ts: Date.now()
     };
 
     fetch(this.makeBeaconURL(log));
@@ -68,7 +70,10 @@ export class BeaconTracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta): void {
     this.pvid = new UIDFactory(PVID).create();
-    this.sendBeacon(BeaconEventName.PageView, pageMeta);
+    this.sendBeacon(BeaconEventName.PageView, pageMeta, {
+      href: pageMeta.href,
+      referrer: pageMeta.referrer
+    });
     this.lastPageMeta = pageMeta;
   }
 
@@ -90,7 +95,9 @@ enum BeaconEventName {
 interface BeaconLog extends PageMeta {
   event: string;
   user_id: string;
+  u_id: string;
   ruid: string;
   pvid: string;
   data: object;
+  ts: number;
 }
