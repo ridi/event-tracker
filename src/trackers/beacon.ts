@@ -53,7 +53,8 @@ export class BeaconTracker extends BaseTracker {
       pvid: this.pvid.value,
       ...pageMeta,
       path: `${pageMeta.path}${search}`,
-      data
+      data,
+      ts: Date.now()
     };
 
     fetch(this.makeBeaconURL(log));
@@ -98,4 +99,5 @@ interface BeaconLog extends PageMeta {
   ruid: string;
   pvid: string;
   data: object;
+  ts: number;
 }
