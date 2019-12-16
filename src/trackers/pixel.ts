@@ -2,7 +2,7 @@ import { loadPixel } from "../utils/externalServices";
 import { BaseTracker, PageMeta } from "./base";
 
 export interface PixelOptions {
-  pixelId: string | Array<string>;
+  pixelId: string | string[];
 }
 
 export class PixelTracker extends BaseTracker {
