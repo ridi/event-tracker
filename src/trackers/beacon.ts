@@ -69,7 +69,10 @@ export class BeaconTracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta): void {
     this.pvid = new UIDFactory(PVID).create();
-    this.sendBeacon(BeaconEventName.PageView, pageMeta);
+    this.sendBeacon(BeaconEventName.PageView, pageMeta, {
+      href: pageMeta.href,
+      referrer: pageMeta.referrer
+    });
     this.lastPageMeta = pageMeta;
   }
 
