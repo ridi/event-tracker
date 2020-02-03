@@ -37,7 +37,8 @@ export class UIDFactory {
     Cookies.set(this.UIDClass.type, value, {
       expires,
       path: "/",
-      domain: ".ridibooks.com"
+      domain: ".ridibooks.com",
+      sameSite: 'lax',
     });
   }
 
