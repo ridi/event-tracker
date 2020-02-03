@@ -38,7 +38,7 @@ export class UIDFactory {
       expires,
       path: "/",
       domain: ".ridibooks.com",
-      sameSite: 'lax',
+      sameSite: "lax",
     });
   }
 
