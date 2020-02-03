@@ -28,7 +28,7 @@
     "@ridi/tslint-config": "^0.1.0",
     "@types/facebook-pixel": "0.0.19",
     "@types/jest": "^24.0.12",
-    "@types/js-cookie": "^2.1.0",
+    "@types/js-cookie": "^2.2.4",
     "@types/url-parse": "^1.4.1",
     "jest": "^24.8.0",
     "pre-commit": "^1.2.2",
