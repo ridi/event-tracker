@@ -1,6 +1,6 @@
 {
   "name": "@ridi/event-tracker",
-  "version": "0.8.3",
+  "version": "0.8.4",
   "description": "",
   "main": "dist/cjs/index.js",
   "typings": "dist/typings/index.d.ts",
