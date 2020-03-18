@@ -52,4 +52,13 @@ export class GATracker extends BaseTracker {
       dimension1: this.mainOptions.deviceType
     });
   }
+
+  public sendEvent(name: string, data: { [k: string]: any }): void {
+    ga("send", {
+      hitType: "event",
+      eventCategory: data.category || "All",
+      eventAction: data.action || name,
+      eventLabel: data.label || "All"
+    });
+  }
 }
