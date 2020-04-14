@@ -116,7 +116,7 @@ Allow to set (change) `MainTrackerOptions`'s attributes
 ```bash
 $ git clone https://github.com/ridi/event-tracker && cd tracking
 $ npm install
-$ npm run watch
+$ npm run build
 ```
 
 ## Test
