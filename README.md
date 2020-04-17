@@ -111,7 +111,7 @@ Allow to set (change) `MainTrackerOptions`'s attributes
 | `userId`     | false    | `string`     |             |
 | `deviceType` | false    | `DeviceType` |             |
 
-## Development
+## Develop
 
 ```bash
 $ git clone https://github.com/ridi/event-tracker && cd tracking
@@ -123,6 +123,12 @@ $ npm run build
 
 ```bash
 $ npm run test
+```
+
+## Publish
+
+```bash
+$ npm publish --access public
 ```
 
 ## LICENSE
