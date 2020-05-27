@@ -1,4 +1,4 @@
-import { DeviceType, Tracker } from "../index";
+import {DeviceType, Tracker} from "../index";
 import {
   BeaconTracker,
   GATracker,
@@ -49,6 +49,36 @@ it("sends PageView event with all tracking providers", () => {
     expect(mock).toBeCalledTimes(1);
   });
 });
+
+it("path should contains querystring of href", () => {
+  const mocks = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
+    tracker => {
+      const mock = jest.fn();
+      tracker.prototype.sendPageView = mock;
+      return mock;
+    }
+  );
+
+  const t = createDummyTracker();
+
+  const href = "https://localhost/home?q=localhost&adult_exclude=true";
+  const referrer = "https://google.com/search?q=localhost";
+
+  t.initialize();
+  t.sendPageView(href, referrer);
+
+  mocks.forEach(mock => {
+    expect(mock).nthCalledWith(1, {
+      page: 'home',
+      device: 'mobile',
+      query_params: {adult_exclude: 'true', q: "localhost"},
+      path: '/home?q=localhost&adult_exclude=true',
+      href: 'https://localhost/home?q=localhost&adult_exclude=true',
+      referrer: 'https://google.com/search?q=localhost'
+    })
+  });
+});
+
 
 it("throws if initialize have not been called before sending any events ", () => {
   const t = createDummyTracker();
