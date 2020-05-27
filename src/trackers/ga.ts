@@ -16,13 +16,14 @@ export class GATracker extends BaseTracker {
     super();
   }
 
-  private refinePath(originalPath: string): string {
+  private refinePath(originalPath: string, href: string): string {
     const refiners: Array<(path: string) => string> = [
       path => (this.options.pathPrefix ? this.options.pathPrefix + path : path),
 
       // Pathname in some browsers doesn't start with slash character (/)
       // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449
-      path => (path.startsWith("/") ? path : `/${path}`)
+      path => (path.startsWith("/") ? path : `/${path}`),
+      path => `${path}?${href.split("?")[1] || ""}`
     ];
 
     return refiners.reduce((value, refiner) => {
@@ -44,7 +45,7 @@ export class GATracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta): void {
-    const refinedPath = this.refinePath(pageMeta.path);
+    const refinedPath = this.refinePath(pageMeta.path, pageMeta.href);
 
     ga("set", "page", refinedPath);
 

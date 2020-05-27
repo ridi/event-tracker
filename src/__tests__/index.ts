@@ -30,7 +30,7 @@ const createDummyTracker = (additionalOptions: object = {}) => {
 };
 
 it("sends PageView event with all tracking providers", () => {
-  const mocks = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
+  const mocks = [BeaconTracker,GATracker, PixelTracker, TagManagerTracker].map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -51,7 +51,8 @@ it("sends PageView event with all tracking providers", () => {
 });
 
 it("path should contains querystring of href", () => {
-  const mocks = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
+
+  const mocks = [BeaconTracker, PixelTracker, TagManagerTracker].map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -65,18 +66,11 @@ it("path should contains querystring of href", () => {
   const referrer = "https://google.com/search?q=localhost";
 
   t.initialize();
+  ga = jest.fn() as unknown as UniversalAnalytics.ga
   t.sendPageView(href, referrer);
+  expect(ga).toHaveBeenCalledWith("set", "page", "/home?q=localhost&adult_exclude=true")
 
-  mocks.forEach(mock => {
-    expect(mock).nthCalledWith(1, {
-      page: 'home',
-      device: 'mobile',
-      query_params: {adult_exclude: 'true', q: "localhost"},
-      path: '/home?q=localhost&adult_exclude=true',
-      href: 'https://localhost/home?q=localhost&adult_exclude=true',
-      referrer: 'https://google.com/search?q=localhost'
-    })
-  });
+
 });
 
 

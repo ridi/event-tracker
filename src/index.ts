@@ -64,9 +64,8 @@ export class Tracker {
 
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
-    const queryString = url.href.split("?")[1] || ""
 
-    const path = `${url.pathname}?${queryString}`;
+    const path = url.pathname;
 
     return {
       page: url.pathname.split("/")[1] || "index",
