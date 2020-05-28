@@ -41,10 +41,10 @@ it("GATracker should send pageview event", () => {
   const referrer = "https://google.com/search?q=localhost";
 
   t.initialize();
-  ga = jest.fn() as unknown as UniversalAnalytics.ga
+  ga = jest.fn() as unknown as UniversalAnalytics.ga;
   t.sendPageView(href, referrer);
 
-  expect(ga).toHaveBeenCalledWith("set", "page", "/home?q=localhost&adult_exclude=true")
+  expect(ga).toHaveBeenCalledWith("set", "page", "/home?q=localhost&adult_exclude=true");
 
 });
 
@@ -68,9 +68,6 @@ it("sends PageView event with all tracking providers", () => {
     expect(mock).toBeCalledTimes(1);
   });
 });
-
-
-
 
 
 it("throws if initialize have not been called before sending any events ", () => {
