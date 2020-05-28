@@ -1,5 +1,5 @@
-import { loadGA } from "../utils/externalServices";
-import { BaseTracker, PageMeta } from "./base";
+import {loadGA} from "../utils/externalServices";
+import {BaseTracker, PageMeta} from "./base";
 
 interface GAFields extends UniversalAnalytics.FieldsObject {
   allowAdFeatures?: boolean;

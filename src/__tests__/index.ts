@@ -31,7 +31,7 @@ const createDummyTracker = (additionalOptions: object = {}) => {
 };
 
 it("sends PageView event with all tracking providers", () => {
-  const mocks = [BeaconTracker,GATracker, PixelTracker, TagManagerTracker].map(
+  const mocks = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
