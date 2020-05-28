@@ -6,6 +6,7 @@ import {
   TagManagerTracker
 } from "../trackers";
 
+
 beforeAll(() => {
   document.body.innerHTML = "<script />";
 });
@@ -48,29 +49,6 @@ it("sends PageView event with all tracking providers", () => {
   mocks.forEach(mock => {
     expect(mock).toBeCalledTimes(1);
   });
-});
-
-it("path should contains querystring of href", () => {
-
-  const mocks = [BeaconTracker, PixelTracker, TagManagerTracker].map(
-    tracker => {
-      const mock = jest.fn();
-      tracker.prototype.sendPageView = mock;
-      return mock;
-    }
-  );
-
-  const t = createDummyTracker();
-
-  const href = "https://localhost/home?q=localhost&adult_exclude=true";
-  const referrer = "https://google.com/search?q=localhost";
-
-  t.initialize();
-  ga = jest.fn() as unknown as UniversalAnalytics.ga
-  t.sendPageView(href, referrer);
-  expect(ga).toHaveBeenCalledWith("set", "page", "/home?q=localhost&adult_exclude=true")
-
-
 });
 
 
