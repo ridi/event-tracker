@@ -22,7 +22,7 @@ export class GATracker extends BaseTracker {
 
       // Pathname in some browsers doesn't start with slash character (/)
       // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449
-      path => (path.startsWith("/") ? path : `/${path}`),
+      path => (path.startsWith("/") ? path : `/${path}`)
     ];
 
     return refiners.reduce((value, refiner) => {
@@ -45,9 +45,9 @@ export class GATracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta): void {
     const refinedPath = this.refinePath(pageMeta.path);
-    const queryString = pageMeta.href.split("?")[1] || ""
+    const queryString = pageMeta.href.split("?")[1] || "";
 
-    const pageName = `${refinedPath}?${queryString}`
+    const pageName = `${refinedPath}?${queryString}`;
 
     ga("set", "page", pageName);
 
