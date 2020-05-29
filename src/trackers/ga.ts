@@ -1,5 +1,5 @@
-import { loadGA } from "../utils/externalServices";
-import { BaseTracker, PageMeta } from "./base";
+import {loadGA} from "../utils/externalServices";
+import {BaseTracker, PageMeta} from "./base";
 
 interface GAFields extends UniversalAnalytics.FieldsObject {
   allowAdFeatures?: boolean;
@@ -45,8 +45,11 @@ export class GATracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta): void {
     const refinedPath = this.refinePath(pageMeta.path);
+    const queryString = pageMeta.href.split("?")[1] || "";
 
-    ga("set", "page", refinedPath);
+    const pageName = `${refinedPath}?${queryString}`;
+
+    ga("set", "page", pageName);
 
     ga("send", "pageview", {
       dimension1: this.mainOptions.deviceType
