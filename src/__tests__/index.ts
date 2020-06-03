@@ -9,6 +9,10 @@ beforeAll(() => {
 const createDummyTracker = (additionalOptions: object = {}) => {
   return new Tracker({
     deviceType: DeviceType.Mobile,
+    serviceProps: {
+      "prop1": "value1",
+      "prop2": "value2"
+    },
     beaconOptions: {
       use: true
     },
@@ -24,6 +28,42 @@ const createDummyTracker = (additionalOptions: object = {}) => {
     ...additionalOptions
   });
 };
+
+// TODO: fix this test works.
+//  For now, we need to
+//    1) make BeaconTacker.sendBeacon as public method
+//    2) comment out "GATracker should send pageview event" Test
+//  temporarily to pass this test.
+// it("BeaconTracker sends PageView event with serviceProps", () => {
+//   const dummpyPageMeta = {
+//     "device": "mobile",
+//     "href": "https://localhost/home?q=localhost&adult_exclude=true",
+//     "page": "home",
+//     "path": "/home",
+//     "query_params": {"adult_exclude": "true", "q": "localhost"},
+//     "referrer": "https://google.com/search?q=localhost"
+//   };
+//
+//   [GATracker, PixelTracker, TagManagerTracker].map(
+//     tracker => {
+//       const mock = jest.fn();
+//       tracker.prototype.sendPageView = mock;
+//       return mock;
+//     }
+//   );
+//
+//   const t = createDummyTracker();
+//
+//   const href = "https://localhost/home?q=localhost&adult_exclude=true";
+//   const referrer = "https://google.com/search?q=localhost";
+//
+//   t.initialize();
+//   const sendBeaconMock = jest.fn();
+//   BeaconTracker.prototype.sendBeacon = sendBeaconMock;
+//   t.sendPageView(href, referrer);
+//
+//   expect(sendBeaconMock).toHaveBeenCalledWith("pageView", dummpyPageMeta, {"prop1": "value1", "prop2": "value2"});
+// });
 
 it("GATracker should send pageview event", () => {
 
