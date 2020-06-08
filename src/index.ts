@@ -20,11 +20,14 @@ export enum DeviceType {
   Paper = "paper"
 }
 
+export type ServiceProp = Record<string, string>
+
 export interface MainTrackerOptions {
   debug?: boolean;
   development?: boolean;
   userId?: string;
   deviceType: DeviceType;
+  serviceProps?: ServiceProp;
   gaOptions?: GAOptions;
   beaconOptions?: BeaconOptions;
   pixelOptions?: PixelOptions;
@@ -35,6 +38,7 @@ export interface MainTrackerOptions {
 export interface ChangeableTrackerOptions {
   userId?: string;
   deviceType?: DeviceType;
+  serviceProps?: ServiceProp;
 }
 
 export class Tracker {
