@@ -42,7 +42,10 @@ export class BeaconTracker extends BaseTracker {
     return `${beaconSrc}?${queryString}`;
   }
 
-  private sendBeacon(eventName: string, pageMeta: PageMeta, data: object = {}) {
+  private sendBeacon(eventName: string, pageMeta: PageMeta, data: object = {}, ts?: Date) {
+    if (ts == null) {
+      ts = new Date();
+    }
     const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
 
     const log: BeaconLog = {
@@ -54,7 +57,7 @@ export class BeaconTracker extends BaseTracker {
       ...pageMeta,
       path: `${pageMeta.path}${search}`,
       data,
-      ts: Date.now()
+      ts: ts.getTime(),
     };
 
     fetch(this.makeBeaconURL(log));
@@ -68,20 +71,20 @@ export class BeaconTracker extends BaseTracker {
     return !!this.ruid;
   }
 
-  public sendPageView(pageMeta: PageMeta): void {
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.pvid = new UIDFactory(PVID).create();
-    this.sendBeacon(BeaconEventName.PageView, pageMeta, this.mainOptions.serviceProps);
+    this.sendBeacon(BeaconEventName.PageView, pageMeta, this.mainOptions.serviceProps, ts);
     this.lastPageMeta = pageMeta;
   }
 
-  public sendEvent(name: string, data: object = {}): void {
+  public sendEvent(name: string, data: object = {}, ts?: Date): void {
     if (this.lastPageMeta === undefined) {
       throw Error(
         "[@ridi/event-tracker] Please call sendPageView method first."
       );
     }
 
-    this.sendBeacon(name, this.lastPageMeta, data);
+    this.sendBeacon(name, this.lastPageMeta, data, ts);
   }
 }
 

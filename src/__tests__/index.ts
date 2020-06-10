@@ -74,7 +74,7 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
   BeaconTracker.prototype.sendBeacon = sendBeaconMock;
   t.sendPageView(href, referrer);
 
-  expect(sendBeaconMock).toHaveBeenCalledWith("pageView", dummpyPageMeta, {"prop1": "value1", "prop2": "value2"});
+  expect(sendBeaconMock).toHaveBeenCalledWith("pageView", dummpyPageMeta, {"prop1": "value1", "prop2": "value2"}, undefined);
 });
 
 
@@ -95,6 +95,30 @@ it("sends PageView event with all tracking providers", () => {
   t.initialize();
   t.sendPageView(href, referrer);
 
+  mocks.forEach(mock => {
+    expect(mock).toBeCalledTimes(1);
+  });
+});
+
+it("queues events before initialize when queueWhenUninitialized is set", () => {
+  const mocks = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
+    tracker => {
+      const mock = jest.fn();
+      tracker.prototype.sendPageView = mock;
+      return mock;
+    }
+  );
+  const t = createDummyTracker({ queueWhenUninitialized: true });
+
+  const href = "https://localhost/home";
+  const referrer = "https://google.com/search?q=localhost";
+
+  t.sendPageView(href, referrer);
+  mocks.forEach(mock => {
+    expect(mock).not.toBeCalled();
+  });
+
+  t.initialize();
   mocks.forEach(mock => {
     expect(mock).toBeCalledTimes(1);
   });

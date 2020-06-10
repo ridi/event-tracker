@@ -25,6 +25,7 @@ export type ServiceProp = Record<string, string>
 export interface MainTrackerOptions {
   debug?: boolean;
   development?: boolean;
+  queueWhenUninitialized?: boolean;
   userId?: string;
   deviceType: DeviceType;
   serviceProps?: ServiceProp;
@@ -41,8 +42,30 @@ export interface ChangeableTrackerOptions {
   serviceProps?: ServiceProp;
 }
 
+interface PageViewQueueItem {
+  type: "pageview";
+  ts: Date;
+  href: string;
+  referrer?: string;
+}
+
+interface EventQueueItem {
+  type: "event";
+  ts: Date;
+  name: string;
+  data: any;
+}
+
+type QueueItem = PageViewQueueItem | EventQueueItem;
+
 export class Tracker {
   constructor(private options: MainTrackerOptions) {
+    if (options.queueWhenUninitialized) {
+      this.eventQueue = [];
+    } else {
+      this.eventQueue = null;
+    }
+
     if (options.gaOptions) {
       this.trackers.push(new GATracker(options.gaOptions));
     }
@@ -65,6 +88,8 @@ export class Tracker {
   }
 
   private trackers: BaseTracker[] = [];
+
+  private eventQueue: QueueItem[] | null;
 
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
@@ -125,25 +150,59 @@ export class Tracker {
     }
 
     this.log("Initialize");
+
+    if (this.eventQueue) {
+      const queue = this.eventQueue;
+      this.eventQueue = null;
+      for (const item of queue) {
+        switch (item.type) {
+          case "pageview":
+            this.sendPageView(item.href, item.referrer, item.ts);
+            break;
+          case "event":
+            this.sendEvent(item.name, item.data, item.ts);
+            break;
+        }
+      }
+    }
   }
 
-  public sendPageView(href: string, referrer?: string): void {
+  public sendPageView(href: string, referrer?: string, ts?: Date): void {
+    if (this.eventQueue) {
+      this.eventQueue.push({
+        type: "pageview",
+        ts: ts || new Date(),
+        href,
+        referrer,
+      });
+      return;
+    }
+
     this.throwIfInitializeIsNotCalled();
 
     const pageMeta = this.getPageMeta(href, referrer);
 
     for (const tracker of this.trackers) {
-      tracker.sendPageView(pageMeta);
+      tracker.sendPageView(pageMeta, ts);
     }
 
     this.log("PageView", pageMeta);
   }
 
-  public sendEvent(name: string, data: any = {}) {
+  public sendEvent(name: string, data: any = {}, ts?: Date) {
+    if (this.eventQueue) {
+      this.eventQueue.push({
+        type: "event",
+        ts: ts || new Date(),
+        name,
+        data,
+      });
+    }
+
     this.throwIfInitializeIsNotCalled();
 
     for (const tracker of this.trackers) {
-      tracker.sendEvent(name, data);
+      tracker.sendEvent(name, data, ts);
     }
 
     this.log(`Event:${name}`, data);

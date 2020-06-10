@@ -20,11 +20,11 @@ export abstract class BaseTracker {
     this.mainOptions = newOptions;
   }
 
-  public sendPageView(pageMeta: PageMeta): void {
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     // Default behavior
   }
 
-  public sendEvent(name: string, data: object = {}): void {
+  public sendEvent(name: string, data: object = {}, ts?: Date): void {
     // Default behavior
   }
 }
