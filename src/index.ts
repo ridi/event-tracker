@@ -123,6 +123,40 @@ export class Tracker {
     }
   }
 
+  private flush(): void {
+    const queue = this.eventQueue;
+    while(queue.length) {
+      const item = queue.shift();
+      switch (item.type) {
+        case "pageview":
+          this.doSendPageView(item as PageViewQueueItem);
+          break;
+        case "event":
+          this.doSendEvent(item as EventQueueItem);
+          break;
+      }
+    }
+  }
+
+  private doSendPageView(item: PageViewQueueItem): void {
+    const pageMeta = this.getPageMeta(item.href, item.referrer);
+
+    for (const tracker of this.trackers) {
+      tracker.sendPageView(pageMeta, item.ts);
+    }
+
+    this.log("PageView", pageMeta);
+
+  }
+
+  private doSendEvent(item: EventQueueItem): void {
+    this.log(`Event:${item.name}`, item.data);
+    for (const tracker of this.trackers) {
+      tracker.sendEvent(item.name, item.data, item.ts);
+    }
+
+  }
+
   public set(options: ChangeableTrackerOptions): void {
     this.options = {
       ...this.options,
@@ -155,21 +189,6 @@ export class Tracker {
     })
   }
 
-  private flush(): void {
-    const queue = this.eventQueue;
-    while(queue.length) {
-      const item = queue.shift();
-      switch (item.type) {
-        case "pageview":
-          this.doSendPageView(<PageViewQueueItem> item);
-          break;
-        case "event":
-          this.doSendEvent(<EventQueueItem> item);
-          break;
-      }
-    }
-  }
-
   public sendPageView(href: string, referrer?: string): void {
     this.eventQueue.push({
       type: "pageview",
@@ -179,17 +198,6 @@ export class Tracker {
     });
   }
 
-  private doSendPageView(item: PageViewQueueItem): void {
-    const pageMeta = this.getPageMeta(item.href, item.referrer);
-
-    for (const tracker of this.trackers) {
-      tracker.sendPageView(pageMeta, item.ts);
-    }
-
-    this.log("PageView", pageMeta);
-
-  }
-
   public sendEvent(name: string, data: any = {}): void {
     this.eventQueue.push({
       type: "event",
@@ -197,14 +205,6 @@ export class Tracker {
       name,
       data,
     });
-  }
-
-  private doSendEvent(item: EventQueueItem): void {
-    this.log(`Event:${item.name}`, item.data);
-    for (const tracker of this.trackers) {
-      tracker.sendEvent(item.name, item.data, item.ts);
-    }
-
   }
 }
 
