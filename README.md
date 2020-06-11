@@ -28,6 +28,10 @@ import { Tracker, DeviceType } from "@ridi/event-tracker";
 const tracker = new Tracker({
   deviceType: DeviceType.PC,
   userId: "ridi",
+  serviceProps: {
+    "prop1": "value1",
+    "prop2": "value1"
+  },
   beaconOptions: {
     use: true
   },
@@ -68,6 +72,7 @@ tracker.sendEvent("Purchased", {
 | `development`                  | false    | `boolean`                                                                             | Represents the state of the system environment your application                                                                 |
 | `userId`                       | false    | `string`                                                                              | Logged user's identifier.                                                                                                       |
 | `deviceType`                   | true     | `DeviceType`                                                                          | Type of connected user's device. Please refer `DeviceType` type                                                                 |
+| `serviceProps`                 | false     | `ServiceProp`                                                                        | Additional properties related to specific service. Please refer `ServiceProp` type, which is `Record<string, string>`           |
 | `gaOptions`                    | false    | `GAOptions`                                                                           | Options related with Google Analytics tracking module                                                                           |
 | `gaOptions.trackingId`         | true     | `string`                                                                              | GA Tracking ID like `UA-000000-01`.                                                                                             |
 | `gaOptions.pathPrefix`         | flase    | `string`                                                                              | Pathname prefix for manual content grouping.                                                                                    |
