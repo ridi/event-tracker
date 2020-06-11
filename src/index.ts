@@ -25,7 +25,6 @@ export type ServiceProp = Record<string, string>
 export interface MainTrackerOptions {
   debug?: boolean;
   development?: boolean;
-  queueWhenUninitialized?: boolean;
   userId?: string;
   deviceType: DeviceType;
   serviceProps?: ServiceProp;
@@ -60,12 +59,6 @@ type QueueItem = PageViewQueueItem | EventQueueItem;
 
 export class Tracker {
   constructor(private options: MainTrackerOptions) {
-    if (options.queueWhenUninitialized) {
-      this.eventQueue = [];
-    } else {
-      this.eventQueue = null;
-    }
-
     if (options.gaOptions) {
       this.trackers.push(new GATracker(options.gaOptions));
     }
@@ -89,7 +82,7 @@ export class Tracker {
 
   private trackers: BaseTracker[] = [];
 
-  private eventQueue: QueueItem[] | null;
+  private eventQueue: QueueItem[] = [];
 
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
@@ -151,60 +144,67 @@ export class Tracker {
 
     this.log("Initialize");
 
-    if (this.eventQueue) {
-      const queue = this.eventQueue;
-      this.eventQueue = null;
-      for (const item of queue) {
-        switch (item.type) {
-          case "pageview":
-            this.sendPageView(item.href, item.referrer, item.ts);
-            break;
-          case "event":
-            this.sendEvent(item.name, item.data, item.ts);
-            break;
-        }
+    this.flush();
+
+    setTimeout(() => {
+      this.flush();
+    }, 500);
+
+    window.addEventListener("unload", (event) => {
+      this.flush();
+    })
+  }
+
+  private flush(): void {
+    const queue = this.eventQueue;
+    while(queue.length) {
+      const item = queue.shift();
+      switch (item.type) {
+        case "pageview":
+          this.doSendPageView(<PageViewQueueItem> item);
+          break;
+        case "event":
+          this.doSendEvent(<EventQueueItem> item);
+          break;
       }
     }
   }
 
-  public sendPageView(href: string, referrer?: string, ts?: Date): void {
-    if (this.eventQueue) {
-      this.eventQueue.push({
-        type: "pageview",
-        ts: ts || new Date(),
-        href,
-        referrer,
-      });
-      return;
-    }
+  public sendPageView(href: string, referrer?: string): void {
+    this.eventQueue.push({
+      type: "pageview",
+      ts: new Date(),
+      href,
+      referrer,
+    });
+  }
 
-    this.throwIfInitializeIsNotCalled();
-
-    const pageMeta = this.getPageMeta(href, referrer);
+  private doSendPageView(item: PageViewQueueItem): void {
+    const pageMeta = this.getPageMeta(item.href, item.referrer);
 
     for (const tracker of this.trackers) {
-      tracker.sendPageView(pageMeta, ts);
+      tracker.sendPageView(pageMeta, item.ts);
     }
 
     this.log("PageView", pageMeta);
+
   }
 
-  public sendEvent(name: string, data: any = {}, ts?: Date) {
-    if (this.eventQueue) {
-      this.eventQueue.push({
-        type: "event",
-        ts: ts || new Date(),
-        name,
-        data,
-      });
-    }
+  public sendEvent(name: string, data: any = {}): void {
+    this.eventQueue.push({
+      type: "event",
+      ts: new Date(),
+      name,
+      data,
+    });
+  }
 
-    this.throwIfInitializeIsNotCalled();
-
+  private doSendEvent(item: EventQueueItem): void {
+    this.log(`Event:${item.name}`, item.data);
     for (const tracker of this.trackers) {
-      tracker.sendEvent(name, data, ts);
+      tracker.sendEvent(item.name, item.data, item.ts);
     }
 
-    this.log(`Event:${name}`, data);
   }
 }
+
