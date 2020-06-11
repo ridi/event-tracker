@@ -45,6 +45,8 @@ const createDummyTracker = (additionalOptions: object = {}) => {
   });
 };
 
+jest.useFakeTimers();
+
 it("BeaconTracker sends PageView event with serviceProps", () => {
   const dummpyPageMeta = {
     "device": "mobile",
@@ -74,9 +76,9 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
   BeaconTracker.prototype.sendBeacon = sendBeaconMock;
   t.sendPageView(href, referrer);
 
-  setTimeout(() => {
-    expect(sendBeaconMock).toHaveBeenCalledWith("pageView", dummpyPageMeta, {"prop1": "value1", "prop2": "value2"}, undefined);
-  }, 1000)
+  jest.runOnlyPendingTimers();
+  expect(sendBeaconMock).toHaveBeenCalledWith("pageView", dummpyPageMeta, {"prop1": "value1", "prop2": "value2"}, expect.any(Date));
+  
 });
 
 
@@ -97,14 +99,13 @@ it("sends PageView event with all tracking providers", () => {
   t.initialize();
   t.sendPageView(href, referrer);
 
-  setTimeout(() => {
-    mocks.forEach(mock => {
-      expect(mock).toBeCalledTimes(1);
-    });  
-  })
+  jest.runOnlyPendingTimers();
+  mocks.forEach(mock => {
+    expect(mock).toBeCalledTimes(1);
+  });  
 });
 
-it("eventually sends events even if called before initialize", () => {
+it("sends events both before and after initialize", () => {
   const mocks = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
     tracker => {
       const mock = jest.fn();
@@ -117,17 +118,38 @@ it("eventually sends events even if called before initialize", () => {
   const href = "https://localhost/home";
   const referrer = "https://google.com/search?q=localhost";
 
+  const href2 = "https://localhost/search?q=abc";
+  const referrer2 = href;
+
   t.sendPageView(href, referrer);
   mocks.forEach(mock => {
     expect(mock).not.toBeCalled();
   });
 
   t.initialize();
-  setTimeout(() => {
-    mocks.forEach(mock => {
-      expect(mock).toBeCalledTimes(1);
-    });  
-  }, 1000)
+  jest.runOnlyPendingTimers();
+  t.sendPageView(href2, referrer2);
+  jest.runOnlyPendingTimers();
+
+
+  mocks.forEach(mock => {
+    expect(mock).toHaveBeenNthCalledWith(1, {
+      "device": "mobile",
+      "href": "https://localhost/home",
+      "page": "home",
+      "path": "/home",
+      "query_params": {},
+      "referrer": "https://google.com/search?q=localhost"
+    }, expect.any(Date))
+    expect(mock).toHaveBeenNthCalledWith(2, {
+      "device": "mobile",
+      "href": "https://localhost/search?q=abc",
+      "page": "search",
+      "path": "/search",
+      "query_params": {"q": "abc"},
+      "referrer": "https://localhost/home"
+    }, expect.any(Date))
+  });  
 });
 
 it("GATracker should send pageview event", () => {
@@ -149,9 +171,8 @@ it("GATracker should send pageview event", () => {
   ga = jest.fn() as unknown as UniversalAnalytics.ga;
   t.sendPageView(href, referrer);
 
-  setTimeout(() => {
-    expect(ga).toHaveBeenCalledWith("set", "page", "/home?q=localhost&adult_exclude=true");
-  }, 1000);
+  jest.runOnlyPendingTimers();
+  expect(ga).toHaveBeenCalledWith("set", "page", "/home?q=localhost&adult_exclude=true");
 
 });
 

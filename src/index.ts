@@ -99,15 +99,15 @@ export class Tracker {
     };
   }
 
-  private log(eventType: string, meta: object = {}): void {
+  private log(message: string): void {
+    console.group(`[@ridi/event-tracker] ${message}`);
+    console.groupEnd();
+  }
+
+  private log_event(eventType: string, meta: object = {}): void {
     if (!this.options.debug) {
       return;
     }
-    meta = {
-      ...this.options,
-      ...meta
-    };
-
     console.group(`[@ridi/event-tracker] Sending '${eventType}' event`);
     for (const [key, value] of Object.entries(meta)) {
       console.log(`${key}\t ${JSON.stringify(value)}`);
@@ -115,15 +115,9 @@ export class Tracker {
     console.groupEnd();
   }
 
-  private throwIfInitializeIsNotCalled(): void {
-    if (this.trackers.some(tracker => !tracker.isInitialized())) {
-      throw Error(
-        "[@ridi/event-tracker] this.initialize must be called first."
-      );
-    }
-  }
-
   private flush(): void {
+    this.log("Flushing events...");
+
     const queue = this.eventQueue;
     while(queue.length) {
       const item = queue.shift();
@@ -145,12 +139,12 @@ export class Tracker {
       tracker.sendPageView(pageMeta, item.ts);
     }
 
-    this.log("PageView", pageMeta);
+    this.log_event("PageView", pageMeta);
 
   }
 
   private doSendEvent(item: EventQueueItem): void {
-    this.log(`Event:${item.name}`, item.data);
+    this.log_event(`Event:${item.name}`, item.data);
     for (const tracker of this.trackers) {
       tracker.sendEvent(item.name, item.data, item.ts);
     }
@@ -169,6 +163,8 @@ export class Tracker {
   }
 
   public initialize(): void {
+    this.log("Initialize");
+
     for (const tracker of this.trackers) {
       if (tracker.isInitialized()) {
         continue;
@@ -176,17 +172,18 @@ export class Tracker {
       tracker.initialize();
     }
 
-    this.log("Initialize");
-
-    this.flush();
-
-    setTimeout(() => {
-      this.flush();
-    }, 500);
+    this.flushAndWait();
 
     window.addEventListener("unload", (event) => {
       this.flush();
     })
+  }
+
+  private flushAndWait(): void {
+    this.flush();
+    setTimeout(() => {
+      this.flushAndWait();
+    }, 500);
   }
 
   public sendPageView(href: string, referrer?: string): void {
