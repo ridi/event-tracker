@@ -151,6 +151,13 @@ export class Tracker {
 
   }
 
+  private flushAndWait(): void {
+    this.flush();
+    setTimeout(() => {
+      this.flushAndWait();
+    }, 500);
+  }
+
   public set(options: ChangeableTrackerOptions): void {
     this.options = {
       ...this.options,
@@ -177,13 +184,6 @@ export class Tracker {
     window.addEventListener("unload", (event) => {
       this.flush();
     })
-  }
-
-  private flushAndWait(): void {
-    this.flush();
-    setTimeout(() => {
-      this.flushAndWait();
-    }, 500);
   }
 
   public sendPageView(href: string, referrer?: string): void {
