@@ -133,7 +133,9 @@ $ npm run test
 ## Publish
 
 ```bash
-$ npm publish --access public
+$ npm run deploy
+$ # or
+$ npm run build && npm publish --access public
 ```
 
 ## LICENSE
