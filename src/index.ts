@@ -100,25 +100,27 @@ export class Tracker {
   }
 
   private log(message: string): void {
-    console.group(`[@ridi/event-tracker] ${message}`);
-    console.groupEnd();
+    if (this.options.debug) {
+      console.group(`[@ridi/event-tracker] ${message}`);
+      console.groupEnd();
+    }
   }
 
   private log_event(eventType: string, meta: object = {}): void {
-    if (!this.options.debug) {
-      return;
-    }
-    console.group(`[@ridi/event-tracker] Sending '${eventType}' event`);
-    for (const [key, value] of Object.entries(meta)) {
-      console.log(`${key}\t ${JSON.stringify(value)}`);
-    }
-    console.groupEnd();
+    if (this.options.debug) {
+      console.group(`[@ridi/event-tracker] Sending '${eventType}' event`);
+      for (const [key, value] of Object.entries(meta)) {
+        console.log(`${key}\t ${JSON.stringify(value)}`);
+      }
+      console.groupEnd();
+      }
   }
 
   private flush(): void {
-    this.log("Flushing events...");
-
     const queue = this.eventQueue;
+    if (queue.length) {
+      this.log("Flushing events...");
+    }
     while(queue.length) {
       const item = queue.shift();
       switch (item.type) {
