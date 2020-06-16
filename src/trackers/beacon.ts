@@ -33,7 +33,7 @@ export class BeaconTracker extends BaseTracker {
         if (typeof value === "object") {
           value = JSON.stringify(value);
         } else {
-          value = value.toString();
+          value = value ? value.toString() : value ;
         }
         return [key, value].map(encodeURIComponent).join("=");
       })
