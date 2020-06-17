@@ -106,14 +106,14 @@ export class Tracker {
     }
   }
 
-  private log_event(eventType: string, meta: object = {}): void {
+  private logEvent(eventType: string, meta: object = {}): void {
     if (this.options.debug) {
       console.group(`[@ridi/event-tracker] Sending '${eventType}' event`);
       for (const [key, value] of Object.entries(meta)) {
         console.log(`${key}\t ${JSON.stringify(value)}`);
       }
       console.groupEnd();
-      }
+    }
   }
 
   private flush(): void {
@@ -121,7 +121,7 @@ export class Tracker {
     if (queue.length) {
       this.log("Flushing events...");
     }
-    while(queue.length) {
+    while (queue.length) {
       const item = queue.shift();
       switch (item.type) {
         case "pageview":
@@ -141,16 +141,14 @@ export class Tracker {
       tracker.sendPageView(pageMeta, item.ts);
     }
 
-    this.log_event("PageView", pageMeta);
-
+    this.logEvent("PageView", pageMeta);
   }
 
   private doSendEvent(item: EventQueueItem): void {
-    this.log_event(`Event:${item.name}`, item.data);
+    this.logEvent(`Event:${item.name}`, item.data);
     for (const tracker of this.trackers) {
       tracker.sendEvent(item.name, item.data, item.ts);
     }
-
   }
 
   private flushAndWait(): void {
