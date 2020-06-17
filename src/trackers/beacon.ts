@@ -30,10 +30,13 @@ export class BeaconTracker extends BaseTracker {
     const beaconSrc = this.options.beaconSrc;
     const queryString = Object.entries(log)
       .map(([key, value]) => {
+        if (value === undefined) {
+          return [key, "undefined"].join("=");
+        }
         if (typeof value === "object") {
           value = JSON.stringify(value);
         } else {
-          value = value ? value.toString() : value ;
+          value = value.toString();
         }
         return [key, value].map(encodeURIComponent).join("=");
       })
