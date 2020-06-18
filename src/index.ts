@@ -106,8 +106,7 @@ export class Tracker {
 
   private log(message: string): void {
     if (this.options.debug) {
-      console.group(`[@ridi/event-tracker] ${message}`);
-      console.groupEnd();
+      console.log(`[@ridi/event-tracker] ${message}`);
     }
   }
 
@@ -118,6 +117,12 @@ export class Tracker {
         console.log(`${key}\t ${JSON.stringify(value)}`);
       }
       console.groupEnd();
+    }
+  }
+
+  private count(key: string): void {
+    if (this.options.debug) {
+      document.body.dataset[key] = String(Number(document.body.dataset[key] || 0) + 1)
     }
   }
 
@@ -150,13 +155,16 @@ export class Tracker {
     }
 
     this.logEvent("PageView", pageMeta);
+    this.count('eventTrackerSent');
   }
 
   private doSendEvent(item: EventQueueItem): void {
-    this.logEvent(`Event:${item.name}`, item.data);
     for (const tracker of this.trackers) {
       tracker.sendEvent(item.name, item.data, item.ts);
     }
+
+    this.logEvent(`Event:${item.name}`, item.data);
+    this.count('eventTrackerSent');
   }
 
   public set(options: ChangeableTrackerOptions): void {
@@ -190,6 +198,8 @@ export class Tracker {
   }
 
   public sendPageView(href: string, referrer?: string): void {
+    this.count('eventTrackerQueue');
+
     this.eventQueue.push({
       type: "pageview",
       ts: new Date(),
@@ -203,6 +213,8 @@ export class Tracker {
   }
 
   public sendEvent(name: string, data: any = {}): void {
+    this.count('eventTrackerQueue');
+
     this.eventQueue.push({
       type: "event",
       ts: new Date(),
