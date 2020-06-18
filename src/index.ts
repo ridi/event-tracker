@@ -1,4 +1,4 @@
-import { throttle } from 'lodash';
+import throttle from "lodash/throttle";
 import URL from "url-parse";
 
 import {
@@ -129,7 +129,7 @@ export class Tracker {
   private flush(): void {
     const queue = this.eventQueue;
     if (this.options.debug) {
-      console.group('[@ridi/event-tracker] Flushing events...');
+      console.group("[@ridi/event-tracker] Flushing events...");
     }
     while (queue.length) {
       const item = queue.shift();
@@ -155,7 +155,7 @@ export class Tracker {
     }
 
     this.logEvent("PageView", pageMeta);
-    this.count('eventTrackerSent');
+    this.count("eventTrackerSent");
   }
 
   private doSendEvent(item: EventQueueItem): void {
@@ -164,7 +164,7 @@ export class Tracker {
     }
 
     this.logEvent(`Event:${item.name}`, item.data);
-    this.count('eventTrackerSent');
+    this.count("eventTrackerSent");
   }
 
   public set(options: ChangeableTrackerOptions): void {
@@ -198,7 +198,7 @@ export class Tracker {
   }
 
   public sendPageView(href: string, referrer?: string): void {
-    this.count('eventTrackerQueue');
+    this.count("eventTrackerQueue");
 
     this.eventQueue.push({
       type: "pageview",
@@ -213,7 +213,7 @@ export class Tracker {
   }
 
   public sendEvent(name: string, data: any = {}): void {
-    this.count('eventTrackerQueue');
+    this.count("eventTrackerQueue");
 
     this.eventQueue.push({
       type: "event",
