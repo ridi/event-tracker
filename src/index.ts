@@ -1,3 +1,4 @@
+import { throttle } from 'lodash';
 import URL from "url-parse";
 
 import {
@@ -84,6 +85,10 @@ export class Tracker {
 
   private eventQueue: QueueItem[] = [];
 
+  private initialized = false;
+
+  private throttledFlush = throttle(() => this.flush(), 5000);
+
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
 
@@ -118,8 +123,8 @@ export class Tracker {
 
   private flush(): void {
     const queue = this.eventQueue;
-    if (queue.length) {
-      this.log("Flushing events...");
+    if (this.options.debug) {
+      console.group('[@ridi/event-tracker] Flushing events...');
     }
     while (queue.length) {
       const item = queue.shift();
@@ -131,6 +136,9 @@ export class Tracker {
           this.doSendEvent(item as EventQueueItem);
           break;
       }
+    }
+    if (this.options.debug) {
+      console.groupEnd();
     }
   }
 
@@ -149,13 +157,6 @@ export class Tracker {
     for (const tracker of this.trackers) {
       tracker.sendEvent(item.name, item.data, item.ts);
     }
-  }
-
-  private flushAndWait(): void {
-    this.flush();
-    setTimeout(() => {
-      this.flushAndWait();
-    }, 500);
   }
 
   public set(options: ChangeableTrackerOptions): void {
@@ -179,11 +180,13 @@ export class Tracker {
       tracker.initialize();
     }
 
-    this.flushAndWait();
-
-    window.addEventListener("unload", (event) => {
+    if (!this.initialized) {
       this.flush();
-    })
+      window.addEventListener("unload", (event) => {
+        this.flush();
+      });
+      this.initialized = true;
+    }
   }
 
   public sendPageView(href: string, referrer?: string): void {
@@ -193,6 +196,10 @@ export class Tracker {
       href,
       referrer,
     });
+
+    if (this.initialized) {
+      this.throttledFlush();
+    }
   }
 
   public sendEvent(name: string, data: any = {}): void {
@@ -202,6 +209,9 @@ export class Tracker {
       name,
       data,
     });
+
+    if (this.initialized) {
+      this.throttledFlush();
+    }
   }
 }
-
