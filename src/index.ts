@@ -34,6 +34,7 @@ export interface MainTrackerOptions {
   pixelOptions?: PixelOptions;
   tagManagerOptions?: TagManagerOptions;
   gTagOptions?: GTagOptions;
+  throttleWait?: number;
 }
 
 export interface ChangeableTrackerOptions {
@@ -79,6 +80,8 @@ export class Tracker {
     for (const tracker of this.trackers) {
       tracker.setMainOptions(options);
     }
+
+    this.throttledFlush = throttle(() => this.flush(), options.throttleWait || 1000);
   }
 
   private trackers: BaseTracker[] = [];
@@ -87,7 +90,7 @@ export class Tracker {
 
   private initialized = false;
 
-  private throttledFlush = throttle(() => this.flush(), 5000);
+  private throttledFlush: () => void;
 
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
