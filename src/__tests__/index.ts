@@ -4,13 +4,14 @@ import {BaseTracker} from "../trackers/base";
 
 let originalFunctions: Array<typeof BaseTracker.prototype.sendPageView>
 
-beforeAll(() => {
+beforeEach(() => {
   document.body.innerHTML = "<script />";
   originalFunctions = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
     tracker => {
       return tracker.prototype.sendPageView
     }
   )
+  jest.useFakeTimers();
 });
 
 afterEach(() => {
@@ -44,8 +45,6 @@ const createDummyTracker = (additionalOptions: object = {}) => {
     ...additionalOptions
   });
 };
-
-jest.useFakeTimers();
 
 it("BeaconTracker sends PageView event with serviceProps", () => {
   const dummpyPageMeta = {
