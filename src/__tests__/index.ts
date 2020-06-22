@@ -42,6 +42,9 @@ const createDummyTracker = (additionalOptions: object = {}) => {
     tagManagerOptions: {
       trackingId: "TEST"
     },
+    kakaoOptions: {
+      trackingId: "TEST_ID"
+    },
     ...additionalOptions
   });
 };

@@ -7,7 +7,7 @@ import {
   GAOptions,
   GATracker,
   GTagOptions,
-  GTagTracker,
+  GTagTracker, KakaoOptions, KakaoTracker,
   PixelOptions,
   PixelTracker,
   TagManagerOptions,
@@ -35,6 +35,7 @@ export interface MainTrackerOptions {
   tagManagerOptions?: TagManagerOptions;
   gTagOptions?: GTagOptions;
   throttleWait?: number;
+  kakaoOptions?: KakaoOptions;
 }
 
 export interface ChangeableTrackerOptions {
@@ -75,6 +76,10 @@ export class Tracker {
     }
     if (options.gTagOptions) {
       this.trackers.push(new GTagTracker(options.gTagOptions));
+    }
+
+    if (options.kakaoOptions) {
+      this.trackers.push(new KakaoTracker(options.kakaoOptions));
     }
 
     for (const tracker of this.trackers) {

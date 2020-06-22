@@ -47,3 +47,14 @@ export function loadGTag(id: string) {
   })(window as any,document,'script','dataLayer',id);
   // tslint:enable
 }
+
+export function loadKakao() {
+    // tslint:disable
+    (function (w, d, s) {
+    var f = d.getElementsByTagName(s)[0], j: any = d.createElement(s)
+    j.async = true;
+    j.src = 'https://t1.daumcdn.net/adfit/static/kp.js';
+    f.parentNode.insertBefore(j, f);
+  })(window as any, document, 'script');
+    // tslint:enable
+}

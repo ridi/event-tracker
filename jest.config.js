@@ -14,5 +14,8 @@ module.exports = {
     "jsx",
     "json",
     "node"
+  ],
+  "setupFiles": [
+    "<rootDir>/src/utils/kakaoTracker.js"
   ]
 };
