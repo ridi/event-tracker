@@ -1,5 +1,5 @@
-import {BaseTracker, PageMeta} from "./base";
 import {loadKakao} from "../utils/externalServices";
+import {BaseTracker, PageMeta} from "./base";
 
 declare var kakaoPixel:any;
 
@@ -8,23 +8,24 @@ export interface KakaoOptions {
 }
 
 export class KakaoTracker extends BaseTracker {
-  private client:any;
 
   constructor(private options: KakaoOptions) {
     super();
   }
+  private tagCalled:boolean = false;
 
-  initialize(): void {
+  public initialize(): void {
     loadKakao()
-    this.client = kakaoPixel(this.options.trackingId);
+    this.tagCalled = true
 
   }
 
-  isInitialized(): boolean {
-    return !!this.client;
+  public isInitialized(): boolean {
+    return this.tagCalled;
   }
 
-  sendPageView(pageMeta: PageMeta): void {
-    this.client.pageView();
+  public sendPageView(pageMeta: PageMeta): void {
+    kakaoPixel(this.options.trackingId).pageView();
   }
+
 }

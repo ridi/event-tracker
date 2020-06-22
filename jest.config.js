@@ -15,7 +15,4 @@ module.exports = {
     "json",
     "node"
   ],
-  "setupFiles": [
-    "<rootDir>/src/utils/kakaoTracker.js"
-  ]
 };
