@@ -21,7 +21,9 @@
   "license": "MIT",
   "dependencies": {
     "@types/google.analytics": "0.0.39",
+    "@types/lodash": "^4.14.155",
     "js-cookie": "^2.2.1",
+    "lodash": "^4.17.15",
     "performance-now": "^2.1.0",
     "url-parse": "^1.4.3"
   },

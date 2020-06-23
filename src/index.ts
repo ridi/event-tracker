@@ -1,3 +1,4 @@
+import throttle from "lodash/throttle";
 import URL from "url-parse";
 
 import {
@@ -33,6 +34,7 @@ export interface MainTrackerOptions {
   pixelOptions?: PixelOptions;
   tagManagerOptions?: TagManagerOptions;
   gTagOptions?: GTagOptions;
+  throttleWait?: number;
 }
 
 export interface ChangeableTrackerOptions {
@@ -78,11 +80,17 @@ export class Tracker {
     for (const tracker of this.trackers) {
       tracker.setMainOptions(options);
     }
+
+    this.throttledFlush = throttle(() => this.flush(), options.throttleWait || 1000);
   }
 
   private trackers: BaseTracker[] = [];
 
   private eventQueue: QueueItem[] = [];
+
+  private initialized = false;
+
+  private throttledFlush: () => void;
 
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
@@ -101,8 +109,7 @@ export class Tracker {
 
   private log(message: string): void {
     if (this.options.debug) {
-      console.group(`[@ridi/event-tracker] ${message}`);
-      console.groupEnd();
+      console.log(`[@ridi/event-tracker] ${message}`);
     }
   }
 
@@ -116,10 +123,16 @@ export class Tracker {
     }
   }
 
+  private count(key: string): void {
+    if (this.options.debug) {
+      document.body.dataset[key] = String(Number(document.body.dataset[key] || 0) + 1)
+    }
+  }
+
   private flush(): void {
     const queue = this.eventQueue;
-    if (queue.length) {
-      this.log("Flushing events...");
+    if (this.options.debug) {
+      console.group("[@ridi/event-tracker] Flushing events...");
     }
     while (queue.length) {
       const item = queue.shift();
@@ -132,6 +145,9 @@ export class Tracker {
           break;
       }
     }
+    if (this.options.debug) {
+      console.groupEnd();
+    }
   }
 
   private doSendPageView(item: PageViewQueueItem): void {
@@ -142,20 +158,16 @@ export class Tracker {
     }
 
     this.logEvent("PageView", pageMeta);
+    this.count("eventTrackerSent");
   }
 
   private doSendEvent(item: EventQueueItem): void {
-    this.logEvent(`Event:${item.name}`, item.data);
     for (const tracker of this.trackers) {
       tracker.sendEvent(item.name, item.data, item.ts);
     }
-  }
 
-  private flushAndWait(): void {
-    this.flush();
-    setTimeout(() => {
-      this.flushAndWait();
-    }, 500);
+    this.logEvent(`Event:${item.name}`, item.data);
+    this.count("eventTrackerSent");
   }
 
   public set(options: ChangeableTrackerOptions): void {
@@ -179,29 +191,42 @@ export class Tracker {
       tracker.initialize();
     }
 
-    this.flushAndWait();
-
-    window.addEventListener("unload", (event) => {
+    if (!this.initialized) {
       this.flush();
-    })
+      window.addEventListener("unload", (event) => {
+        this.flush();
+      });
+      this.initialized = true;
+    }
   }
 
   public sendPageView(href: string, referrer?: string): void {
+    this.count("eventTrackerQueue");
+
     this.eventQueue.push({
       type: "pageview",
       ts: new Date(),
       href,
       referrer,
     });
+
+    if (this.initialized) {
+      this.throttledFlush();
+    }
   }
 
   public sendEvent(name: string, data: any = {}): void {
+    this.count("eventTrackerQueue");
+
     this.eventQueue.push({
       type: "event",
       ts: new Date(),
       name,
       data,
     });
+
+    if (this.initialized) {
+      this.throttledFlush();
+    }
   }
 }
-
