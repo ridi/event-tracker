@@ -1,21 +1,25 @@
 import {DeviceType, Tracker} from "../index";
-import {BeaconTracker, GATracker, PixelTracker, TagManagerTracker} from "../trackers";
-import {BaseTracker} from "../trackers/base";
+import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker} from "../trackers";
+import {loadKakao} from "../utils/externalServices";
 
-let originalFunctions: Array<typeof BaseTracker.prototype.sendPageView>
 
+const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker,KakaoTracker]
+const originalFunctions = ALL_TRACKERS.map((tracker) =>tracker.prototype.sendPageView);
+
+beforeAll( () => {
+  KakaoTracker.prototype.initialize = () => {
+    loadKakao();
+    // @ts-ignore
+    KakaoTracker.tagCalled = true;
+  }
+})
 beforeEach(() => {
   document.body.innerHTML = "<script />";
-  originalFunctions = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
-    tracker => {
-      return tracker.prototype.sendPageView
-    }
-  )
   jest.useFakeTimers();
 });
 
 afterEach(() => {
-    [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
+    ALL_TRACKERS.map(
       (tracker, index) => {
         tracker.prototype.sendPageView = originalFunctions[index]
       }
@@ -43,7 +47,7 @@ const createDummyTracker = (additionalOptions: object = {}) => {
       trackingId: "TEST"
     },
     kakaoOptions: {
-      trackingId: "TEST_ID"
+      trackingId: "TEST"
     },
     ...additionalOptions
   });
@@ -59,7 +63,7 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
     "referrer": "https://google.com/search?q=localhost"
   };
 
-  [GATracker, PixelTracker, TagManagerTracker].map(
+  [GATracker, PixelTracker, TagManagerTracker,KakaoTracker].map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -71,7 +75,6 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
 
   const href = "https://localhost/home?q=localhost&adult_exclude=true";
   const referrer = "https://google.com/search?q=localhost";
-
   t.initialize();
   const sendBeaconMock = jest.fn();
   // @ts-ignore
@@ -80,13 +83,13 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
 
   jest.runOnlyPendingTimers();
   expect(sendBeaconMock).toHaveBeenCalledWith("pageView", dummpyPageMeta, {"prop1": "value1", "prop2": "value2"}, expect.any(Date));
-  
+
 });
 
 
 
 it("sends PageView event with all tracking providers", () => {
-  const mocks = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
+  const mocks = ALL_TRACKERS.map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -104,11 +107,11 @@ it("sends PageView event with all tracking providers", () => {
   jest.runOnlyPendingTimers();
   mocks.forEach(mock => {
     expect(mock).toBeCalledTimes(1);
-  });  
+  });
 });
 
 it("sends events both before and after initialize", () => {
-  const mocks = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker].map(
+  const mocks = ALL_TRACKERS.map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -151,12 +154,12 @@ it("sends events both before and after initialize", () => {
       "query_params": {"q": "abc"},
       "referrer": "https://localhost/home"
     }, expect.any(Date))
-  });  
+  });
 });
 
 it("GATracker should send pageview event", () => {
 
-  [BeaconTracker, PixelTracker, TagManagerTracker].map(
+  [BeaconTracker, PixelTracker, TagManagerTracker,KakaoTracker].map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
