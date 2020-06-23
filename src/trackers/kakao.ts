@@ -1,7 +1,7 @@
 import {loadKakao} from "../utils/externalServices";
 import {BaseTracker, PageMeta} from "./base";
 
-declare var kakaoPixel:any;
+declare var kakaoPixel: any;
 
 export interface KakaoOptions {
   trackingId: string;
@@ -12,11 +12,19 @@ export class KakaoTracker extends BaseTracker {
   constructor(private options: KakaoOptions) {
     super();
   }
-  private tagCalled:boolean = false;
+
+  private tagCalled: boolean = false;
 
   public initialize(): void {
-    loadKakao()
-    this.tagCalled = true
+    const init = new Promise((resolve, reject) => {
+      loadKakao();
+      setTimeout(() => {
+        resolve();
+      }, 100);
+    });
+    init.then(() => {
+      this.tagCalled = true;
+    });
 
   }
 
