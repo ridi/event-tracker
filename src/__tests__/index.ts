@@ -3,10 +3,10 @@ import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker}
 import {loadKakao} from "../utils/externalServices";
 
 
-const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker,KakaoTracker]
-const originalFunctions = ALL_TRACKERS.map((tracker) =>tracker.prototype.sendPageView);
+const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker, KakaoTracker]
+const originalFunctions = ALL_TRACKERS.map((tracker) => tracker.prototype.sendPageView);
 
-beforeAll( () => {
+beforeAll(() => {
   KakaoTracker.prototype.initialize = () => {
     loadKakao();
     // @ts-ignore
@@ -19,11 +19,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-    ALL_TRACKERS.map(
-      (tracker, index) => {
-        tracker.prototype.sendPageView = originalFunctions[index]
-      }
-    )
+  ALL_TRACKERS.map(
+    (tracker, index) => {
+      tracker.prototype.sendPageView = originalFunctions[index]
+    }
+  )
 });
 
 
@@ -63,7 +63,7 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
     "referrer": "https://google.com/search?q=localhost"
   };
 
-  [GATracker, PixelTracker, TagManagerTracker,KakaoTracker].map(
+  [GATracker, PixelTracker, TagManagerTracker, KakaoTracker].map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -85,7 +85,6 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
   expect(sendBeaconMock).toHaveBeenCalledWith("pageView", dummpyPageMeta, {"prop1": "value1", "prop2": "value2"}, expect.any(Date));
 
 });
-
 
 
 it("sends PageView event with all tracking providers", () => {
@@ -159,7 +158,7 @@ it("sends events both before and after initialize", () => {
 
 it("GATracker should send pageview event", () => {
 
-  [BeaconTracker, PixelTracker, TagManagerTracker,KakaoTracker].map(
+  [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker].map(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
