@@ -43,7 +43,7 @@ export class GATracker extends BaseTracker {
     return typeof ga === "function";
   }
 
-  public sendPageView(pageMeta: PageMeta): void {
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     const refinedPath = this.refinePath(pageMeta.path);
     const queryString = pageMeta.href.split("?")[1] || "";
 
@@ -51,17 +51,26 @@ export class GATracker extends BaseTracker {
 
     ga("set", "page", pageName);
 
-    ga("send", "pageview", {
+    const fields: UniversalAnalytics.FieldsObject = {
+      hitType: "pageview",
       dimension1: this.mainOptions.deviceType
-    });
+    };
+    if (ts) {
+      fields.queueTime = Math.max(Date.now() - ts.getTime(), 0);
+    }
+    ga("send", fields);
   }
 
-  public sendEvent(name: string, data: { [k: string]: any }): void {
-    ga("send", {
+  public sendEvent(name: string, data: { [k: string]: any }, ts?: Date): void {
+    const fields: UniversalAnalytics.FieldsObject = {
       hitType: "event",
       eventCategory: data.category || "All",
       eventAction: data.action || name,
       eventLabel: data.label || "All"
-    });
+    };
+    if (ts) {
+      fields.queueTime = Math.max(Date.now() - ts.getTime(), 0);
+    }
+    ga("send", fields);
   }
 }
