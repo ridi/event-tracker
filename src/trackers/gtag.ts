@@ -17,9 +17,10 @@ export class GTagTracker extends BaseTracker {
   }
   private tagCalled = false;
 
-  public initialize(): void {
-    loadGTag(this.options.trackingId);
+  public async initialize(): Promise<void> {
+    await loadGTag(this.options.trackingId);
     this.tagCalled = true;
+
   }
 
   public isInitialized(): boolean {

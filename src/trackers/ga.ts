@@ -30,8 +30,8 @@ export class GATracker extends BaseTracker {
     }, originalPath);
   }
 
-  public initialize(): void {
-    loadGA();
+  public async initialize(): Promise<void> {
+    await loadGA();
     if (this.options.fields) {
       ga("create", this.options.trackingId, this.options.fields);
     } else {

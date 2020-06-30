@@ -12,8 +12,8 @@ export class PixelTracker extends BaseTracker {
 
   private initialPageViewEventFired = false;
 
-  public initialize(): void {
-    loadPixel();
+  public async initialize(): Promise<void> {
+    await loadPixel();
     const pixelIds =
       typeof this.options.pixelId === "string"
         ? [this.options.pixelId]

@@ -1,21 +1,18 @@
 import {DeviceType, Tracker} from "../index";
 import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker} from "../trackers";
-import {loadKakao} from "../utils/externalServices";
 
 
 const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker, KakaoTracker]
 const originalFunctions = ALL_TRACKERS.map((tracker) => tracker.prototype.sendPageView);
 
 beforeAll(() => {
-  KakaoTracker.prototype.initialize = () => {
-    loadKakao();
-    // @ts-ignore
-    KakaoTracker.tagCalled = true;
-  }
+  ALL_TRACKERS.map((t) => t.prototype.isInitialized = () => true)
 })
+
 beforeEach(() => {
   document.body.innerHTML = "<script />";
   jest.useFakeTimers();
+
 });
 
 afterEach(() => {
@@ -53,7 +50,7 @@ const createDummyTracker = (additionalOptions: object = {}) => {
   });
 };
 
-it("BeaconTracker sends PageView event with serviceProps", () => {
+it("BeaconTracker sends PageView event with serviceProps", async () => {
   const dummpyPageMeta = {
     "device": "mobile",
     "href": "https://localhost/home?q=localhost&adult_exclude=true",
@@ -75,7 +72,8 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
 
   const href = "https://localhost/home?q=localhost&adult_exclude=true";
   const referrer = "https://google.com/search?q=localhost";
-  t.initialize();
+  await t.initialize();
+
   const sendBeaconMock = jest.fn();
   // @ts-ignore
   BeaconTracker.prototype.sendBeacon = sendBeaconMock;
@@ -87,7 +85,7 @@ it("BeaconTracker sends PageView event with serviceProps", () => {
 });
 
 
-it("sends PageView event with all tracking providers", () => {
+it("sends PageView event with all tracking providers", async () => {
   const mocks = ALL_TRACKERS.map(
     tracker => {
       const mock = jest.fn();
@@ -100,7 +98,7 @@ it("sends PageView event with all tracking providers", () => {
   const href = "https://localhost/home";
   const referrer = "https://google.com/search?q=localhost";
 
-  t.initialize();
+  await t.initialize();
   t.sendPageView(href, referrer);
 
   jest.runOnlyPendingTimers();
@@ -109,7 +107,7 @@ it("sends PageView event with all tracking providers", () => {
   });
 });
 
-it("sends events both before and after initialize", () => {
+it("sends events both before and after initialize", async () => {
   const mocks = ALL_TRACKERS.map(
     tracker => {
       const mock = jest.fn();
@@ -130,7 +128,7 @@ it("sends events both before and after initialize", () => {
     expect(mock).not.toBeCalled();
   });
 
-  t.initialize();
+  await t.initialize();
   jest.runOnlyPendingTimers();
   t.sendPageView(href2, referrer2);
   jest.runOnlyPendingTimers();
@@ -156,7 +154,7 @@ it("sends events both before and after initialize", () => {
   });
 });
 
-it("GATracker should send pageview event", () => {
+it("GATracker should send pageview event", async () => {
 
   [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker].map(
     tracker => {
@@ -171,8 +169,10 @@ it("GATracker should send pageview event", () => {
   const href = "https://localhost/home?q=localhost&adult_exclude=true";
   const referrer = "https://google.com/search?q=localhost";
 
-  t.initialize();
-  ga = jest.fn() as unknown as UniversalAnalytics.ga;
+  await t.initialize();
+
+  // @ts-ignore
+  window.ga = jest.fn()
   t.sendPageView(href, referrer);
 
   jest.runOnlyPendingTimers();

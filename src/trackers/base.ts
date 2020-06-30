@@ -10,11 +10,12 @@ export interface PageMeta {
 }
 
 export abstract class BaseTracker {
+
   public mainOptions: MainTrackerOptions;
 
   public abstract isInitialized(): boolean;
 
-  public abstract initialize(): void;
+  public async abstract initialize(): Promise<void>;
 
   public setMainOptions(newOptions: MainTrackerOptions): void {
     this.mainOptions = newOptions;

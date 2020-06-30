@@ -38,11 +38,11 @@ export class TagManagerTracker extends BaseTracker {
     this.sendEvent("Options Changed", newOptions);
   }
 
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     this.pushDataLayer(this.mainOptions);
-
-    loadTagManager(this.options.trackingId);
+    await loadTagManager(this.options.trackingId);
     this.tagCalled = true;
+
   }
 
   public isInitialized(): boolean {

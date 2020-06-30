@@ -7,7 +7,9 @@ import {
   GAOptions,
   GATracker,
   GTagOptions,
-  GTagTracker, KakaoOptions, KakaoTracker,
+  GTagTracker,
+  KakaoOptions,
+  KakaoTracker,
   PixelOptions,
   PixelTracker,
   TagManagerOptions,
@@ -186,15 +188,20 @@ export class Tracker {
     }
   }
 
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     this.log("Initialize");
 
-    for (const tracker of this.trackers) {
-      if (tracker.isInitialized()) {
-        continue;
-      }
-      tracker.initialize();
-    }
+    await Promise.all(
+      this.trackers
+        .filter((t) => !t.isInitialized())
+        .map((t) => t.initialize())
+    )
+
+    // for (const tracker of this.trackers) {
+    //   if (!tracker.isInitialized()) {
+    //     await tracker.initialize()
+    //   }
+    // }
 
     if (!this.initialized) {
       this.flush();
@@ -203,6 +210,7 @@ export class Tracker {
       });
       this.initialized = true;
     }
+
   }
 
   public sendPageView(href: string, referrer?: string): void {
@@ -234,4 +242,10 @@ export class Tracker {
       this.throttledFlush();
     }
   }
+
+  public test() {
+    console.log(ga)
+  }
 }
+
+

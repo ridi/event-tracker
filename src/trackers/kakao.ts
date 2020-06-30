@@ -13,23 +13,12 @@ export class KakaoTracker extends BaseTracker {
     super();
   }
 
-  private tagCalled: boolean = false;
-
-  public initialize(): void {
-    const init = new Promise((resolve, reject) => {
-      loadKakao();
-      setTimeout(() => {
-        resolve();
-      }, 100);
-    });
-    init.then(() => {
-      this.tagCalled = true;
-    });
-
+  public async initialize(): Promise<void> {
+    await loadKakao();
   }
 
   public isInitialized(): boolean {
-    return this.tagCalled;
+    return typeof kakaoPixel === "function";
   }
 
   public sendPageView(pageMeta: PageMeta): void {
