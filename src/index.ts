@@ -195,13 +195,7 @@ export class Tracker {
       this.trackers
         .filter((t) => !t.isInitialized())
         .map((t) => t.initialize())
-    )
-
-    // for (const tracker of this.trackers) {
-    //   if (!tracker.isInitialized()) {
-    //     await tracker.initialize()
-    //   }
-    // }
+    );
 
     if (!this.initialized) {
       this.flush();
@@ -241,10 +235,6 @@ export class Tracker {
     if (this.initialized) {
       this.throttledFlush();
     }
-  }
-
-  public test() {
-    console.log(ga)
   }
 }
 

@@ -22,7 +22,8 @@ export class KakaoTracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta): void {
-    kakaoPixel(this.options.trackingId).pageView(pageMeta.page);
+    kakaoPixel(this.options.trackingId).pageView();
   }
+
 
 }
