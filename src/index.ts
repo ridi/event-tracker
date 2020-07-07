@@ -13,7 +13,7 @@ import {
   PixelOptions,
   PixelTracker,
   TagManagerOptions,
-  TagManagerTracker
+  TagManagerTracker, TwitterOptions, TwitterTracker
 } from "./trackers";
 import { BaseTracker, PageMeta } from "./trackers/base";
 
@@ -38,6 +38,8 @@ export interface MainTrackerOptions {
   gTagOptions?: GTagOptions;
   throttleWait?: number;
   kakaoOptions?: KakaoOptions;
+  twitterOptions?: TwitterOptions;
+  isSelect?: boolean
 }
 
 export interface ChangeableTrackerOptions {
@@ -62,6 +64,7 @@ interface EventQueueItem {
 
 type QueueItem = PageViewQueueItem | EventQueueItem;
 
+
 export class Tracker {
   constructor(private options: MainTrackerOptions) {
     if (options.gaOptions) {
@@ -82,6 +85,10 @@ export class Tracker {
 
     if (options.kakaoOptions) {
       this.trackers.push(new KakaoTracker(options.kakaoOptions));
+    }
+
+    if (options.twitterOptions) {
+      this.trackers.push(new TwitterTracker(options.twitterOptions));
     }
 
     for (const tracker of this.trackers) {

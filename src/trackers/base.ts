@@ -28,4 +28,12 @@ export abstract class BaseTracker {
   public sendEvent(name: string, data: object = {}, ts?: Date): void {
     // Default behavior
   }
+
+  public registration(args: object = {}): void {
+    // Default behavior
+  }
+
+  public impression(args: object = {}): void {
+    // Default behavior
+  }
 }

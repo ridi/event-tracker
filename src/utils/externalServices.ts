@@ -1,7 +1,7 @@
 const gaNewElem: any = {};
 const gaElems: any = {};
 
-function addScriptLoadListener(scriptElement:HTMLScriptElement): Promise<void> {
+function addScriptLoadListener(scriptElement: HTMLScriptElement): Promise<void> {
   const listener = new Promise<void>((resolve) => {
     const callback = () => {
       scriptElement.removeEventListener('load', callback)
@@ -12,13 +12,13 @@ function addScriptLoadListener(scriptElement:HTMLScriptElement): Promise<void> {
   })
 
   const timeout = new Promise<void>((_, reject) => {
-    setTimeout(() => {
-      reject("Failed to load Script.")
-    }, 5000)
+      setTimeout(() => {
+        reject("Failed to load Script.")
+      }, 5000)
     }
   )
 
-  return Promise.race([listener,timeout])
+  return Promise.race([listener, timeout])
 
 }
 
@@ -80,4 +80,30 @@ export function loadKakao(){
     return j
   })(window as any, document, 'script'));
   // tslint:enable
+}
+
+export function loadTwitterUniversal() {
+  // tslint:disable
+  return addScriptLoadListener((function (e, t, n, s?: any, u?: any, a?: any,) {
+    e.twq || (s = e.twq = function () {
+      s.exe ? s.exe.apply(s, arguments) : s.queue.push(arguments);
+    }, s.version = '1.1', s.queue = [], u = t.createElement(n), u.async = !0, u.src = 'https://static.ads-twitter.com/uwt.js',
+      a = t.getElementsByTagName(n)[0], a.parentNode.insertBefore(u, a));
+    return u;
+  })(window as any, document, 'script'));
+  // tslint:enable
+
+}
+
+export function loadTwitterTag() {
+  // tslint:disable
+  return addScriptLoadListener((function (w, d, s) {
+    var f = d.getElementsByTagName(s)[0], j: any = d.createElement(s)
+    j.async = true;
+    j.src = 'https://platform.twitter.com/oct.js';
+    f.parentNode.insertBefore(j, f);
+    return j
+  })(window as any, document, 'script'));
+  // tslint:enable
+
 }
