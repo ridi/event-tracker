@@ -1,26 +1,24 @@
 import {DeviceType, Tracker} from "../index";
-import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker} from "../trackers";
+import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker, TwitterTracker} from "../trackers";
 
 
-const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker, KakaoTracker]
+const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker];
 const originalFunctions = ALL_TRACKERS.map((tracker) => tracker.prototype.sendPageView);
 
+
 beforeAll(() => {
-  ALL_TRACKERS.map((t) => t.prototype.isInitialized = () => true)
+  ALL_TRACKERS.forEach((t) => t.prototype.isInitialized = () => true);
 })
 
 beforeEach(() => {
   document.body.innerHTML = "<script />";
   jest.useFakeTimers();
-
 });
 
 afterEach(() => {
-  ALL_TRACKERS.map(
-    (tracker, index) => {
-      tracker.prototype.sendPageView = originalFunctions[index]
-    }
-  )
+  ALL_TRACKERS.forEach((t, i) => {
+    t.prototype.sendPageView = originalFunctions[i];
+  });
 });
 
 
@@ -46,6 +44,11 @@ const createDummyTracker = (additionalOptions: object = {}) => {
     kakaoOptions: {
       trackingId: "TEST"
     },
+    twitterOptions: {
+      mainTid: "TEST",
+      productTrackingTid: "TEST",
+      booksRegisterTid: "TEST",
+    },
     ...additionalOptions
   });
 };
@@ -60,7 +63,7 @@ it("BeaconTracker sends PageView event with serviceProps", async () => {
     "referrer": "https://google.com/search?q=localhost"
   };
 
-  [GATracker, PixelTracker, TagManagerTracker, KakaoTracker].map(
+  [GATracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker].forEach(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -124,6 +127,7 @@ it("sends events both before and after initialize", async () => {
   const referrer2 = href;
 
   t.sendPageView(href, referrer);
+
   mocks.forEach(mock => {
     expect(mock).not.toBeCalled();
   });
@@ -156,7 +160,7 @@ it("sends events both before and after initialize", async () => {
 
 it("GATracker should send pageview event", async () => {
 
-  [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker].map(
+  [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker,TwitterTracker].forEach(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -172,7 +176,7 @@ it("GATracker should send pageview event", async () => {
   await t.initialize();
 
   // @ts-ignore
-  window.ga = jest.fn()
+  window.ga = jest.fn();
   t.sendPageView(href, referrer);
 
   jest.runOnlyPendingTimers();
@@ -180,3 +184,52 @@ it("GATracker should send pageview event", async () => {
 
 });
 
+it("Test twitter trackers", async () => {
+  [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker, GATracker].forEach(
+    tracker => {
+      tracker.prototype.sendPageView = jest.fn();
+      tracker.prototype.impression = jest.fn();
+      tracker.prototype.registration = jest.fn();
+    });
+
+  const t = createDummyTracker({
+    isSelect: true,
+    twitterOptions: {
+      mainTid: "mainTid",
+      selectRegisterTid: "selectRegisterTid",
+      productTrackingTid: "productTrackingTid",
+      booksRegisterTid: "booksRegisterTid"
+    }
+  });
+
+
+  const trackPidMock = jest.fn();
+  const twqMock = jest.fn();
+
+  // @ts-ignore
+  TwitterTracker.prototype.twttr = {conversion: {}}, TwitterTracker.prototype.twttr.conversion.trackPid = trackPidMock;
+
+  // @ts-ignore
+  TwitterTracker.prototype.twq = twqMock;
+
+  await t.initialize();
+
+  /* Need to disable flush throttling when sending event multiple times in one test cases */
+  // @ts-ignore
+  t.throttledFlush = t.flush;
+
+  t.sendPageView("href");
+  t.sendImpression();
+  t.sendRegistration();
+  jest.runOnlyPendingTimers();
+
+
+  expect(twqMock).toHaveBeenCalledWith("track", "pageView");
+
+  expect(trackPidMock).toHaveBeenNthCalledWith(1, "productTrackingTid", {tw_sale_amount: 0, tw_order_quantity: 0});
+  expect(trackPidMock).toHaveBeenNthCalledWith(2,"selectRegisterTid", {tw_sale_amount: 0, tw_order_quantity: 0});
+
+  expect(trackPidMock).not.toHaveBeenCalledWith("booksRegisterTid", {tw_sale_amount: 0, tw_order_quantity: 0});
+
+
+})
