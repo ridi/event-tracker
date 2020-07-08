@@ -13,9 +13,11 @@ import {
   PixelOptions,
   PixelTracker,
   TagManagerOptions,
-  TagManagerTracker, TwitterOptions, TwitterTracker
+  TagManagerTracker,
+  TwitterOptions,
+  TwitterTracker
 } from "./trackers";
-import { BaseTracker, PageMeta } from "./trackers/base";
+import {BaseTracker, PageMeta} from "./trackers/base";
 
 export enum DeviceType {
   PC = "pc",
@@ -39,7 +41,7 @@ export interface MainTrackerOptions {
   throttleWait?: number;
   kakaoOptions?: KakaoOptions;
   twitterOptions?: TwitterOptions;
-  isSelect?: boolean
+  isSelect?: boolean;
 }
 
 export interface ChangeableTrackerOptions {
@@ -62,11 +64,16 @@ interface EventQueueItem {
   data: any;
 }
 
-type QueueItem = PageViewQueueItem | EventQueueItem;
+type QueueItem = PageViewQueueItem | EventQueueItem | { type: "impression" | "registration" };
 
 
 export class Tracker {
+
   constructor(private options: MainTrackerOptions) {
+    if (this.options.isSelect === undefined) {
+      this.options.isSelect = false;
+    }
+
     if (options.gaOptions) {
       this.trackers.push(new GATracker(options.gaOptions));
     }
@@ -91,9 +98,11 @@ export class Tracker {
       this.trackers.push(new TwitterTracker(options.twitterOptions));
     }
 
+
     for (const tracker of this.trackers) {
       tracker.setMainOptions(options);
     }
+
 
     this.throttledFlush = throttle(() => this.flush(), options.throttleWait || 1000);
   }
@@ -150,12 +159,19 @@ export class Tracker {
     }
     while (queue.length) {
       const item = queue.shift();
+
       switch (item.type) {
         case "pageview":
           this.doSendPageView(item as PageViewQueueItem);
           break;
         case "event":
           this.doSendEvent(item as EventQueueItem);
+          break;
+        case "registration":
+          this.registration();
+          break;
+        case "impression":
+          this.impression();
           break;
       }
     }
@@ -182,6 +198,18 @@ export class Tracker {
 
     this.logEvent(`Event:${item.name}`, item.data);
     this.count("eventTrackerSent");
+  }
+
+  private impression(): void {
+    for (const tracker of this.trackers) {
+      tracker.impression();
+    }
+  }
+
+  private registration(): void {
+    for (const tracker of this.trackers) {
+      tracker.registration();
+    }
   }
 
   public set(options: ChangeableTrackerOptions): void {
@@ -238,6 +266,26 @@ export class Tracker {
       name,
       data,
     });
+
+    if (this.initialized) {
+      this.throttledFlush();
+    }
+  }
+
+  public sendImpression(): void {
+    this.count("eventTrackerQueue");
+
+    this.eventQueue.push({type: "impression"})
+
+    if (this.initialized) {
+      this.throttledFlush();
+    }
+  }
+
+  public sendRegistration(): void {
+    this.count("eventTrackerQueue");
+
+    this.eventQueue.push({type: "registration"})
 
     if (this.initialized) {
       this.throttledFlush();
