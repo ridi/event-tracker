@@ -13,8 +13,11 @@ export class KakaoTracker extends BaseTracker {
     super();
   }
 
+  private tracker:any;
+
   public async initialize(): Promise<void> {
     await loadKakao();
+    this.tracker = kakaoPixel(this.options.trackingId)
   }
 
   public isInitialized(): boolean {
@@ -22,7 +25,19 @@ export class KakaoTracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta): void {
-    kakaoPixel(this.options.trackingId).pageView();
+    this.tracker.pageView();
+  }
+
+  public registration(args: object = {}): void {
+    if (this.mainOptions.isSelect) {
+      this.tracker.signUp();
+    } else {
+      this.tracker.completeRegistration();
+    }
+  }
+
+  public impression(args: object = {}): void {
+    this.tracker.viewContent();
   }
 
 
