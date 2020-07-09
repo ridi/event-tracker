@@ -13,7 +13,7 @@ export class KakaoTracker extends BaseTracker {
     super();
   }
 
-  private tracker:any;
+  private tracker: any;
 
   public async initialize(): Promise<void> {
     await loadKakao();
@@ -21,7 +21,7 @@ export class KakaoTracker extends BaseTracker {
   }
 
   public isInitialized(): boolean {
-    return typeof kakaoPixel === "function";
+    return typeof this.tracker === "object";
   }
 
   public sendPageView(pageMeta: PageMeta): void {

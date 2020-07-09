@@ -5,7 +5,6 @@ import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker,
 const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker];
 const originalFunctions = ALL_TRACKERS.map((tracker) => tracker.prototype.sendPageView);
 
-
 beforeAll(() => {
   ALL_TRACKERS.forEach((t) => t.prototype.isInitialized = () => true);
 })
@@ -23,6 +22,7 @@ afterEach(() => {
 
 
 const createDummyTracker = (additionalOptions: object = {}) => {
+
   return new Tracker({
     deviceType: DeviceType.Mobile,
     serviceProps: {
@@ -160,7 +160,7 @@ it("sends events both before and after initialize", async () => {
 
 it("GATracker should send pageview event", async () => {
 
-  [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker,TwitterTracker].forEach(
+  [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker].forEach(
     tracker => {
       const mock = jest.fn();
       tracker.prototype.sendPageView = mock;
@@ -184,13 +184,15 @@ it("GATracker should send pageview event", async () => {
 
 });
 
-it("Test twitter trackers", async () => {
+it("Test TwitterTracker", async () => {
+
   [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker, GATracker].forEach(
     tracker => {
       tracker.prototype.sendPageView = jest.fn();
       tracker.prototype.impression = jest.fn();
       tracker.prototype.registration = jest.fn();
     });
+
 
   const t = createDummyTracker({
     isSelect: true,
@@ -227,9 +229,9 @@ it("Test twitter trackers", async () => {
   expect(twqMock).toHaveBeenCalledWith("track", "pageView");
 
   expect(trackPidMock).toHaveBeenNthCalledWith(1, "productTrackingTid", {tw_sale_amount: 0, tw_order_quantity: 0});
-  expect(trackPidMock).toHaveBeenNthCalledWith(2,"selectRegisterTid", {tw_sale_amount: 0, tw_order_quantity: 0});
+  expect(trackPidMock).toHaveBeenNthCalledWith(2, "selectRegisterTid", {tw_sale_amount: 0, tw_order_quantity: 0});
 
   expect(trackPidMock).not.toHaveBeenCalledWith("booksRegisterTid", {tw_sale_amount: 0, tw_order_quantity: 0});
 
 
-})
+});

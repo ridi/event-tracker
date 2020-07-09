@@ -1,4 +1,4 @@
-import { DeviceType, MainTrackerOptions } from "../index";
+import {DeviceType, MainTrackerOptions} from "../index";
 
 export interface PageMeta {
   page: string;

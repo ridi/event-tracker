@@ -20,7 +20,7 @@ export class TwitterTracker extends BaseTracker {
 
   private twttr: any;
 
-  private twq: (...command:any[]) => {};
+  private twq: (...command: any[]) => {};
 
   public async initialize(): Promise<void> {
     await Promise.all([loadTwitterUniversal(), loadTwitterTag()]);

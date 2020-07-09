@@ -1,5 +1,5 @@
-import { loadPixel } from "../utils/externalServices";
-import { BaseTracker, PageMeta } from "./base";
+import {loadPixel} from "../utils/externalServices";
+import {BaseTracker, PageMeta} from "./base";
 
 export interface PixelOptions {
   pixelId: string | string[];
