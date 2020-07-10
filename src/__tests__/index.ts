@@ -120,7 +120,7 @@ it("BeaconTracker sends PageView event with serviceProps", async () => {
 
 it("sends PageView event with all tracking providers", async () => {
   const t = new TestableTracker();
-  const spies = t.mocking(ALL_TRACKERS, "sendPageView");
+  const mocks = t.mocking(ALL_TRACKERS, "sendPageView");
 
 
   const href = "https://localhost/home";
@@ -130,7 +130,7 @@ it("sends PageView event with all tracking providers", async () => {
   t.sendPageView(href, referrer);
 
   jest.runOnlyPendingTimers();
-  spies.forEach(mock => {
+  mocks.forEach(mock => {
     expect(mock).toBeCalledTimes(1);
   });
 });
@@ -138,7 +138,7 @@ it("sends PageView event with all tracking providers", async () => {
 it("sends events both before and after initialize", async () => {
 
   const t = new TestableTracker();
-  const spies = t.mocking(ALL_TRACKERS, "sendPageView");
+  const mocks = t.mocking(ALL_TRACKERS, "sendPageView");
 
   const href = "https://localhost/home";
   const referrer = "https://google.com/search?q=localhost";
@@ -148,7 +148,7 @@ it("sends events both before and after initialize", async () => {
 
   t.sendPageView(href, referrer);
 
-  spies.forEach(mock => {
+  mocks.forEach(mock => {
     expect(mock).not.toBeCalled();
   });
 
@@ -158,7 +158,7 @@ it("sends events both before and after initialize", async () => {
   jest.runOnlyPendingTimers();
 
 
-  spies.forEach(mock => {
+  mocks.forEach(mock => {
     expect(mock).toHaveBeenNthCalledWith(1, {
       "device": "mobile",
       "href": "https://localhost/home",
