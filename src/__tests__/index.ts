@@ -1,9 +1,22 @@
 import {DeviceType, Tracker} from "../index";
 import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker, TwitterTracker} from "../trackers";
-
+import {BaseTracker} from "../trackers/base";
 
 const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker];
-const originalFunctions = ALL_TRACKERS.map((tracker) => tracker.prototype.sendPageView);
+
+declare global {
+  interface Array<T> {
+    excludes(...elements: T[]): T[];
+  }
+}
+
+if (!Array.prototype.excludes) {
+  Array.prototype.excludes = function <T>(...elements: T[]): T[] {
+    return this.filter((e: T) => !elements.includes(e))
+  }
+}
+
+type trackerMethods = "isInitialized" | "initialize" | "setMainOptions" | "sendPageView" | "sendEvent" | "registration" | "impression"
 
 beforeAll(() => {
   ALL_TRACKERS.forEach((t) => t.prototype.isInitialized = () => true);
@@ -15,43 +28,66 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  ALL_TRACKERS.forEach((t, i) => {
-    t.prototype.sendPageView = originalFunctions[i];
-  });
-});
+  jest.restoreAllMocks();
+})
 
+class TestableTracker extends Tracker {
+  constructor(additionalOptions: object = {}) {
+    super({
+      deviceType: DeviceType.Mobile,
+      serviceProps: {
+        "prop1": "value1",
+        "prop2": "value2"
+      },
+      beaconOptions: {
+        use: true
+      },
+      gaOptions: {
+        trackingId: "TEST"
+      },
+      pixelOptions: {
+        pixelId: "TEST"
+      },
+      tagManagerOptions: {
+        trackingId: "TEST"
+      },
+      kakaoOptions: {
+        trackingId: "TEST"
+      },
+      twitterOptions: {
+        mainTid: "TEST",
+        productTrackingTid: "TEST",
+        booksRegisterTid: "TEST",
+      },
+      ...additionalOptions
+    });
+  }
 
-const createDummyTracker = (additionalOptions: object = {}) => {
+  private findTrackerInstances(...trackers: Array<new(...args: any[]) => BaseTracker>) {
+    const isGivenTrackers = (t: BaseTracker) => {
+      return trackers.some(useTracker => (t instanceof useTracker))
+    }
 
-  return new Tracker({
-    deviceType: DeviceType.Mobile,
-    serviceProps: {
-      "prop1": "value1",
-      "prop2": "value2"
-    },
-    beaconOptions: {
-      use: true
-    },
-    gaOptions: {
-      trackingId: "TEST"
-    },
-    pixelOptions: {
-      pixelId: "TEST"
-    },
-    tagManagerOptions: {
-      trackingId: "TEST"
-    },
-    kakaoOptions: {
-      trackingId: "TEST"
-    },
-    twitterOptions: {
-      mainTid: "TEST",
-      productTrackingTid: "TEST",
-      booksRegisterTid: "TEST",
-    },
-    ...additionalOptions
-  });
-};
+    return this.trackers.filter(isGivenTrackers)
+  }
+
+  public getTrackerInstance<T>(trackerType: new(...args: any[]) => T) {
+    return this.trackers.find(t => (t instanceof trackerType))
+  }
+
+  public mocking(trackers: Array<new(...args: any[]) => BaseTracker>, methodName: trackerMethods, mockImpl: () => void = () => true) {
+    const mockingTargetTrackers = this.findTrackerInstances(...trackers)
+    return mockingTargetTrackers.map(t => jest.spyOn(t, methodName).mockImplementation(mockImpl))
+  }
+
+  // FIXME: Convert to method overloading
+  public mockingAll(trackers: Array<new(...args: any[]) => BaseTracker>, ...methodNames: trackerMethods[]) {
+    return methodNames.map(m => {
+      return this.mocking(trackers, m)
+    })
+  }
+}
+
 
 it("BeaconTracker sends PageView event with serviceProps", async () => {
   const dummpyPageMeta = {
@@ -63,15 +99,9 @@ it("BeaconTracker sends PageView event with serviceProps", async () => {
     "referrer": "https://google.com/search?q=localhost"
   };
 
-  [GATracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker].forEach(
-    tracker => {
-      const mock = jest.fn();
-      tracker.prototype.sendPageView = mock;
-      return mock;
-    }
-  );
+  const t = new TestableTracker();
 
-  const t = createDummyTracker();
+  t.mocking(ALL_TRACKERS.excludes(BeaconTracker), "sendPageView");
 
   const href = "https://localhost/home?q=localhost&adult_exclude=true";
   const referrer = "https://google.com/search?q=localhost";
@@ -89,14 +119,9 @@ it("BeaconTracker sends PageView event with serviceProps", async () => {
 
 
 it("sends PageView event with all tracking providers", async () => {
-  const mocks = ALL_TRACKERS.map(
-    tracker => {
-      const mock = jest.fn();
-      tracker.prototype.sendPageView = mock;
-      return mock;
-    }
-  );
-  const t = createDummyTracker();
+  const t = new TestableTracker();
+  const spies = t.mocking(ALL_TRACKERS, "sendPageView");
+
 
   const href = "https://localhost/home";
   const referrer = "https://google.com/search?q=localhost";
@@ -105,20 +130,15 @@ it("sends PageView event with all tracking providers", async () => {
   t.sendPageView(href, referrer);
 
   jest.runOnlyPendingTimers();
-  mocks.forEach(mock => {
+  spies.forEach(mock => {
     expect(mock).toBeCalledTimes(1);
   });
 });
 
 it("sends events both before and after initialize", async () => {
-  const mocks = ALL_TRACKERS.map(
-    tracker => {
-      const mock = jest.fn();
-      tracker.prototype.sendPageView = mock;
-      return mock;
-    }
-  );
-  const t = createDummyTracker();
+
+  const t = new TestableTracker();
+  const spies = t.mocking(ALL_TRACKERS, "sendPageView");
 
   const href = "https://localhost/home";
   const referrer = "https://google.com/search?q=localhost";
@@ -128,7 +148,7 @@ it("sends events both before and after initialize", async () => {
 
   t.sendPageView(href, referrer);
 
-  mocks.forEach(mock => {
+  spies.forEach(mock => {
     expect(mock).not.toBeCalled();
   });
 
@@ -138,7 +158,7 @@ it("sends events both before and after initialize", async () => {
   jest.runOnlyPendingTimers();
 
 
-  mocks.forEach(mock => {
+  spies.forEach(mock => {
     expect(mock).toHaveBeenNthCalledWith(1, {
       "device": "mobile",
       "href": "https://localhost/home",
@@ -159,16 +179,9 @@ it("sends events both before and after initialize", async () => {
 });
 
 it("GATracker should send pageview event", async () => {
+  const t = new TestableTracker();
+  t.mocking(ALL_TRACKERS.excludes(GATracker), "sendPageView");
 
-  [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker].forEach(
-    tracker => {
-      const mock = jest.fn();
-      tracker.prototype.sendPageView = mock;
-      return mock;
-    }
-  );
-
-  const t = createDummyTracker();
 
   const href = "https://localhost/home?q=localhost&adult_exclude=true";
   const referrer = "https://google.com/search?q=localhost";
@@ -186,15 +199,7 @@ it("GATracker should send pageview event", async () => {
 
 it("Test TwitterTracker", async () => {
 
-  [BeaconTracker, PixelTracker, TagManagerTracker, KakaoTracker, GATracker].forEach(
-    tracker => {
-      tracker.prototype.sendPageView = jest.fn();
-      tracker.prototype.impression = jest.fn();
-      tracker.prototype.registration = jest.fn();
-    });
-
-
-  const t = createDummyTracker({
+  const t = new TestableTracker({
     isSelect: true,
     twitterOptions: {
       mainTid: "mainTid",
@@ -204,15 +209,17 @@ it("Test TwitterTracker", async () => {
     }
   });
 
+  t.mockingAll(ALL_TRACKERS.excludes(TwitterTracker), "sendPageView", "impression", "registration");
 
   const trackPidMock = jest.fn();
   const twqMock = jest.fn();
 
+  const twitterTracker = t.getTrackerInstance(TwitterTracker)
   // @ts-ignore
-  TwitterTracker.prototype.twttr = {conversion: {}}, TwitterTracker.prototype.twttr.conversion.trackPid = trackPidMock;
+  twitterTracker.twttr = {conversion: {}}, twitterTracker.twttr.conversion.trackPid = trackPidMock;
 
   // @ts-ignore
-  TwitterTracker.prototype.twq = twqMock;
+  twitterTracker.twq = twqMock;
 
   await t.initialize();
 

@@ -107,13 +107,13 @@ export class Tracker {
     this.throttledFlush = throttle(() => this.flush(), options.throttleWait || 1000);
   }
 
-  private trackers: BaseTracker[] = [];
-
   private eventQueue: QueueItem[] = [];
 
   private initialized = false;
 
   private throttledFlush: () => void;
+
+  protected trackers: BaseTracker[] = [];
 
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
