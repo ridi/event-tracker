@@ -63,7 +63,7 @@ class TestableTracker extends Tracker {
     });
   }
 
-  private findTrackerInstances(...trackers: Array<new(...args: any[]) => BaseTracker>) {
+  private getTrackerInstances(...trackers: Array<new(...args: any[]) => BaseTracker>): BaseTracker[] {
     const isGivenTrackers = (t: BaseTracker) => {
       return trackers.some(useTracker => (t instanceof useTracker))
     }
@@ -71,19 +71,19 @@ class TestableTracker extends Tracker {
     return this.trackers.filter(isGivenTrackers)
   }
 
-  public getTrackerInstance<T>(trackerType: new(...args: any[]) => T) {
+  public getTrackerInstance(trackerType: new(...args: any[]) => BaseTracker): BaseTracker {
     return this.trackers.find(t => (t instanceof trackerType))
   }
 
   public mocking(trackers: Array<new(...args: any[]) => BaseTracker>, methodName: trackerMethods, mockImpl: () => void = () => true) {
-    const mockingTargetTrackers = this.findTrackerInstances(...trackers)
+    const mockingTargetTrackers = this.getTrackerInstances(...trackers)
     return mockingTargetTrackers.map(t => jest.spyOn(t, methodName).mockImplementation(mockImpl))
   }
 
   // FIXME: Convert to method overloading
-  public mockingAll(trackers: Array<new(...args: any[]) => BaseTracker>, ...methodNames: trackerMethods[]) {
+  public mockingAll(trackers: Array<new(...args: any[]) => BaseTracker>, methodNames: trackerMethods[], mockImpl: () => void = () => true) {
     return methodNames.map(m => {
-      return this.mocking(trackers, m)
+      return this.mocking(trackers, m, mockImpl)
     })
   }
 }
@@ -209,7 +209,7 @@ it("Test TwitterTracker", async () => {
     }
   });
 
-  t.mockingAll(ALL_TRACKERS.excludes(TwitterTracker), "sendPageView", "impression", "registration");
+  t.mockingAll(ALL_TRACKERS.excludes(TwitterTracker), ["sendPageView", "impression", "registration"]);
 
   const trackPidMock = jest.fn();
   const twqMock = jest.fn();
