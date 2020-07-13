@@ -230,6 +230,7 @@ export class Tracker {
       this.trackers
         .filter((t) => !t.isInitialized())
         .map((t) => t.initialize())
+        .map((p) => p.catch(error => null))
     );
 
     if (!this.initialized) {
