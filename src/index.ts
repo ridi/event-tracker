@@ -111,9 +111,13 @@ export class Tracker {
 
   private initialized = false;
 
-  private throttledFlush: () => void;
+  private readonly throttledFlush: () => void;
 
   protected trackers: BaseTracker[] = [];
+
+  private initializedTrackers(): BaseTracker[] {
+    return this.trackers.filter(t => t.isInitialized());
+  }
 
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
@@ -183,33 +187,29 @@ export class Tracker {
   private doSendPageView(item: PageViewQueueItem): void {
     const pageMeta = this.getPageMeta(item.href, item.referrer);
 
-    for (const tracker of this.trackers) {
-      tracker.sendPageView(pageMeta, item.ts);
-    }
+    this.initializedTrackers().forEach(t => t.sendPageView(pageMeta, item.ts));
 
     this.logEvent("PageView", pageMeta);
     this.count("eventTrackerSent");
   }
 
   private doSendEvent(item: EventQueueItem): void {
-    for (const tracker of this.trackers) {
-      tracker.sendEvent(item.name, item.data, item.ts);
-    }
+    this.initializedTrackers().forEach(t => t.sendEvent(item.name, item.data, item.ts));
 
     this.logEvent(`Event:${item.name}`, item.data);
     this.count("eventTrackerSent");
   }
 
   private impression(): void {
-    for (const tracker of this.trackers) {
-      tracker.impression();
-    }
+    this.initializedTrackers().forEach(t => t.impression());
+    this.logEvent("Impression")
+    this.count("eventTrackerSent");
   }
 
   private registration(): void {
-    for (const tracker of this.trackers) {
-      tracker.registration();
-    }
+    this.initializedTrackers().forEach(t => t.registration());
+    this.logEvent("Registration")
+    this.count("eventTrackerSent");
   }
 
   public set(options: ChangeableTrackerOptions): void {
