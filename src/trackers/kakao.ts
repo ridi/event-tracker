@@ -28,7 +28,7 @@ export class KakaoTracker extends BaseTracker {
     this.tracker.pageView();
   }
 
-  public registration(args: object = {}): void {
+  public sendRegistration(args: object = {}): void {
     if (this.mainOptions.isSelect) {
       this.tracker.signUp();
     } else {
@@ -36,7 +36,7 @@ export class KakaoTracker extends BaseTracker {
     }
   }
 
-  public impression(args: object = {}): void {
+  public sendImpression(args: object = {}): void {
     this.tracker.viewContent();
   }
 

@@ -172,10 +172,10 @@ export class Tracker {
           this.doSendEvent(item as EventQueueItem);
           break;
         case "registration":
-          this.registration();
+          this.doSendRegistration();
           break;
         case "impression":
-          this.impression();
+          this.doSendImpression();
           break;
       }
     }
@@ -200,14 +200,14 @@ export class Tracker {
     this.count("eventTrackerSent");
   }
 
-  private impression(): void {
-    this.initializedTrackers().forEach(t => t.impression());
+  private doSendImpression(): void {
+    this.initializedTrackers().forEach(t => t.sendImpression());
     this.logEvent("Impression")
     this.count("eventTrackerSent");
   }
 
-  private registration(): void {
-    this.initializedTrackers().forEach(t => t.registration());
+  private doSendRegistration(): void {
+    this.initializedTrackers().forEach(t => t.sendRegistration());
     this.logEvent("Registration")
     this.count("eventTrackerSent");
   }

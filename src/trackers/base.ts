@@ -29,11 +29,11 @@ export abstract class BaseTracker {
     // Default behavior
   }
 
-  public registration(args: object = {}): void {
+  public sendRegistration(args: object = {}): void {
     // Default behavior
   }
 
-  public impression(args: object = {}): void {
+  public sendImpression(args: object = {}): void {
     // Default behavior
   }
 }
