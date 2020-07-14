@@ -98,7 +98,6 @@ export class Tracker {
       this.trackers.push(new TwitterTracker(options.twitterOptions));
     }
 
-
     for (const tracker of this.trackers) {
       tracker.setMainOptions(options);
     }

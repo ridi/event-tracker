@@ -16,11 +16,33 @@ export class TwitterTracker extends BaseTracker {
 
   constructor(private options: TwitterOptions) {
     super();
+    this.validateOptions();
   }
 
   private twttr: any;
 
   private twq: (...command: any[]) => {};
+
+  private registerTid: string;
+
+  private validateOptions() {
+    const booksId = this.options.booksRegisterTid;
+    const selectId = this.options.selectRegisterTid;
+
+    this.registerTid = this.options.booksRegisterTid || this.options.selectRegisterTid;
+
+    const idEntered = !!(this.registerTid);
+    const bothIdEntered = (booksId && selectId);
+
+    if ( !idEntered || bothIdEntered) {
+      throw new Error(`
+      [@ridi/event-tracker] TwitterOption not provided properly.
+      ${this.options}
+      `);
+    }
+
+
+  }
 
   public async initialize(): Promise<void> {
     await Promise.all([loadTwitterUniversal(), loadTwitterTag()]);
@@ -39,8 +61,7 @@ export class TwitterTracker extends BaseTracker {
   }
 
   public sendRegistration(args: object = {}): void {
-    const id = (this.mainOptions.isSelect) ? this.options.selectRegisterTid : this.options.booksRegisterTid;
-    this.twttr.conversion.trackPid(id, {tw_sale_amount: 0, tw_order_quantity: 0});
+    this.twttr.conversion.trackPid(this.registerTid, {tw_sale_amount: 0, tw_order_quantity: 0});
   }
 
   public sendImpression(args: object = {}): void {

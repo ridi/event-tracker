@@ -9,9 +9,39 @@ export interface PageMeta {
   referrer: string;
 }
 
-export abstract class BaseTracker {
+export interface SendEvent {
+  sendPageView(pageMeta: PageMeta, ts?: Date): void;
+
+  sendEvent(name: string, data?: object, ts?: Date): void;
+
+  sendRegistration(args?: object): void;
+
+  sendImpression(args?: object): void;
+}
+
+export abstract class BaseTracker implements SendEvent {
 
   public mainOptions: MainTrackerOptions;
+
+  // tslint:disable:no-empty
+
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
+
+  }
+
+  public sendEvent(name: string, data?: object, ts?: Date): void {
+
+  }
+
+  public sendRegistration(args?: object): void {
+
+  }
+
+  public sendImpression(args?: object): void {
+
+  }
+
+  // tslint:enable:no-empty
 
   public abstract isInitialized(): boolean;
 
@@ -21,19 +51,4 @@ export abstract class BaseTracker {
     this.mainOptions = newOptions;
   }
 
-  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
-    // Default behavior
-  }
-
-  public sendEvent(name: string, data: object = {}, ts?: Date): void {
-    // Default behavior
-  }
-
-  public sendRegistration(args: object = {}): void {
-    // Default behavior
-  }
-
-  public sendImpression(args: object = {}): void {
-    // Default behavior
-  }
 }

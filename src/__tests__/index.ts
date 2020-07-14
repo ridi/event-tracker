@@ -1,6 +1,6 @@
 import {DeviceType, Tracker} from "../index";
 import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker, TwitterTracker} from "../trackers";
-import {BaseTracker} from "../trackers/base";
+import {BaseTracker, SendEvent} from "../trackers/base";
 
 const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker];
 
@@ -15,8 +15,6 @@ if (!Array.prototype.excludes) {
     return this.filter((e: T) => !elements.includes(e))
   }
 }
-
-type trackerMethods = "isInitialized" | "initialize" | "setMainOptions" | "sendPageView" | "sendEvent" | "registration" | "impression"
 
 beforeAll(() => {
   ALL_TRACKERS.forEach((t) => t.prototype.isInitialized = () => true);
@@ -75,13 +73,13 @@ class TestableTracker extends Tracker {
     return this.trackers.find(t => (t instanceof trackerType))
   }
 
-  public mocking(trackers: Array<new(...args: any[]) => BaseTracker>, methodName: trackerMethods, mockImpl: () => void = () => true) {
+
+  public mocking(trackers: Array<new(...args: any[]) => BaseTracker>, methodName: keyof SendEvent, mockImpl: () => void = () => true) {
     const mockingTargetTrackers = this.getTrackerInstances(...trackers)
     return mockingTargetTrackers.map(t => jest.spyOn(t, methodName).mockImplementation(mockImpl))
   }
 
-  // FIXME: Convert to method overloading
-  public mockingAll(trackers: Array<new(...args: any[]) => BaseTracker>, methodNames: trackerMethods[], mockImpl: () => void = () => true) {
+  public mockingAll(trackers: Array<new(...args: any[]) => BaseTracker>, methodNames: Array<keyof SendEvent>, mockImpl: () => void = () => true) {
     return methodNames.map(m => {
       return this.mocking(trackers, m, mockImpl)
     })
@@ -200,7 +198,6 @@ it("GATracker should send pageview event", async () => {
 it("Test TwitterTracker", async () => {
 
   const t = new TestableTracker({
-    isSelect: true,
     twitterOptions: {
       mainTid: "mainTid",
       selectRegisterTid: "selectRegisterTid",
@@ -209,7 +206,7 @@ it("Test TwitterTracker", async () => {
     }
   });
 
-  t.mockingAll(ALL_TRACKERS.excludes(TwitterTracker), ["sendPageView", "impression", "registration"]);
+  t.mockingAll(ALL_TRACKERS.excludes(TwitterTracker), ["sendPageView", "sendImpression", "sendRegistration"]);
 
   const trackPidMock = jest.fn();
   const twqMock = jest.fn();
