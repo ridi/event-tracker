@@ -28,12 +28,12 @@ export class KakaoTracker extends BaseTracker {
     this.tracker.pageView();
   }
 
-  public sendRegistration(args: object = {}): void {
-    if (this.mainOptions.isSelect) {
-      this.tracker.signUp();
-    } else {
-      this.tracker.completeRegistration();
-    }
+  public sendSignUp(args: object = {}): void {
+    this.tracker.completeRegistration();
+  }
+
+  public sendStartSubscription(args?: object): void {
+    this.tracker.signUp();
   }
 
   public sendImpression(args: object = {}): void {

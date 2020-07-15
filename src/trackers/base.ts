@@ -14,9 +14,14 @@ export interface SendEvent {
 
   sendEvent(name: string, data?: object, ts?: Date): void;
 
-  sendRegistration(args?: object): void;
+  sendSignUp(args?: object): void;
+
+  sendStartSubscription(args?: object): void;
 
   sendImpression(args?: object): void;
+
+  sendAddPaymentInfo(args?: object): void;
+
 }
 
 export abstract class BaseTracker implements SendEvent {
@@ -33,11 +38,20 @@ export abstract class BaseTracker implements SendEvent {
 
   }
 
-  public sendRegistration(args?: object): void {
+  public sendSignUp(args?: object): void {
 
   }
 
+
   public sendImpression(args?: object): void {
+
+  }
+
+  public sendStartSubscription(args?: object): void {
+
+  }
+
+  public sendAddPaymentInfo(args?: object): void {
 
   }
 
@@ -50,5 +64,6 @@ export abstract class BaseTracker implements SendEvent {
   public setMainOptions(newOptions: MainTrackerOptions): void {
     this.mainOptions = newOptions;
   }
+
 
 }

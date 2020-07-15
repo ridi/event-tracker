@@ -17,7 +17,7 @@ import {
   TwitterOptions,
   TwitterTracker
 } from "./trackers";
-import {BaseTracker, PageMeta} from "./trackers/base";
+import {BaseTracker, PageMeta, SendEvent} from "./trackers/base";
 
 export enum DeviceType {
   PC = "pc",
@@ -41,7 +41,6 @@ export interface MainTrackerOptions {
   throttleWait?: number;
   kakaoOptions?: KakaoOptions;
   twitterOptions?: TwitterOptions;
-  isSelect?: boolean;
 }
 
 export interface ChangeableTrackerOptions {
@@ -50,29 +49,38 @@ export interface ChangeableTrackerOptions {
   serviceProps?: ServiceProp;
 }
 
-interface PageViewQueueItem {
-  type: "pageview";
-  ts: Date;
-  href: string;
-  referrer?: string;
+type EventParameter = Parameters<SendEvent[keyof SendEvent]>;
+type QueueItem = { consumerMethod: keyof SendEvent } & EventParameter;
+
+
+function pushEventToQueue(consumerMethodName?: keyof SendEvent) {
+  return (target: any, propertyKey: keyof SendEvent, descriptor: PropertyDescriptor) => {
+
+    consumerMethodName = consumerMethodName || propertyKey
+
+    const originalMethod = descriptor.value;
+
+    descriptor.value = function () {
+      const context = this
+      const eventRecord:QueueItem = originalMethod.apply(context, arguments);
+
+      eventRecord.consumerMethod = consumerMethodName;
+
+      context.eventQueue.push(eventRecord)
+      context.count("eventTrackerQueue")
+
+      if (context.initialized) {
+        context.throttledFlush();
+      }
+    }
+
+    return descriptor;
+  }
 }
-
-interface EventQueueItem {
-  type: "event";
-  ts: Date;
-  name: string;
-  data: any;
-}
-
-type QueueItem = PageViewQueueItem | EventQueueItem | { type: "impression" | "registration" };
-
 
 export class Tracker {
 
   constructor(private options: MainTrackerOptions) {
-    if (this.options.isSelect === undefined) {
-      this.options.isSelect = false;
-    }
 
     if (options.gaOptions) {
       this.trackers.push(new GATracker(options.gaOptions));
@@ -162,54 +170,28 @@ export class Tracker {
     }
     while (queue.length) {
       const item = queue.shift();
+      const methodName = item.consumerMethod;
+      delete item.consumerMethod;
 
-      switch (item.type) {
-        case "pageview":
-          this.doSendPageView(item as PageViewQueueItem);
-          break;
-        case "event":
-          this.doSendEvent(item as EventQueueItem);
-          break;
-        case "registration":
-          this.doSendRegistration();
-          break;
-        case "impression":
-          this.doSendImpression();
-          break;
-      }
+      this.runTrackersMethod(methodName, item);
+
     }
     if (this.options.debug) {
       console.groupEnd();
     }
   }
 
-  private doSendPageView(item: PageViewQueueItem): void {
-    const pageMeta = this.getPageMeta(item.href, item.referrer);
+  private runTrackersMethod(methodName: string, item: any): void {
+    this.initializedTrackers().forEach(t => {
+      const trackerMethod = (t as any)[methodName];
+      const args = Object.values(item);
+      trackerMethod.apply(t, args);
 
-    this.initializedTrackers().forEach(t => t.sendPageView(pageMeta, item.ts));
-
-    this.logEvent("PageView", pageMeta);
-    this.count("eventTrackerSent");
+      this.logEvent(methodName, args);
+      this.count("eventTrackerSent");
+    });
   }
 
-  private doSendEvent(item: EventQueueItem): void {
-    this.initializedTrackers().forEach(t => t.sendEvent(item.name, item.data, item.ts));
-
-    this.logEvent(`Event:${item.name}`, item.data);
-    this.count("eventTrackerSent");
-  }
-
-  private doSendImpression(): void {
-    this.initializedTrackers().forEach(t => t.sendImpression());
-    this.logEvent("Impression")
-    this.count("eventTrackerSent");
-  }
-
-  private doSendRegistration(): void {
-    this.initializedTrackers().forEach(t => t.sendRegistration());
-    this.logEvent("Registration")
-    this.count("eventTrackerSent");
-  }
 
   public set(options: ChangeableTrackerOptions): void {
     this.options = {
@@ -242,54 +224,45 @@ export class Tracker {
 
   }
 
-  public sendPageView(href: string, referrer?: string): void {
-    this.count("eventTrackerQueue");
+  @pushEventToQueue()
+  public sendPageView(href: string, referrer?: string): EventParameter {
+    const pageMeta = this.getPageMeta(href, referrer);
 
-    this.eventQueue.push({
-      type: "pageview",
-      ts: new Date(),
-      href,
-      referrer,
-    });
+    return [
+      pageMeta,
+      new Date(),
+    ]
 
-    if (this.initialized) {
-      this.throttledFlush();
-    }
   }
 
-  public sendEvent(name: string, data: any = {}): void {
-    this.count("eventTrackerQueue");
-
-    this.eventQueue.push({
-      type: "event",
-      ts: new Date(),
+  @pushEventToQueue()
+  public sendEvent(name: string, data: any = {}): EventParameter {
+    return [
       name,
       data,
-    });
-
-    if (this.initialized) {
-      this.throttledFlush();
-    }
+      new Date(),
+    ];
   }
 
-  public sendImpression(): void {
-    this.count("eventTrackerQueue");
-
-    this.eventQueue.push({type: "impression"})
-
-    if (this.initialized) {
-      this.throttledFlush();
-    }
+  @pushEventToQueue()
+  public sendStartSubscription(): EventParameter {
+    return [];
   }
 
-  public sendRegistration(): void {
-    this.count("eventTrackerQueue");
+  @pushEventToQueue()
+  public sendImpression(): EventParameter {
+    return [];
+  }
 
-    this.eventQueue.push({type: "registration"})
+  @pushEventToQueue()
+  public sendAddPaymentInfo(): EventParameter {
+    return [];
+  }
 
-    if (this.initialized) {
-      this.throttledFlush();
-    }
+  @pushEventToQueue()
+  public sendSignUp(): EventParameter {
+    return [];
+
   }
 }
 

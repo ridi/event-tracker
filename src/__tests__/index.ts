@@ -53,9 +53,10 @@ class TestableTracker extends Tracker {
         trackingId: "TEST"
       },
       twitterOptions: {
-        mainTid: "TEST",
-        productTrackingTid: "TEST",
-        booksRegisterTid: "TEST",
+        mainPid: "TEST",
+        impressionPid: "TEST",
+        booksSignUpPid: "TEST",
+        selectStartSubscriptionPid: "TEST",
       },
       ...additionalOptions
     });
@@ -200,13 +201,13 @@ it("Test TwitterTracker", async () => {
   const t = new TestableTracker({
     twitterOptions: {
       mainTid: "mainTid",
-      selectRegisterTid: "selectRegisterTid",
-      productTrackingTid: "productTrackingTid",
-      booksRegisterTid: "booksRegisterTid"
+      booksSignUpPid: "booksSignUpPid",
+      selectStartSubscriptionPid: "selectStartSubscriptionPid",
+      impressionPid: "impressionPid",
     }
   });
 
-  t.mockingAll(ALL_TRACKERS.excludes(TwitterTracker), ["sendPageView", "sendImpression", "sendRegistration"]);
+  t.mockingAll(ALL_TRACKERS.excludes(TwitterTracker), ["sendPageView", "sendImpression", "sendSignUp", "sendStartSubscription"]);
 
   const trackPidMock = jest.fn();
   const twqMock = jest.fn();
@@ -226,16 +227,17 @@ it("Test TwitterTracker", async () => {
 
   t.sendPageView("href");
   t.sendImpression();
-  t.sendRegistration();
+  t.sendSignUp();
+  t.sendStartSubscription();
+
   jest.runOnlyPendingTimers();
 
 
   expect(twqMock).toHaveBeenCalledWith("track", "pageView");
 
-  expect(trackPidMock).toHaveBeenNthCalledWith(1, "productTrackingTid", {tw_sale_amount: 0, tw_order_quantity: 0});
-  expect(trackPidMock).toHaveBeenNthCalledWith(2, "selectRegisterTid", {tw_sale_amount: 0, tw_order_quantity: 0});
-
-  expect(trackPidMock).not.toHaveBeenCalledWith("booksRegisterTid", {tw_sale_amount: 0, tw_order_quantity: 0});
+  expect(trackPidMock).toHaveBeenNthCalledWith(1, "impressionPid", {tw_sale_amount: 0, tw_order_quantity: 0});
+  expect(trackPidMock).toHaveBeenNthCalledWith(2, "booksSignUpPid", {tw_sale_amount: 0, tw_order_quantity: 0});
+  expect(trackPidMock).toHaveBeenNthCalledWith(3, "selectStartSubscriptionPid", {tw_sale_amount: 0, tw_order_quantity: 0});
 
 
 });
