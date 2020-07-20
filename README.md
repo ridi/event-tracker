@@ -2,7 +2,6 @@
 
 [![npm](https://img.shields.io/npm/v/@ridi/event-tracker.svg)](https://www.npmjs.com/package/@ridi/event-tracker)
 [![Build Status](https://travis-ci.com/ridi/event-tracker.svg?branch=master)](https://travis-ci.com/ridi/event-tracker)
-[![Greenkeeper badge](https://badges.greenkeeper.io/ridi/event-tracker.svg)](https://greenkeeper.io/)
 
 Provides tracking API that helps to send events to various logging services like Google Analytics, RIDI beacon system
 
@@ -47,7 +46,17 @@ const tracker = new Tracker({
   },
   tagManagerOptions: {
     trackingId: "GTM-XXXX00"
+  },
+  kakaoOptions: {
+    trackingId: "12345678"
+  },
+  twitterOptions: {
+    mainPid: "a1234",
+    impressionPid: "b1632",
+    booksSignUpPid: "a1245",
+    selectStartSubscriptionPid: "z1253",
   }
+
 });
 
 tracker.initialize();
@@ -72,7 +81,7 @@ tracker.sendEvent("Purchased", {
 | `development`                  | false    | `boolean`                                                                             | Represents the state of the system environment your application                                                                 |
 | `userId`                       | false    | `string`                                                                              | Logged user's identifier.                                                                                                       |
 | `deviceType`                   | true     | `DeviceType`                                                                          | Type of connected user's device. Please refer `DeviceType` type                                                                 |
-| `serviceProps`                 | false     | `ServiceProp`                                                                        | Additional properties related to specific service. Please refer `ServiceProp` type, which is `Record<string, string>`           |
+| `serviceProps`                 | false    | `ServiceProp`                                                                         | Additional properties related to specific service. Please refer `ServiceProp` type, which is `Record<string, string>`           |
 | `gaOptions`                    | false    | `GAOptions`                                                                           | Options related with Google Analytics tracking module                                                                           |
 | `gaOptions.trackingId`         | true     | `string`                                                                              | GA Tracking ID like `UA-000000-01`.                                                                                             |
 | `gaOptions.pathPrefix`         | flase    | `string`                                                                              | Pathname prefix for manual content grouping.                                                                                    |
@@ -86,10 +95,17 @@ tracker.sendEvent("Purchased", {
 | `tagManagerOptions.trackingId` | true     | `string`                                                                              | Google Tag Manager Tracking ID like `GTM-XXXX00`                                                                                |
 | `gTagOptions`                  | false    | `GTagOptions`                                                                         | Options related with GTag tracking module                                                                                       |
 | `gTagOptions.trackingId`       | true     | `string`                                                                              | GTag Tracking ID like `AW-XXXX00`                                                                                               |
+| `kakaoOptions.trackingId`      | true     | `string`                                                                              | Kakao Pixel Tracking ID                                                                                    |
+| `twitterOptions.mainTid`       | true     | `string`                                                                              | Twitter Pixel universal tag type ID                                                                                           |
+| `twitterOptions.impressionId`  | true     | `string`                                                                              | ID of `impression` event tag
 
 ### `Tracker.initialize()`
 
-`@ridi/event-tracker` must be initialized by using this method before any of the other tracking functions will record any data.
+To use this library correctly, you need to call this method least once either before calling other methods or after.
+
+written event records before calling `initialize`, this records flush after initialized.
+
+
 
 ### `Tracker.sendPageView(href, referrer)`
 
