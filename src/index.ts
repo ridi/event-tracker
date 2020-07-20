@@ -17,7 +17,7 @@ import {
   TwitterOptions,
   TwitterTracker
 } from "./trackers";
-import {BaseTracker, PageMeta, SendEvent} from "./trackers/base";
+import {BaseTracker, EventTracker, PageMeta} from "./trackers/base";
 
 export enum DeviceType {
   PC = "pc",
@@ -49,12 +49,12 @@ export interface ChangeableTrackerOptions {
   serviceProps?: ServiceProp;
 }
 
-type EventParameter = Parameters<SendEvent[keyof SendEvent]>;
-type QueueItem = { consumerMethod: keyof SendEvent } & EventParameter;
+type EventParameter = Parameters<EventTracker[keyof EventTracker]>;
+type QueueItem = { consumerMethod: keyof EventTracker } & EventParameter;
 
 
-function pushEventToQueue(consumerMethodName?: keyof SendEvent) {
-  return (target: any, propertyKey: keyof SendEvent, descriptor: PropertyDescriptor) => {
+function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
+  return (target: any, propertyKey: keyof EventTracker, descriptor: PropertyDescriptor) => {
 
     consumerMethodName = consumerMethodName || propertyKey
 
@@ -62,7 +62,7 @@ function pushEventToQueue(consumerMethodName?: keyof SendEvent) {
 
     descriptor.value = function () {
       const context = this
-      const eventRecord:QueueItem = originalMethod.apply(context, arguments);
+      const eventRecord: QueueItem = originalMethod.apply(context, arguments);
 
       eventRecord.consumerMethod = consumerMethodName;
 

@@ -9,7 +9,7 @@ export interface PageMeta {
   referrer: string;
 }
 
-export interface SendEvent {
+export interface EventTracker {
   sendPageView(pageMeta: PageMeta, ts?: Date): void;
 
   sendEvent(name: string, data?: object, ts?: Date): void;
@@ -24,35 +24,28 @@ export interface SendEvent {
 
 }
 
-export abstract class BaseTracker implements SendEvent {
+export abstract class BaseTracker implements EventTracker {
 
   public mainOptions: MainTrackerOptions;
 
   // tslint:disable:no-empty
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
-
   }
 
   public sendEvent(name: string, data?: object, ts?: Date): void {
-
   }
 
   public sendSignUp(args?: object): void {
-
   }
 
-
   public sendImpression(args?: object): void {
-
   }
 
   public sendStartSubscription(args?: object): void {
-
   }
 
   public sendAddPaymentInfo(args?: object): void {
-
   }
 
   // tslint:enable:no-empty

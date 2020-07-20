@@ -1,6 +1,6 @@
 import {DeviceType, Tracker} from "../index";
 import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker, TwitterTracker} from "../trackers";
-import {BaseTracker, SendEvent} from "../trackers/base";
+import {BaseTracker, EventTracker} from "../trackers/base";
 
 const ALL_TRACKERS = [BeaconTracker, GATracker, PixelTracker, TagManagerTracker, KakaoTracker, TwitterTracker];
 
@@ -75,12 +75,12 @@ class TestableTracker extends Tracker {
   }
 
 
-  public mocking(trackers: Array<new(...args: any[]) => BaseTracker>, methodName: keyof SendEvent, mockImpl: () => void = () => true) {
+  public mocking(trackers: Array<new(...args: any[]) => BaseTracker>, methodName: keyof EventTracker, mockImpl: () => void = () => true) {
     const mockingTargetTrackers = this.getTrackerInstances(...trackers)
     return mockingTargetTrackers.map(t => jest.spyOn(t, methodName).mockImplementation(mockImpl))
   }
 
-  public mockingAll(trackers: Array<new(...args: any[]) => BaseTracker>, methodNames: Array<keyof SendEvent>, mockImpl: () => void = () => true) {
+  public mockingAll(trackers: Array<new(...args: any[]) => BaseTracker>, methodNames: Array<keyof EventTracker>, mockImpl: () => void = () => true) {
     return methodNames.map(m => {
       return this.mocking(trackers, m, mockImpl)
     })
