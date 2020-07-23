@@ -50,7 +50,11 @@ export interface ChangeableTrackerOptions {
 }
 
 type EventParameter = Parameters<EventTracker[keyof EventTracker]>;
-type QueueItem = { consumerMethod: keyof EventTracker } & EventParameter;
+
+interface QueueItem {
+  consumerMethodName: keyof EventTracker
+  eventParams: EventParameter
+}
 
 
 function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
@@ -62,9 +66,12 @@ function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
 
     descriptor.value = function () {
       const context = this
-      const eventRecord: QueueItem = originalMethod.apply(context, arguments);
+      const eventParams: EventParameter = originalMethod.apply(context, arguments);
 
-      eventRecord.consumerMethod = consumerMethodName;
+      const eventRecord: QueueItem = {
+        eventParams,
+        consumerMethodName,
+      }
 
       context.eventQueue.push(eventRecord)
       context.count("eventTrackerQueue")
@@ -170,10 +177,8 @@ export class Tracker {
     }
     while (queue.length) {
       const item = queue.shift();
-      const methodName = item.consumerMethod;
-      delete item.consumerMethod;
 
-      this.runTrackersMethod(methodName, item);
+      this.runTrackersMethod(item);
 
     }
     if (this.options.debug) {
@@ -181,13 +186,13 @@ export class Tracker {
     }
   }
 
-  private runTrackersMethod(methodName: string, item: any): void {
+  private runTrackersMethod(item: QueueItem): void {
     this.initializedTrackers().forEach(t => {
-      const trackerMethod = (t as any)[methodName];
-      const args = Object.values(item);
+      const trackerMethod = (t as any)[item.consumerMethodName];
+      const args = Object.values(item.eventParams);
       trackerMethod.apply(t, args);
 
-      this.logEvent(methodName, args);
+      this.logEvent(item.consumerMethodName, args);
       this.count("eventTrackerSent");
     });
   }
