@@ -24,19 +24,19 @@ export class KakaoTracker extends BaseTracker {
     return typeof this.tracker === "object";
   }
 
-  public sendPageView(pageMeta: PageMeta): void {
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.tracker.pageView();
   }
 
-  public sendSignUp(args: object = {}): void {
+  public sendSignUp(args: object = {}, ts?: Date): void {
     this.tracker.completeRegistration();
   }
 
-  public sendStartSubscription(args?: object): void {
+  public sendStartSubscription(args?: object, ts?: Date): void {
     this.tracker.signUp();
   }
 
-  public sendImpression(args: object = {}): void {
+  public sendImpression(args: object = {}, ts?: Date): void {
     this.tracker.viewContent();
   }
 

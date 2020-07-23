@@ -26,7 +26,7 @@ export class PixelTracker extends BaseTracker {
     return typeof fbq === "function";
   }
 
-  public sendPageView(pageMeta: PageMeta): void {
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     if (!this.initialPageViewEventFired) {
       // Pixel automatically tracks route changes itself.
       // So we don't need to evaluate this block for every call.

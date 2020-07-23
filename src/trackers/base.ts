@@ -14,13 +14,13 @@ export interface EventTracker {
 
   sendEvent(name: string, data?: object, ts?: Date): void;
 
-  sendSignUp(args?: object): void;
+  sendSignUp(args?: object, ts?: Date): void;
 
-  sendStartSubscription(args?: object): void;
+  sendStartSubscription(args?: object, ts?:Date ): void;
 
-  sendImpression(args?: object): void;
+  sendImpression(args?: object, ts?:Date): void;
 
-  sendAddPaymentInfo(args?: object): void;
+  sendAddPaymentInfo(args?: object, ts?:Date): void;
 
 }
 
@@ -36,16 +36,16 @@ export abstract class BaseTracker implements EventTracker {
   public sendEvent(name: string, data?: object, ts?: Date): void {
   }
 
-  public sendSignUp(args?: object): void {
+  public sendSignUp(args?: object, ts?:Date): void {
   }
 
-  public sendImpression(args?: object): void {
+  public sendImpression(args?: object, ts?:Date): void {
   }
 
-  public sendStartSubscription(args?: object): void {
+  public sendStartSubscription(args?: object, ts?:Date): void {
   }
 
-  public sendAddPaymentInfo(args?: object): void {
+  public sendAddPaymentInfo(args?: object, ts?:Date): void {
   }
 
   // tslint:enable:no-empty

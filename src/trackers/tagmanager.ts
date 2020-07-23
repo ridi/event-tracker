@@ -1,7 +1,7 @@
-import { MainTrackerOptions } from "..";
+import {MainTrackerOptions} from "..";
 
-import { loadTagManager } from "../utils/externalServices";
-import { BaseTracker, PageMeta } from "./base";
+import {loadTagManager} from "../utils/externalServices";
+import {BaseTracker, PageMeta} from "./base";
 
 export interface TagManagerOptions {
   trackingId: string;
@@ -17,6 +17,7 @@ export class TagManagerTracker extends BaseTracker {
   constructor(private options: TagManagerOptions) {
     super();
   }
+
   private tagCalled = false;
 
   private get dataLayer() {
@@ -49,11 +50,11 @@ export class TagManagerTracker extends BaseTracker {
     return this.tagCalled;
   }
 
-  public sendPageView(pageMeta: PageMeta): void {
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.sendEvent("Page View", pageMeta);
   }
 
-  public sendEvent(name: string, data: object = {}): void {
+  public sendEvent(name: string, data: object = {}, ts?: Date): void {
     this.dataLayer.push({
       event: name,
       data

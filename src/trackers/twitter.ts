@@ -34,20 +34,24 @@ export class TwitterTracker extends BaseTracker {
     return typeof this.twq === "function" && typeof this.twttr === "object";
   }
 
-  public sendPageView(pageMeta: PageMeta): void {
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.twq("track", "pageView");
   }
 
-  public sendSignUp(args: object = {}): void {
+  public sendSignUp(args: object = {}, ts?: Date): void {
     this.twttr.conversion.trackPid(this.options.booksSignUpPid, {tw_sale_amount: 0, tw_order_quantity: 0});
   }
 
-  public sendStartSubscription(args?: object): void {
+  public sendStartSubscription(args?: object, ts?: Date): void {
     this.twttr.conversion.trackPid(this.options.selectStartSubscriptionPid, {tw_sale_amount: 0, tw_order_quantity: 0});
   }
 
-  public sendImpression(args: object = {}): void {
+  public sendImpression(args: object = {}, ts?: Date): void {
     this.twttr.conversion.trackPid(this.options.impressionPid, {tw_sale_amount: 0, tw_order_quantity: 0})
+  }
+
+  public abcd(args?:unknown): void {
+    this.sendImpression(new Date())
   }
 }
 

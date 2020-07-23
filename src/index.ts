@@ -54,6 +54,7 @@ type EventParameter = Parameters<EventTracker[keyof EventTracker]>;
 interface QueueItem {
   consumerMethodName: keyof EventTracker
   eventParams: EventParameter
+  ts: Date
 }
 
 
@@ -67,10 +68,10 @@ function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
     descriptor.value = function () {
       const context = this
       const eventParams: EventParameter = originalMethod.apply(context, arguments);
-
       const eventRecord: QueueItem = {
         eventParams,
         consumerMethodName,
+        ts: new Date()
       }
 
       context.eventQueue.push(eventRecord)
@@ -187,9 +188,14 @@ export class Tracker {
   }
 
   private runTrackersMethod(item: QueueItem): void {
+    item.eventParams.push(item.ts)
+
+
     this.initializedTrackers().forEach(t => {
-      const trackerMethod = (t as any)[item.consumerMethodName];
+      const trackerMethod = (t)[item.consumerMethodName];
       const args = Object.values(item.eventParams);
+
+      console.log(args);
       trackerMethod.apply(t, args);
 
       this.logEvent(item.consumerMethodName, args);
@@ -235,7 +241,6 @@ export class Tracker {
 
     return [
       pageMeta,
-      new Date(),
     ]
 
   }
@@ -245,7 +250,6 @@ export class Tracker {
     return [
       name,
       data,
-      new Date(),
     ];
   }
 
