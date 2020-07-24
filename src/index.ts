@@ -49,11 +49,11 @@ export interface ChangeableTrackerOptions {
   serviceProps?: ServiceProp;
 }
 
-type EventParameter = Parameters<EventTracker[keyof EventTracker]>;
+type EventParameters = Parameters<EventTracker[keyof EventTracker]>;
 
 interface QueueItem {
   consumerMethodName: keyof EventTracker
-  eventParams: EventParameter
+  eventParams: EventParameters
   ts: Date
 }
 
@@ -67,7 +67,7 @@ function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
 
     descriptor.value = function () {
       const context = this
-      const eventParams: EventParameter = originalMethod.apply(context, arguments);
+      const eventParams: EventParameters = originalMethod.apply(context, arguments);
       const eventRecord: QueueItem = {
         eventParams,
         consumerMethodName,
@@ -236,7 +236,7 @@ export class Tracker {
   }
 
   @pushEventToQueue()
-  public sendPageView(href: string, referrer?: string): EventParameter {
+  public sendPageView(href: string, referrer?: string): EventParameters {
     const pageMeta = this.getPageMeta(href, referrer);
 
     return [
@@ -246,7 +246,7 @@ export class Tracker {
   }
 
   @pushEventToQueue()
-  public sendEvent(name: string, data: any = {}): EventParameter {
+  public sendEvent(name: string, data: any = {}): EventParameters {
     return [
       name,
       data,
@@ -254,22 +254,22 @@ export class Tracker {
   }
 
   @pushEventToQueue()
-  public sendStartSubscription(): EventParameter {
+  public sendStartSubscription(): EventParameters {
     return [];
   }
 
   @pushEventToQueue()
-  public sendImpression(): EventParameter {
+  public sendImpression(): EventParameters {
     return [];
   }
 
   @pushEventToQueue()
-  public sendAddPaymentInfo(): EventParameter {
+  public sendAddPaymentInfo(): EventParameters {
     return [];
   }
 
   @pushEventToQueue()
-  public sendSignUp(): EventParameter {
+  public sendSignUp(): EventParameters {
     return [];
 
   }
