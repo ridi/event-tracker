@@ -1,10 +1,22 @@
 import {loadKakao} from "../utils/externalServices";
 import {BaseTracker, PageMeta} from "./base";
 
-declare var kakaoPixel: any;
+declare var kakaoPixel: (trackingId: string) => KakaoPixel;
 
 export interface KakaoOptions {
   trackingId: string;
+}
+
+declare global {
+  interface KakaoPixel {
+    pageView(...fields: any[]): void;
+
+    completeRegistration(...fields: any[]): void;
+
+    signUp(...fields: any[]): void;
+
+    viewContent(...fields: any[]): void;
+  }
 }
 
 export class KakaoTracker extends BaseTracker {
@@ -13,7 +25,7 @@ export class KakaoTracker extends BaseTracker {
     super();
   }
 
-  private tracker: any;
+  private tracker: KakaoPixel;
 
   public async initialize(): Promise<void> {
     await loadKakao();
