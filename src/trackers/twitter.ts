@@ -12,6 +12,7 @@ export interface TwitterOptions {
   impressionPid: string;
 }
 
+
 export class TwitterTracker extends BaseTracker {
 
   constructor(private options: TwitterOptions) {
@@ -49,9 +50,6 @@ export class TwitterTracker extends BaseTracker {
   public sendImpression(args: object = {}, ts?: Date): void {
     this.twttr.conversion.trackPid(this.options.impressionPid, {tw_sale_amount: 0, tw_order_quantity: 0})
   }
-
-  public abcd(args?:unknown): void {
-    this.sendImpression(new Date())
-  }
+  
 }
 
