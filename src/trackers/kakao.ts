@@ -29,7 +29,7 @@ export class KakaoTracker extends BaseTracker {
 
   public async initialize(): Promise<void> {
     await loadKakao();
-    this.tracker = kakaoPixel(this.options.trackingId)
+    this.tracker = kakaoPixel(this.options.trackingId);
   }
 
   public isInitialized(): boolean {

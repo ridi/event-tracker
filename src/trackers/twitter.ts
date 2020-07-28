@@ -26,7 +26,7 @@ export class TwitterTracker extends BaseTracker {
 
   public async initialize(): Promise<void> {
     await Promise.all([loadTwitterUniversal(), loadTwitterTag()]);
-    this.twq = twq
+    this.twq = twq;
     this.twttr = twttr;
     this.twq("init", this.options.mainPid);
   }
@@ -48,7 +48,7 @@ export class TwitterTracker extends BaseTracker {
   }
 
   public sendImpression(args: object = {}, ts?: Date): void {
-    this.twttr.conversion.trackPid(this.options.impressionPid, {tw_sale_amount: 0, tw_order_quantity: 0})
+    this.twttr.conversion.trackPid(this.options.impressionPid, {tw_sale_amount: 0, tw_order_quantity: 0});
   }
   
 }

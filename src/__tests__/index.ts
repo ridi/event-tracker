@@ -12,13 +12,13 @@ declare global {
 
 if (!Array.prototype.excludes) {
   Array.prototype.excludes = function <T>(...elements: T[]): T[] {
-    return this.filter((e: T) => !elements.includes(e))
-  }
+    return this.filter((e: T) => !elements.includes(e));
+  };
 }
 
 beforeAll(() => {
   ALL_TRACKERS.forEach((t) => t.prototype.isInitialized = () => true);
-})
+});
 
 beforeEach(() => {
   document.body.innerHTML = "<script />";
@@ -27,7 +27,7 @@ beforeEach(() => {
 
 afterEach(() => {
   jest.restoreAllMocks();
-})
+});
 
 class TestableTracker extends Tracker {
   constructor(additionalOptions: object = {}) {
@@ -64,26 +64,26 @@ class TestableTracker extends Tracker {
 
   private getTrackerInstances(...trackers: Array<new(...args: any[]) => BaseTracker>): BaseTracker[] {
     const isGivenTrackers = (t: BaseTracker) => {
-      return trackers.some(useTracker => (t instanceof useTracker))
-    }
+      return trackers.some(useTracker => (t instanceof useTracker));
+    };
 
-    return this.trackers.filter(isGivenTrackers)
+    return this.trackers.filter(isGivenTrackers);
   }
 
   public getTrackerInstance(trackerType: new(...args: any[]) => BaseTracker): BaseTracker {
-    return this.trackers.find(t => (t instanceof trackerType))
+    return this.trackers.find(t => (t instanceof trackerType));
   }
 
 
   public mocking(trackers: Array<new(...args: any[]) => BaseTracker>, methodName: keyof EventTracker, mockImpl: () => void = () => true) {
-    const mockingTargetTrackers = this.getTrackerInstances(...trackers)
-    return mockingTargetTrackers.map(t => jest.spyOn(t, methodName).mockImplementation(mockImpl))
+    const mockingTargetTrackers = this.getTrackerInstances(...trackers);
+    return mockingTargetTrackers.map(t => jest.spyOn(t, methodName).mockImplementation(mockImpl));
   }
 
   public mockingAll(trackers: Array<new(...args: any[]) => BaseTracker>, methodNames: Array<keyof EventTracker>, mockImpl: () => void = () => true) {
     return methodNames.map(m => {
-      return this.mocking(trackers, m, mockImpl)
-    })
+      return this.mocking(trackers, m, mockImpl);
+    });
   }
 }
 
@@ -165,7 +165,7 @@ it("sends events both before and after initialize", async () => {
       "path": "/home",
       "query_params": {},
       "referrer": "https://google.com/search?q=localhost"
-    }, expect.any(Date))
+    }, expect.any(Date));
     expect(mock).toHaveBeenNthCalledWith(2, {
       "device": "mobile",
       "href": "https://localhost/search?q=abc",
@@ -173,7 +173,7 @@ it("sends events both before and after initialize", async () => {
       "path": "/search",
       "query_params": {"q": "abc"},
       "referrer": "https://localhost/home"
-    }, expect.any(Date))
+    }, expect.any(Date));
   });
 });
 
@@ -212,7 +212,7 @@ it("Test TwitterTracker", async () => {
   const trackPidMock = jest.fn();
   const twqMock = jest.fn();
 
-  const twitterTracker = t.getTrackerInstance(TwitterTracker)
+  const twitterTracker = t.getTrackerInstance(TwitterTracker);
   // @ts-ignore
   twitterTracker.twttr = {conversion: {}}, twitterTracker.twttr.conversion.trackPid = trackPidMock;
 

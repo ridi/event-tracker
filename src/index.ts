@@ -25,7 +25,7 @@ export enum DeviceType {
   Paper = "paper"
 }
 
-export type ServiceProp = Record<string, string>
+export type ServiceProp = Record<string, string>;
 
 export interface MainTrackerOptions {
   debug?: boolean;
@@ -52,38 +52,38 @@ export interface ChangeableTrackerOptions {
 type EventParameters = Parameters<EventTracker[keyof EventTracker]>;
 
 interface QueueItem {
-  consumerMethodName: keyof EventTracker
-  eventParams: EventParameters
-  ts: Date
+  consumerMethodName: keyof EventTracker;
+  eventParams: EventParameters;
+  ts: Date;
 }
 
 
 function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
   return (target: any, propertyKey: keyof EventTracker, descriptor: PropertyDescriptor) => {
 
-    consumerMethodName = consumerMethodName || propertyKey
+    consumerMethodName = consumerMethodName || propertyKey;
 
     const originalMethod = descriptor.value;
 
     descriptor.value = function () {
-      const context = this
+      const context = this;
       const eventParams: EventParameters = originalMethod.apply(context, arguments);
       const eventRecord: QueueItem = {
         eventParams,
         consumerMethodName,
         ts: new Date()
-      }
+      };
 
-      context.eventQueue.push(eventRecord)
-      context.count("eventTrackerQueue")
+      context.eventQueue.push(eventRecord);
+      context.count("eventTrackerQueue");
 
       if (context.initialized) {
         context.throttledFlush();
       }
-    }
+    };
 
     return descriptor;
-  }
+  };
 }
 
 export class Tracker {
@@ -167,7 +167,7 @@ export class Tracker {
 
   private count(key: string): void {
     if (this.options.debug) {
-      document.body.dataset[key] = String(Number(document.body.dataset[key] || 0) + 1)
+      document.body.dataset[key] = String(Number(document.body.dataset[key] || 0) + 1);
     }
   }
 
@@ -188,7 +188,7 @@ export class Tracker {
   }
 
   private runTrackersMethod(item: QueueItem): void {
-    item.eventParams.push(item.ts)
+    item.eventParams.push(item.ts);
 
 
     this.initializedTrackers().forEach(t => {
@@ -241,7 +241,7 @@ export class Tracker {
 
     return [
       pageMeta,
-    ]
+    ];
 
   }
 

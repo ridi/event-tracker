@@ -4,21 +4,21 @@ const gaElems: any = {};
 function addScriptLoadListener(scriptElement: HTMLScriptElement): Promise<void> {
   const listener = new Promise<void>((resolve) => {
     const callback = () => {
-      scriptElement.removeEventListener('load', callback)
-      resolve()
-    }
+      scriptElement.removeEventListener('load', callback);
+      resolve();
+    };
 
-    scriptElement.addEventListener('load', callback)
-  })
+    scriptElement.addEventListener('load', callback);
+  });
 
   const timeout = new Promise<void>((_, reject) => {
       setTimeout(() => {
-        reject("Failed to load Script.")
-      }, 5000)
+        reject("Failed to load Script.");
+      }, 5000);
     }
-  )
+  );
 
-  return Promise.race([listener, timeout])
+  return Promise.race([listener, timeout]);
 
 }
 
