@@ -4,7 +4,8 @@ module.exports = {
     'tslint-config-prettier',
   ],
   'rules': {
-    'no-console': false
+    'no-console': false,
+    'semicolon': [true, 'always']
   },
   'linterOptions': {
     'exclude': [

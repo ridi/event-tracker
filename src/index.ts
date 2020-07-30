@@ -8,12 +8,16 @@ import {
   GATracker,
   GTagOptions,
   GTagTracker,
+  KakaoOptions,
+  KakaoTracker,
   PixelOptions,
   PixelTracker,
   TagManagerOptions,
-  TagManagerTracker
+  TagManagerTracker,
+  TwitterOptions,
+  TwitterTracker
 } from "./trackers";
-import { BaseTracker, PageMeta } from "./trackers/base";
+import {BaseTracker, EventTracker, PageMeta} from "./trackers/base";
 
 export enum DeviceType {
   PC = "pc",
@@ -21,7 +25,7 @@ export enum DeviceType {
   Paper = "paper"
 }
 
-export type ServiceProp = Record<string, string>
+export type ServiceProp = Record<string, string>;
 
 export interface MainTrackerOptions {
   debug?: boolean;
@@ -35,6 +39,8 @@ export interface MainTrackerOptions {
   tagManagerOptions?: TagManagerOptions;
   gTagOptions?: GTagOptions;
   throttleWait?: number;
+  kakaoOptions?: KakaoOptions;
+  twitterOptions?: TwitterOptions;
 }
 
 export interface ChangeableTrackerOptions {
@@ -43,24 +49,47 @@ export interface ChangeableTrackerOptions {
   serviceProps?: ServiceProp;
 }
 
-interface PageViewQueueItem {
-  type: "pageview";
+type EventParameters = Parameters<EventTracker[keyof EventTracker]>;
+
+interface QueueItem {
+  consumerMethodName: keyof EventTracker;
+  eventParams: EventParameters;
   ts: Date;
-  href: string;
-  referrer?: string;
 }
 
-interface EventQueueItem {
-  type: "event";
-  ts: Date;
-  name: string;
-  data: any;
-}
 
-type QueueItem = PageViewQueueItem | EventQueueItem;
+function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
+  return (target: any, propertyKey: keyof EventTracker, descriptor: PropertyDescriptor) => {
+
+    consumerMethodName = consumerMethodName || propertyKey;
+
+    const originalMethod = descriptor.value;
+
+    descriptor.value = function () {
+      const context = this;
+      const eventParams: EventParameters = originalMethod.apply(context, arguments);
+      const eventRecord: QueueItem = {
+        eventParams,
+        consumerMethodName,
+        ts: new Date()
+      };
+
+      context.eventQueue.push(eventRecord);
+      context.count("eventTrackerQueue");
+
+      if (context.initialized) {
+        context.throttledFlush();
+      }
+    };
+
+    return descriptor;
+  };
+}
 
 export class Tracker {
+
   constructor(private options: MainTrackerOptions) {
+
     if (options.gaOptions) {
       this.trackers.push(new GATracker(options.gaOptions));
     }
@@ -77,20 +106,33 @@ export class Tracker {
       this.trackers.push(new GTagTracker(options.gTagOptions));
     }
 
+    if (options.kakaoOptions) {
+      this.trackers.push(new KakaoTracker(options.kakaoOptions));
+    }
+
+    if (options.twitterOptions) {
+      this.trackers.push(new TwitterTracker(options.twitterOptions));
+    }
+
     for (const tracker of this.trackers) {
       tracker.setMainOptions(options);
     }
 
+
     this.throttledFlush = throttle(() => this.flush(), options.throttleWait || 1000);
   }
-
-  private trackers: BaseTracker[] = [];
 
   private eventQueue: QueueItem[] = [];
 
   private initialized = false;
 
-  private throttledFlush: () => void;
+  private readonly throttledFlush: () => void;
+
+  protected trackers: BaseTracker[] = [];
+
+  private initializedTrackers(): BaseTracker[] {
+    return this.trackers.filter(t => t.isInitialized());
+  }
 
   private getPageMeta(href: string, referrer: string = ""): PageMeta {
     const url = new URL(href, {}, true);
@@ -125,7 +167,7 @@ export class Tracker {
 
   private count(key: string): void {
     if (this.options.debug) {
-      document.body.dataset[key] = String(Number(document.body.dataset[key] || 0) + 1)
+      document.body.dataset[key] = String(Number(document.body.dataset[key] || 0) + 1);
     }
   }
 
@@ -136,39 +178,31 @@ export class Tracker {
     }
     while (queue.length) {
       const item = queue.shift();
-      switch (item.type) {
-        case "pageview":
-          this.doSendPageView(item as PageViewQueueItem);
-          break;
-        case "event":
-          this.doSendEvent(item as EventQueueItem);
-          break;
-      }
+
+      this.runTrackersMethod(item);
+
     }
     if (this.options.debug) {
       console.groupEnd();
     }
   }
 
-  private doSendPageView(item: PageViewQueueItem): void {
-    const pageMeta = this.getPageMeta(item.href, item.referrer);
+  private runTrackersMethod(item: QueueItem): void {
+    item.eventParams.push(item.ts);
 
-    for (const tracker of this.trackers) {
-      tracker.sendPageView(pageMeta, item.ts);
-    }
 
-    this.logEvent("PageView", pageMeta);
-    this.count("eventTrackerSent");
+    this.initializedTrackers().forEach(t => {
+      const trackerMethod = (t)[item.consumerMethodName];
+      const args = Object.values(item.eventParams);
+
+      console.log(args);
+      trackerMethod.apply(t, args);
+
+      this.logEvent(item.consumerMethodName, args);
+      this.count("eventTrackerSent");
+    });
   }
 
-  private doSendEvent(item: EventQueueItem): void {
-    for (const tracker of this.trackers) {
-      tracker.sendEvent(item.name, item.data, item.ts);
-    }
-
-    this.logEvent(`Event:${item.name}`, item.data);
-    this.count("eventTrackerSent");
-  }
 
   public set(options: ChangeableTrackerOptions): void {
     this.options = {
@@ -181,15 +215,15 @@ export class Tracker {
     }
   }
 
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     this.log("Initialize");
 
-    for (const tracker of this.trackers) {
-      if (tracker.isInitialized()) {
-        continue;
-      }
-      tracker.initialize();
-    }
+    await Promise.all(
+      this.trackers
+        .filter((t) => !t.isInitialized())
+        .map((t) => t.initialize())
+        .map((p) => p.catch(error => null))
+    );
 
     if (!this.initialized) {
       this.flush();
@@ -198,35 +232,47 @@ export class Tracker {
       });
       this.initialized = true;
     }
+
   }
 
-  public sendPageView(href: string, referrer?: string): void {
-    this.count("eventTrackerQueue");
+  @pushEventToQueue()
+  public sendPageView(href: string, referrer?: string): EventParameters {
+    const pageMeta = this.getPageMeta(href, referrer);
 
-    this.eventQueue.push({
-      type: "pageview",
-      ts: new Date(),
-      href,
-      referrer,
-    });
+    return [
+      pageMeta,
+    ];
 
-    if (this.initialized) {
-      this.throttledFlush();
-    }
   }
 
-  public sendEvent(name: string, data: any = {}): void {
-    this.count("eventTrackerQueue");
-
-    this.eventQueue.push({
-      type: "event",
-      ts: new Date(),
+  @pushEventToQueue()
+  public sendEvent(name: string, data: any = {}): EventParameters {
+    return [
       name,
       data,
-    });
+    ];
+  }
 
-    if (this.initialized) {
-      this.throttledFlush();
-    }
+  @pushEventToQueue()
+  public sendStartSubscription(): EventParameters {
+    return [];
+  }
+
+  @pushEventToQueue()
+  public sendImpression(): EventParameters {
+    return [];
+  }
+
+  @pushEventToQueue()
+  public sendAddPaymentInfo(): EventParameters {
+    return [];
+  }
+
+  @pushEventToQueue()
+  public sendSignUp(): EventParameters {
+    return [];
+
   }
 }
+
+

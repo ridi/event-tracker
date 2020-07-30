@@ -1,4 +1,4 @@
-import { DeviceType, MainTrackerOptions } from "../index";
+import {DeviceType, MainTrackerOptions} from "../index";
 
 export interface PageMeta {
   page: string;
@@ -9,22 +9,54 @@ export interface PageMeta {
   referrer: string;
 }
 
-export abstract class BaseTracker {
+export interface EventTracker {
+  sendPageView(pageMeta: PageMeta, ts?: Date): void;
+
+  sendEvent(name: string, data?: object, ts?: Date): void;
+
+  sendSignUp(args?: object, ts?: Date): void;
+
+  sendStartSubscription(args?: object, ts?:Date ): void;
+
+  sendImpression(args?: object, ts?:Date): void;
+
+  sendAddPaymentInfo(args?: object, ts?:Date): void;
+
+}
+
+export abstract class BaseTracker implements EventTracker {
+
   public mainOptions: MainTrackerOptions;
+
+  // tslint:disable:no-empty
+
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
+  }
+
+  public sendEvent(name: string, data?: object, ts?: Date): void {
+  }
+
+  public sendSignUp(args?: object, ts?:Date): void {
+  }
+
+  public sendImpression(args?: object, ts?:Date): void {
+  }
+
+  public sendStartSubscription(args?: object, ts?:Date): void {
+  }
+
+  public sendAddPaymentInfo(args?: object, ts?:Date): void {
+  }
+
+  // tslint:enable:no-empty
 
   public abstract isInitialized(): boolean;
 
-  public abstract initialize(): void;
+  public async abstract initialize(): Promise<void>;
 
   public setMainOptions(newOptions: MainTrackerOptions): void {
     this.mainOptions = newOptions;
   }
 
-  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
-    // Default behavior
-  }
 
-  public sendEvent(name: string, data: object = {}, ts?: Date): void {
-    // Default behavior
-  }
 }

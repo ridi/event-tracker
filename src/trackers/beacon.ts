@@ -63,7 +63,7 @@ export class BeaconTracker extends BaseTracker {
     fetch(this.makeBeaconURL(log));
   }
 
-  public initialize(): void {
+  public async initialize(): Promise<void> {
     this.ruid = new UIDFactory(RUID).getOrCreate();
   }
 

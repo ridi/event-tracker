@@ -1,5 +1,5 @@
-import { loadPixel } from "../utils/externalServices";
-import { BaseTracker, PageMeta } from "./base";
+import {loadPixel} from "../utils/externalServices";
+import {BaseTracker, PageMeta} from "./base";
 
 export interface PixelOptions {
   pixelId: string | string[];
@@ -12,8 +12,8 @@ export class PixelTracker extends BaseTracker {
 
   private initialPageViewEventFired = false;
 
-  public initialize(): void {
-    loadPixel();
+  public async initialize(): Promise<void> {
+    await loadPixel();
     const pixelIds =
       typeof this.options.pixelId === "string"
         ? [this.options.pixelId]
@@ -26,7 +26,7 @@ export class PixelTracker extends BaseTracker {
     return typeof fbq === "function";
   }
 
-  public sendPageView(pageMeta: PageMeta): void {
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     if (!this.initialPageViewEventFired) {
       // Pixel automatically tracks route changes itself.
       // So we don't need to evaluate this block for every call.
