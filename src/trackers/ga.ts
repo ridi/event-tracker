@@ -73,4 +73,8 @@ export class GATracker extends BaseTracker {
     }
     ga("send", fields);
   }
+
+  public sendSignUp(args?: object, ts?: Date) {
+    this.sendEvent("",{category: "Ecommerce", action: "Click", label: "SignUp Complete"}, ts);
+  }
 }

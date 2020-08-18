@@ -86,6 +86,10 @@ export class BeaconTracker extends BaseTracker {
 
     this.sendBeacon(name, this.lastPageMeta, data, ts);
   }
+
+  public sendSignUp(args?: object, ts?: Date):void {
+    this.sendEvent("SignUp Complete");
+  }
 }
 
 enum BeaconEventName {

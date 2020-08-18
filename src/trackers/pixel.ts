@@ -37,4 +37,8 @@ export class PixelTracker extends BaseTracker {
       fbq("track", "PageView");
     }
   }
+
+  public sendSignUp(args?: object, ts?: Date) {
+    fbq("track", "CompleteRegistration");
+  }
 }
