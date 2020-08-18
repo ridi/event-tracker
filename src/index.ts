@@ -195,7 +195,6 @@ export class Tracker {
       const trackerMethod = (t)[item.consumerMethodName];
       const args = Object.values(item.eventParams);
 
-      console.log(args);
       trackerMethod.apply(t, args);
 
       this.logEvent(item.consumerMethodName, args);
