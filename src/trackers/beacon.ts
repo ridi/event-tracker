@@ -72,8 +72,15 @@ export class BeaconTracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
+    pageMeta = Object.assign({}, pageMeta);
+
     this.pvid = new UIDFactory(PVID).create();
-    this.sendBeacon(BeaconEventName.PageView, pageMeta, this.mainOptions.serviceProps, ts);
+    const pageViewMeta = Object.assign(this.mainOptions.serviceProps,{href: pageMeta.href, referrer: pageMeta.referrer});
+
+    delete pageMeta.href;
+    delete pageMeta.referrer;
+
+    this.sendBeacon(BeaconEventName.PageView, pageMeta, pageViewMeta , ts);
     this.lastPageMeta = pageMeta;
   }
 

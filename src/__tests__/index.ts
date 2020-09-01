@@ -1,4 +1,4 @@
-import {DeviceType, Tracker} from "../index";
+import {DeviceType, MainTrackerOptions, Tracker} from "../index";
 import {BeaconTracker, GATracker, KakaoTracker, PixelTracker, TagManagerTracker, TwitterTracker} from "../trackers";
 import {BaseTracker, EventTracker} from "../trackers/base";
 
@@ -30,7 +30,7 @@ afterEach(() => {
 });
 
 class TestableTracker extends Tracker {
-  constructor(additionalOptions: object = {}) {
+  constructor(additionalOptions?: Partial<MainTrackerOptions>) {
     super({
       deviceType: DeviceType.Mobile,
       serviceProps: {
@@ -88,52 +88,6 @@ class TestableTracker extends Tracker {
 }
 
 
-it("BeaconTracker sends PageView event with serviceProps", async () => {
-  const dummpyPageMeta = {
-    "device": "mobile",
-    "href": "https://localhost/home?q=localhost&adult_exclude=true",
-    "page": "home",
-    "path": "/home",
-    "query_params": {"adult_exclude": "true", "q": "localhost"},
-    "referrer": "https://google.com/search?q=localhost"
-  };
-
-  const t = new TestableTracker();
-
-  t.mocking(ALL_TRACKERS.excludes(BeaconTracker), "sendPageView");
-
-  const href = "https://localhost/home?q=localhost&adult_exclude=true";
-  const referrer = "https://google.com/search?q=localhost";
-  await t.initialize();
-
-  const sendBeaconMock = jest.fn();
-  // @ts-ignore
-  BeaconTracker.prototype.sendBeacon = sendBeaconMock;
-  t.sendPageView(href, referrer);
-
-  jest.runOnlyPendingTimers();
-  expect(sendBeaconMock).toHaveBeenCalledWith("pageView", dummpyPageMeta, {"prop1": "value1", "prop2": "value2"}, expect.any(Date));
-
-});
-
-
-it("sends PageView event with all tracking providers", async () => {
-  const t = new TestableTracker();
-  const mocks = t.mocking(ALL_TRACKERS, "sendPageView");
-
-
-  const href = "https://localhost/home";
-  const referrer = "https://google.com/search?q=localhost";
-
-  await t.initialize();
-  t.sendPageView(href, referrer);
-
-  jest.runOnlyPendingTimers();
-  mocks.forEach(mock => {
-    expect(mock).toBeCalledTimes(1);
-  });
-});
-
 it("sends events both before and after initialize", async () => {
 
   const t = new TestableTracker();
@@ -177,6 +131,81 @@ it("sends events both before and after initialize", async () => {
   });
 });
 
+it("sends PageView event with all tracking providers", async () => {
+  const t = new TestableTracker();
+  const mocks = t.mocking(ALL_TRACKERS, "sendPageView");
+
+
+  const href = "https://localhost/home";
+  const referrer = "https://google.com/search?q=localhost";
+
+  await t.initialize();
+  t.sendPageView(href, referrer);
+
+  jest.runOnlyPendingTimers();
+  mocks.forEach(mock => {
+    expect(mock).toBeCalledTimes(1);
+  });
+});
+
+it("BeaconTracker sends PageView event with serviceProps, href and referrer", async () => {
+
+  const href = "https://localhost/home?q=localhost&adult_exclude=true";
+  const referrer = "https://google.com/search?q=localhost";
+
+  const dummpyPageMeta = {
+    "device": "mobile",
+    "page": "home",
+    "path": "/home",
+    "query_params": {"adult_exclude": "true", "q": "localhost"},
+    href,
+    referrer,
+  };
+
+  const dummyBeaconUrl = "https://dummy-beacon.test";
+
+  const t = new TestableTracker(
+    {
+      beaconOptions: {
+        use: true,
+        beaconSrc: dummyBeaconUrl,
+      }
+    }
+  );
+
+
+  t.mocking(ALL_TRACKERS.excludes(BeaconTracker), "sendPageView");
+
+
+  await t.initialize();
+
+  const beaconTracker = t.getTrackerInstance(BeaconTracker);
+  await beaconTracker.initialize();
+
+  const sendBeaconMock = jest.fn();
+
+  // @ts-ignore
+  beaconTracker.sendBeacon = sendBeaconMock;
+
+  t.sendPageView(href, referrer);
+
+  jest.runOnlyPendingTimers();
+
+  delete dummpyPageMeta.referrer;
+  delete dummpyPageMeta.href;
+
+  expect(sendBeaconMock).toHaveBeenCalledWith("pageView",
+    dummpyPageMeta,
+    {
+      href,
+      referrer,
+      "prop1": "value1",
+      "prop2": "value2"
+    },
+    expect.any(Date))
+  ;
+});
+
 it("GATracker should send pageview event", async () => {
   const t = new TestableTracker();
   t.mocking(ALL_TRACKERS.excludes(GATracker), "sendPageView");
@@ -200,7 +229,7 @@ it("Test TwitterTracker", async () => {
 
   const t = new TestableTracker({
     twitterOptions: {
-      mainTid: "mainTid",
+      mainPid: "mainPid",
       booksSignUpPid: "booksSignUpPid",
       selectStartSubscriptionPid: "selectStartSubscriptionPid",
       impressionPid: "impressionPid",
