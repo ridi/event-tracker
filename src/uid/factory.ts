@@ -1,7 +1,6 @@
-import Cookies from "js-cookie";
-import now from "performance-now";
-import { BaseUID } from "./base";
-
+import Cookies from 'js-cookie';
+import now from 'performance-now';
+import { BaseUID } from './base';
 
 export class UIDFactory {
   constructor(protected UIDClass: typeof BaseUID) {}
@@ -23,11 +22,13 @@ export class UIDFactory {
       this.UIDClass.type
     }-4xxx-yxxx-xxxxxxxxxxxx`.replace(/[xy]/g, c => {
       // tslint:disable-next-line:no-bitwise
+
       const r = (d + Math.random() * 16) % 16 | 0;
       d = Math.floor(d / 16);
 
       // tslint:disable-next-line:no-bitwise
-      return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+
+      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
     });
 
     return new this.UIDClass(uidString);
@@ -36,9 +37,9 @@ export class UIDFactory {
   public setToCookies(value: string, expires: number): void {
     Cookies.set(this.UIDClass.type, value, {
       expires,
-      path: "/",
-      domain: ".ridibooks.com",
-      sameSite: "lax",
+      path: '/',
+      domain: '.ridibooks.com',
+      sameSite: 'lax',
     });
   }
 

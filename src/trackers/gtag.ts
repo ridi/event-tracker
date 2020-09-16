@@ -1,5 +1,5 @@
-import { loadGTag } from "../utils/externalServices";
-import { BaseTracker } from "./base";
+import { loadGTag } from '../utils/externalServices';
+import { BaseTracker } from './base';
 
 export interface GTagOptions {
   trackingId: string;
@@ -7,7 +7,7 @@ export interface GTagOptions {
 
 declare global {
   interface Window {
-    dataLayer?: object[];
+    dataLayer?: Record<string, any>[];
   }
 }
 
@@ -15,12 +15,12 @@ export class GTagTracker extends BaseTracker {
   constructor(private options: GTagOptions) {
     super();
   }
+
   private tagCalled = false;
 
   public async initialize(): Promise<void> {
     await loadGTag(this.options.trackingId);
     this.tagCalled = true;
-
   }
 
   public isInitialized(): boolean {

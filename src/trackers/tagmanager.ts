@@ -1,7 +1,7 @@
-import {MainTrackerOptions} from "..";
+import { MainTrackerOptions } from '..';
 
-import {loadTagManager} from "../utils/externalServices";
-import {BaseTracker, PageMeta} from "./base";
+import { loadTagManager } from '../utils/externalServices';
+import { BaseTracker, PageMeta } from './base';
 
 export interface TagManagerOptions {
   trackingId: string;
@@ -9,16 +9,16 @@ export interface TagManagerOptions {
 
 declare global {
   interface Window {
-    dataLayer?: object[];
+    dataLayer?: Record<string, any>[];
   }
 }
 
 export class TagManagerTracker extends BaseTracker {
+  private tagCalled = false;
+
   constructor(private options: TagManagerOptions) {
     super();
   }
-
-  private tagCalled = false;
 
   private get dataLayer() {
     if (!this.tagCalled) {
@@ -28,22 +28,17 @@ export class TagManagerTracker extends BaseTracker {
     return window.dataLayer;
   }
 
-  private pushDataLayer(data: object): void {
-    this.dataLayer.push(data);
-  }
-
   public setMainOptions(newOptions: MainTrackerOptions): void {
     super.setMainOptions(newOptions);
 
     this.pushDataLayer(newOptions);
-    this.sendEvent("Options Changed", newOptions);
+    this.sendEvent('Options Changed', newOptions);
   }
 
   public async initialize(): Promise<void> {
     this.pushDataLayer(this.mainOptions);
     await loadTagManager(this.options.trackingId);
     this.tagCalled = true;
-
   }
 
   public isInitialized(): boolean {
@@ -51,13 +46,21 @@ export class TagManagerTracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
-    this.sendEvent("Page View", pageMeta);
+    this.sendEvent('Page View', pageMeta, ts);
   }
 
-  public sendEvent(name: string, data: object = {}, ts?: Date): void {
+  public sendEvent(
+    name: string,
+    data: Record<string, any> = {},
+    ts?: Date,
+  ): void {
     this.dataLayer.push({
       event: name,
-      data
+      data,
     });
+  }
+
+  private pushDataLayer(data: Record<string, any>): void {
+    this.dataLayer.push(data);
   }
 }

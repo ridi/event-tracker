@@ -1,8 +1,8 @@
-import URL from "url-parse";
+import URL from 'url-parse';
 
-import { PVID, RUID } from "../uid";
-import { UIDFactory } from "../uid/factory";
-import { BaseTracker, PageMeta } from "./base";
+import { PVID, RUID } from '../uid';
+import { UIDFactory } from '../uid/factory';
+import { BaseTracker, PageMeta } from './base';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -11,38 +11,46 @@ export interface BeaconOptions {
 
 export class BeaconTracker extends BaseTracker {
   constructor({
-    beaconSrc = "https://s3.ap-northeast-2.amazonaws.com/beacon-select/beacon_select.gif",
-    use = true
+    beaconSrc = 'https://s3.ap-northeast-2.amazonaws.com/beacon-select/beacon_select.gif',
+    use = true,
   }: BeaconOptions) {
     super();
     this.options = {
       beaconSrc,
-      use
+      use,
     };
   }
+
   private options: BeaconOptions;
 
   private ruid: RUID;
+
   private pvid: PVID;
+
   private lastPageMeta: PageMeta;
 
   private makeBeaconURL(log: BeaconLog): string {
-    const beaconSrc = this.options.beaconSrc;
+    const { beaconSrc } = this.options;
     const queryString = Object.entries(log)
       .map(([key, value]) => {
-        if (typeof value === "object") {
+        if (typeof value === 'object') {
           value = JSON.stringify(value);
         } else {
           value = String(value);
         }
-        return [key, value].map(encodeURIComponent).join("=");
+        return [key, value].map(encodeURIComponent).join('=');
       })
-      .join("&");
+      .join('&');
 
     return `${beaconSrc}?${queryString}`;
   }
 
-  private sendBeacon(eventName: string, pageMeta: PageMeta, data: object = {}, ts?: Date) {
+  private sendBeacon(
+    eventName: string,
+    pageMeta: PageMeta,
+    data: Record<string, unknown> = {},
+    ts?: Date,
+  ): void {
     if (ts == null) {
       ts = new Date();
     }
@@ -60,7 +68,7 @@ export class BeaconTracker extends BaseTracker {
       ts: ts.getTime(),
     };
 
-    fetch(this.makeBeaconURL(log));
+    void fetch(this.makeBeaconURL(log));
   }
 
   public async initialize(): Promise<void> {
@@ -73,14 +81,23 @@ export class BeaconTracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.pvid = new UIDFactory(PVID).create();
-    this.sendBeacon(BeaconEventName.PageView, pageMeta, this.mainOptions.serviceProps, ts);
+    this.sendBeacon(
+      BeaconEventName.PageView,
+      pageMeta,
+      this.mainOptions.serviceProps,
+      ts,
+    );
     this.lastPageMeta = pageMeta;
   }
 
-  public sendEvent(name: string, data: object = {}, ts?: Date): void {
+  public sendEvent(
+    name: string,
+    data: Record<string, unknown> = {},
+    ts?: Date,
+  ): void {
     if (this.lastPageMeta === undefined) {
       throw Error(
-        "[@ridi/event-tracker] Please call sendPageView method first."
+        '[@ridi/event-tracker] Please call sendPageView method first.',
       );
     }
 
@@ -89,15 +106,16 @@ export class BeaconTracker extends BaseTracker {
 }
 
 enum BeaconEventName {
-  PageView = "pageView"
+  PageView = 'pageView',
 }
-
+/* eslint-disable camelcase */
 interface BeaconLog extends PageMeta {
   event: string;
   user_id: string;
   u_id: string;
   ruid: string;
   pvid: string;
-  data: object;
+  data: Record<string, unknown>;
   ts: number;
 }
+/* eslint-enable camelcase */

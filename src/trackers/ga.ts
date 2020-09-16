@@ -1,5 +1,5 @@
-import {loadGA} from "../utils/externalServices";
-import {BaseTracker, PageMeta} from "./base";
+import { loadGA } from '../utils/externalServices';
+import { BaseTracker, PageMeta } from './base';
 
 interface GAFields extends UniversalAnalytics.FieldsObject {
   allowAdFeatures?: boolean;
@@ -22,55 +22,54 @@ export class GATracker extends BaseTracker {
 
       // Pathname in some browsers doesn't start with slash character (/)
       // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449
-      path => (path.startsWith("/") ? path : `/${path}`)
+
+      path => (path.startsWith('/') ? path : `/${path}`),
     ];
 
-    return refiners.reduce((value, refiner) => {
-      return refiner(value);
-    }, originalPath);
+    return refiners.reduce((value, refiner) => refiner(value), originalPath);
   }
 
   public async initialize(): Promise<void> {
     await loadGA();
     if (this.options.fields) {
-      ga("create", this.options.trackingId, this.options.fields);
+      ga('create', this.options.trackingId, this.options.fields);
     } else {
-      ga("create", this.options.trackingId, "auto");
+      ga('create', this.options.trackingId, 'auto');
     }
   }
 
   public isInitialized(): boolean {
-    return typeof ga === "function";
+    return typeof ga === 'function';
   }
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     const refinedPath = this.refinePath(pageMeta.path);
-    const queryString = pageMeta.href.split("?")[1] || "";
+    const queryString = pageMeta.href.split('?')[1] || '';
 
     const pageName = `${refinedPath}?${queryString}`;
 
-    ga("set", "page", pageName);
+    ga('set', 'page', pageName);
 
     const fields: UniversalAnalytics.FieldsObject = {
-      hitType: "pageview",
-      dimension1: this.mainOptions.deviceType
+      hitType: 'pageview',
+      dimension1: this.mainOptions.deviceType,
     };
     if (ts) {
       fields.queueTime = Math.max(Date.now() - ts.getTime(), 0);
     }
-    ga("send", fields);
+    ga('send', fields);
   }
 
-  public sendEvent(name: string, data: { [k: string]: any }, ts?: Date): void {
+  public sendEvent(name: string, data?: Record<string, any>, ts?: Date): void {
     const fields: UniversalAnalytics.FieldsObject = {
-      hitType: "event",
-      eventCategory: data.category || "All",
+      hitType: 'event',
+      eventCategory: data.category || 'All',
       eventAction: data.action || name,
-      eventLabel: data.label || "All"
+      eventLabel: data.label || 'All',
     };
     if (ts) {
       fields.queueTime = Math.max(Date.now() - ts.getTime(), 0);
     }
-    ga("send", fields);
+    ga('send', fields);
   }
 }

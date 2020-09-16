@@ -1,7 +1,7 @@
-import {loadKakao} from "../utils/externalServices";
-import {BaseTracker, PageMeta} from "./base";
+import { loadKakao } from '../utils/externalServices';
+import { BaseTracker, PageMeta } from './base';
 
-declare var kakaoPixel: (trackingId: string) => KakaoPixel;
+declare let kakaoPixel: (trackingId: string) => KakaoPixel;
 
 export interface KakaoOptions {
   trackingId: string;
@@ -20,7 +20,6 @@ declare global {
 }
 
 export class KakaoTracker extends BaseTracker {
-
   constructor(private options: KakaoOptions) {
     super();
   }
@@ -33,24 +32,25 @@ export class KakaoTracker extends BaseTracker {
   }
 
   public isInitialized(): boolean {
-    return typeof this.tracker === "object";
+    return typeof this.tracker === 'object';
   }
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.tracker.pageView();
   }
 
-  public sendSignUp(args: object = {}, ts?: Date): void {
+  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {
     this.tracker.completeRegistration();
   }
 
-  public sendStartSubscription(args?: object, ts?: Date): void {
+  public sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void {
     this.tracker.signUp();
   }
 
-  public sendImpression(args: object = {}, ts?: Date): void {
+  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {
     this.tracker.viewContent();
   }
-
-
 }
