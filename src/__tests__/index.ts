@@ -29,7 +29,7 @@ if (!Array.prototype.excludes) {
   Array.prototype.excludes = function<T>(...elements: T[]): T[] {
     return this.filter((e: T) => !elements.includes(e));
   };
-  /* eslint-disable */
+  /* eslint-enable */
 }
 
 beforeAll(() => {
@@ -257,11 +257,15 @@ it('Test TwitterTracker', async () => {
   const twitterTracker = t.getTrackerInstance(TwitterTracker);
 
   // @ts-ignore
-  twitterTracker.twttr = { conversion: {} }
+
+  twitterTracker.twttr = { conversion: {} };
+
   // @ts-ignore
+
   twitterTracker.twttr.conversion.trackPid = trackPidMock;
 
   // @ts-ignore
+
   twitterTracker.twq = twqMock;
 
   await t.initialize();
@@ -269,7 +273,7 @@ it('Test TwitterTracker', async () => {
   /* Need to disable flush throttling when sending event multiple times in one test cases */
   // @ts-ignore
 
-  t.throttledFlush = t.flush;
+  t.throttledFlush = t.flush.bind(t);
 
   t.sendPageView('href');
   t.sendImpression();
