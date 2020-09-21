@@ -30,6 +30,7 @@ module.exports = {
     'no-bitwise': 0,
     'no-useless-constructor': 0,
     'import/prefer-default-export': 0,
+    'func-names': 0,
   },
   ignorePatterns: ['**/node_modules/**'],
 };

@@ -67,11 +67,9 @@ function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
 
     const originalMethod = descriptor.value;
 
-    descriptor.value = function() {
-      // eslint-disable-next-line @typescript-eslint/no-this-alias
-      const context = this;
+    const newMethod = function() {
       const eventParams: EventParameters = originalMethod.apply(
-        context,
+        this,
         arguments,
       );
       const eventRecord: QueueItem = {
@@ -80,13 +78,14 @@ function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
         ts: new Date(),
       };
 
-      context.eventQueue.push(eventRecord);
-      context.count('eventTrackerQueue');
+      this.eventQueue.push(eventRecord);
+      this.count('eventTrackerQueue');
 
-      if (context.initialized) {
-        context.throttledFlush();
+      if (this.initialized) {
+        this.throttledFlush();
       }
     };
+    descriptor.value = newMethod;
 
     return descriptor;
   };
