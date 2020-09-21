@@ -72,4 +72,15 @@ export class GATracker extends BaseTracker {
     }
     ga('send', fields);
   }
+
+  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
 }

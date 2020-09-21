@@ -1,5 +1,5 @@
 import { loadGTag } from '../utils/externalServices';
-import { BaseTracker } from './base';
+import { BaseTracker, PageMeta } from './base';
 
 export interface GTagOptions {
   trackingId: string;
@@ -26,4 +26,23 @@ export class GTagTracker extends BaseTracker {
   public isInitialized(): boolean {
     return this.tagCalled;
   }
+
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {}
+
+  public sendEvent(
+    name: string,
+    data?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
+
+  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
 }

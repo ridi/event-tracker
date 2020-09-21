@@ -53,4 +53,12 @@ export class KakaoTracker extends BaseTracker {
   public sendImpression(args?: Record<string, unknown>, ts?: Date): void {
     this.tracker.viewContent();
   }
+
+  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendEvent(
+    name: string,
+    data?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
 }

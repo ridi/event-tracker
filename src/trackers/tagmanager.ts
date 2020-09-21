@@ -63,4 +63,15 @@ export class TagManagerTracker extends BaseTracker {
   private pushDataLayer(data: Record<string, any>): void {
     this.dataLayer.push(data);
   }
+
+  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
 }

@@ -31,6 +31,7 @@ module.exports = {
     'no-useless-constructor': 0,
     'import/prefer-default-export': 0,
     'func-names': 0,
+    '@typescript-eslint/no-empty-function': 1,
   },
   ignorePatterns: ['**/node_modules/**'],
 };

@@ -62,4 +62,12 @@ export class TwitterTracker extends BaseTracker {
       tw_order_quantity: 0,
     });
   }
+
+  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendEvent(
+    name: string,
+    data?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
 }

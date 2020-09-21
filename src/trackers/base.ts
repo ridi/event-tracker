@@ -28,28 +28,30 @@ export interface EventTracker {
 export abstract class BaseTracker implements EventTracker {
   public mainOptions: MainTrackerOptions;
 
-  /* eslint-disable @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars */
+  public abstract sendPageView(pageMeta: PageMeta, ts?: Date): void;
 
-  public sendPageView(pageMeta: PageMeta, ts?: Date): void {}
-
-  public sendEvent(
+  public abstract sendEvent(
     name: string,
     data?: Record<string, unknown>,
     ts?: Date,
-  ): void {}
+  ): void;
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+  public abstract sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
 
-  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
-
-  public sendStartSubscription(
+  public abstract sendImpression(
     args?: Record<string, unknown>,
     ts?: Date,
-  ): void {}
+  ): void;
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+  public abstract sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void;
 
-  /* eslint-enable @typescript-eslint/no-empty-function */
+  public abstract sendAddPaymentInfo(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void;
 
   public abstract isInitialized(): boolean;
 
