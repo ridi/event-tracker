@@ -3,7 +3,7 @@ import URL from 'url-parse';
 import { PVID, RUID } from '../uid';
 import { UIDFactory } from '../uid/factory';
 import { BaseTracker, PageMeta } from './base';
-import { Impression } from './ecommerce';
+import { Archiveable, Displayable, Impression, Purchasable } from './ecommerce';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -107,7 +107,7 @@ export class BeaconTracker extends BaseTracker {
 
   public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
 
-  public sendImpression(items: Impression[], ts?: Date): void {}
+  public sendImpression(items: Displayable[], ts?: Date): void {}
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 
@@ -115,6 +115,10 @@ export class BeaconTracker extends BaseTracker {
     args?: Record<string, unknown>,
     ts?: Date,
   ): void {}
+
+  public sendAddToCart(items: Archiveable[], ts?: Date): void {}
+
+  public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {}
 }
 
 enum BeaconEventName {

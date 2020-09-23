@@ -39,15 +39,14 @@ export class Impression implements Clickable, Displayable {
   }
 
   public display(isLastItem = false): void {
-    GAEcommerceHelper.setImpression(this);
+    GAHelper.addImpression(this);
     if (isLastItem) {
       ga('send', 'event', 'display', this.toString().toLowerCase(), this.list);
     }
   }
 }
 
-export class Product
-  implements Archiveable<'cart' | 'wishlist'>, Displayable, Purchasable {
+export class Product implements Archiveable, Displayable, Purchasable {
   public static from(trackable: Trackable): Product {
     return new Product(
       trackable.objId,
@@ -75,8 +74,8 @@ export class Product
   ) {}
 
   display(isLastItem = false): void {
-    GAEcommerceHelper.addProduct(this);
-    GAEcommerceHelper.setAction('detail');
+    GAHelper.addProduct(this);
+    GAHelper.setAction('detail');
     if (isLastItem) {
       // TODO: Replace section_full
 
@@ -85,17 +84,19 @@ export class Product
   }
 
   public purchase(): void {
-    GAEcommerceHelper.addProduct(this);
+    GAHelper.addProduct(this);
   }
 
   public add(to: 'cart' | 'wishlist'): void {
-    GAEcommerceHelper.addProduct(this);
-    GAEcommerceHelper.setAction('add');
+    GAHelper.addProduct(this);
+    GAHelper.setAction('add');
+    ga('send', 'event', to, 'click', 'section_full');
   }
 
   public remove(from: 'cart' | 'wishlist'): void {
-    GAEcommerceHelper.addProduct(this);
-    GAEcommerceHelper.setAction('remove');
+    GAHelper.addProduct(this);
+    GAHelper.setAction('remove');
+    ga('send', 'event', from, 'click', 'section_full');
   }
 }
 
@@ -117,14 +118,13 @@ export class Promotion implements Clickable, Displayable {
   ) {}
 
   click(): void {
-    GAEcommerceHelper.addPromotion(this);
-    GAEcommerceHelper.setPromotionClick();
-    ga('send', 'event', this.toString().toLowerCase(), 'click', 'section_full');
+    GAHelper.addPromotion(this);
+    GAHelper.setAction('promo_click');
   }
 
   display(isLastItem = false): void {
-    GAEcommerceHelper.addPromotion(this);
-    GAEcommerceHelper.setPromotionClick();
+    GAHelper.addPromotion(this);
+    GAHelper.setAction('promo_click');
 
     if (isLastItem) {
       ga(
@@ -158,12 +158,25 @@ export class GAEcommerceTracker implements EcommerceTracker {
       totalRevenue += it.quantity > 0 ? it.price : 0;
     });
 
-    ga('ec:setAction', 'purchase', { id: tId, revenue: totalRevenue });
+    GAHelper.setAction('purchase', { id: tId, revenue: totalRevenue });
+    GAHelper.sendEvent('purchase', 'event', 'section_full');
     ga('send', 'event', 'purchase', 'event', 'section_full');
+  }
+
+  sendRemove(from: 'cart' | 'wishlist', ...items: Archiveable[]): void {
+    items.forEach(it => {
+      it.remove(from);
+    });
+  }
+
+  sendAdd(to: 'cart' | 'wishlist', ...items: Archiveable[]): void {
+    items.forEach(it => {
+      it.add(to);
+    });
   }
 }
 
-class GAEcommerceHelper {
+class GAHelper {
   public static addProduct(product: Product): void {
     ga('ec:addProduct', product);
   }
@@ -172,26 +185,15 @@ class GAEcommerceHelper {
     ga('ec:addPromo', promotion);
   }
 
-  public static setImpression(impression: Impression): void {
+  public static addImpression(impression: Impression): void {
     ga('ec:addImpression', impression);
   }
 
-  public static setProductClick(
-    obj: Product,
-    meta?: Record<string, unknown>,
-  ): void {
-    ga('ec:setAction', 'click', meta);
+  public static setAction(action: string, ...args: Record<string, unknown>[]) {
+    ga('ec:setAction', action, ...args);
   }
 
-  public static setPromotionClick(): void {
-    ga('ec:setAction', 'promo_click');
-  }
-
-  public static setAddToCart(...obj: Product[]) {
-    ga('ec:setAction', 'add');
-  }
-
-  public static setAction(action: string, ...args: any[]) {
-    ga('ec:setAction', action);
+  public static sendEvent(...args: any[]) {
+    ga('send', 'event', ...args);
   }
 }

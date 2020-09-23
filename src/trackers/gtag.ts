@@ -1,6 +1,6 @@
 import { loadGTag } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Impression } from './ecommerce';
+import { Archiveable, Displayable, Impression, Purchasable } from './ecommerce';
 
 export interface GTagOptions {
   trackingId: string;
@@ -38,7 +38,7 @@ export class GTagTracker extends BaseTracker {
 
   public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
 
-  public sendImpression(items: Impression[], ts?: Date): void {}
+  public sendImpression(items: Displayable[], ts?: Date): void {}
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 
@@ -46,4 +46,8 @@ export class GTagTracker extends BaseTracker {
     args?: Record<string, unknown>,
     ts?: Date,
   ): void {}
+
+  public sendAddToCart(items: Archiveable[], ts?: Date): void {}
+
+  public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {}
 }

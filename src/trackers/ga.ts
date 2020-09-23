@@ -1,6 +1,12 @@
 import { loadGA } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { GAEcommerceTracker, Impression, Purchasable } from './ecommerce';
+import {
+  Archiveable,
+  Displayable,
+  GAEcommerceTracker,
+  Impression,
+  Purchasable,
+} from './ecommerce';
 
 interface GAFields extends UniversalAnalytics.FieldsObject {
   allowAdFeatures?: boolean;
@@ -85,11 +91,15 @@ export class GATracker extends BaseTracker {
     ts?: Date,
   ): void {}
 
-  public sendImpression(items: Impression[], ts?: Date): void {
+  public sendImpression(items: Displayable[], ts?: Date): void {
     this.ecommerceTracker.sendDisplay(...items);
   }
 
   public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {
     this.ecommerceTracker.sendPurchase(tId, ...items);
+  }
+
+  public sendAddToCart(items: Archiveable[], ts?: Date): void {
+    this.ecommerceTracker.sendAdd('cart', ...items);
   }
 }
