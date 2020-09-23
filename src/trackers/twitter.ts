@@ -3,6 +3,7 @@ import {
   loadTwitterUniversal,
 } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
+import { Impression } from './ecommerce';
 
 declare let twq: any;
 declare let twttr: any;
@@ -56,7 +57,7 @@ export class TwitterTracker extends BaseTracker {
     });
   }
 
-  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {
+  public sendImpression(items: Impression[], ts?: Date): void {
     this.twttr.conversion.trackPid(this.options.impressionPid, {
       tw_sale_amount: 0,
       tw_order_quantity: 0,

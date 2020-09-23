@@ -32,6 +32,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'func-names': 0,
     '@typescript-eslint/no-empty-function': 1,
+    'max-classes-per-file': ['error', 10],
   },
   ignorePatterns: ['**/node_modules/**'],
 };
