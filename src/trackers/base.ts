@@ -1,5 +1,5 @@
 import { DeviceType, MainTrackerOptions } from '../index';
-import { Archiveable, Displayable, Impression, Purchasable } from './ecommerce';
+import { Archiveable, Displayable, Purchasable } from '../ecommerce';
 
 /* eslint-disable camelcase */
 export interface PageMeta {

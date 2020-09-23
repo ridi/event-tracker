@@ -1,12 +1,7 @@
-import { loadGA } from '../utils/externalServices';
-import { BaseTracker, PageMeta } from './base';
-import {
-  Archiveable,
-  Displayable,
-  GAEcommerceTracker,
-  Impression,
-  Purchasable,
-} from './ecommerce';
+import { loadGA } from '../../utils/externalServices';
+import { BaseTracker, PageMeta } from '../base';
+import { Archiveable, Displayable, Purchasable } from '../../ecommerce';
+import { GAEcommerceTracker } from './ecommerce';
 
 interface GAFields extends UniversalAnalytics.FieldsObject {
   allowAdFeatures?: boolean;
