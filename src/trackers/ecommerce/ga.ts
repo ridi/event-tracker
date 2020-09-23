@@ -3,11 +3,9 @@ import {
   Clickable,
   EcommerceTracker,
   Purchasable,
-  Trackable,
   Displayable,
 } from './common';
-
-// TODO: sectionName prop 가지고 있는 상위 class, interface 만들기
+import { Trackable } from './legacy';
 
 export class Impression implements Clickable, Displayable {
   public static from(trackable: Trackable): Impression {
@@ -21,8 +19,6 @@ export class Impression implements Clickable, Displayable {
       trackable.position + 1,
     );
   }
-
-  // TODO: change isLastItem to protected
 
   public constructor(
     public readonly id: string,
@@ -142,48 +138,6 @@ export class Promotion implements Clickable, Displayable {
   }
 }
 
-export interface ActionMeta {
-  id?: string;
-  affiliation?: string;
-  revenue?: number;
-  tax?: number;
-  shipping?: number;
-  coupon?: string;
-  list?: string;
-  step?: number;
-  option?: string;
-}
-
-class GAEcommerceHelper {
-  public static addProduct(product: Product): void {
-    ga('ec:addProduct', product);
-  }
-
-  public static addPromotion(promotion: Promotion): void {
-    ga('ec:addPromo', promotion);
-  }
-
-  public static setImpression(impression: Impression): void {
-    ga('ec:addImpression', impression);
-  }
-
-  public static setProductClick(obj: Product, meta?: ActionMeta): void {
-    ga('ec:setAction', 'click', meta);
-  }
-
-  public static setPromotionClick(): void {
-    ga('ec:setAction', 'promo_click');
-  }
-
-  public static setAddToCart(...obj: Product[]) {
-    ga('ec:setAction', 'add');
-  }
-
-  public static setAction(action: string, ...args: any[]) {
-    ga('ec:setAction', action);
-  }
-}
-
 export class GAEcommerceTracker implements EcommerceTracker {
   sendClick(...items: Clickable[]): void {
     items.forEach(it => it.click());
@@ -206,5 +160,38 @@ export class GAEcommerceTracker implements EcommerceTracker {
 
     ga('ec:setAction', 'purchase', { id: tId, revenue: totalRevenue });
     ga('send', 'event', 'purchase', 'event', 'section_full');
+  }
+}
+
+class GAEcommerceHelper {
+  public static addProduct(product: Product): void {
+    ga('ec:addProduct', product);
+  }
+
+  public static addPromotion(promotion: Promotion): void {
+    ga('ec:addPromo', promotion);
+  }
+
+  public static setImpression(impression: Impression): void {
+    ga('ec:addImpression', impression);
+  }
+
+  public static setProductClick(
+    obj: Product,
+    meta?: Record<string, unknown>,
+  ): void {
+    ga('ec:setAction', 'click', meta);
+  }
+
+  public static setPromotionClick(): void {
+    ga('ec:setAction', 'promo_click');
+  }
+
+  public static setAddToCart(...obj: Product[]) {
+    ga('ec:setAction', 'add');
+  }
+
+  public static setAction(action: string, ...args: any[]) {
+    ga('ec:setAction', action);
   }
 }
