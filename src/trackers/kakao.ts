@@ -1,6 +1,6 @@
 import { loadKakao } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Archiveable, Displayable, Impression, Purchasable } from './ecommerce';
+import { Archiveable, Displayable, Purchasable } from '../ecommerce';
 
 declare let kakaoPixel: (trackingId: string) => KakaoPixel;
 

@@ -4,8 +4,10 @@ import {
   EcommerceTracker,
   Purchasable,
   Displayable,
-} from './common';
-import { Trackable } from './legacy';
+  Trackable,
+} from '../../ecommerce';
+
+import { GAHelper } from './utils';
 
 export class Impression implements Clickable, Displayable {
   public static from(trackable: Trackable): Impression {
@@ -173,27 +175,5 @@ export class GAEcommerceTracker implements EcommerceTracker {
     items.forEach(it => {
       it.add(to);
     });
-  }
-}
-
-class GAHelper {
-  public static addProduct(product: Product): void {
-    ga('ec:addProduct', product);
-  }
-
-  public static addPromotion(promotion: Promotion): void {
-    ga('ec:addPromo', promotion);
-  }
-
-  public static addImpression(impression: Impression): void {
-    ga('ec:addImpression', impression);
-  }
-
-  public static setAction(action: string, ...args: Record<string, unknown>[]) {
-    ga('ec:setAction', action, ...args);
-  }
-
-  public static sendEvent(...args: any[]) {
-    ga('send', 'event', ...args);
   }
 }

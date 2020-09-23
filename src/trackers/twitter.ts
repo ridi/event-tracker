@@ -3,7 +3,7 @@ import {
   loadTwitterUniversal,
 } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Archiveable, Displayable, Impression, Purchasable } from './ecommerce';
+import { Archiveable, Displayable, Purchasable } from '../ecommerce';
 
 declare let twq: any;
 declare let twttr: any;

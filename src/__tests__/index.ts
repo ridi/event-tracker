@@ -1,7 +1,6 @@
 import { DeviceType, MainTrackerOptions, Tracker } from '../index';
 import {
   BeaconTracker,
-  GAEcommerceTracker,
   GATracker,
   KakaoTracker,
   PixelTracker,
@@ -9,7 +8,7 @@ import {
   TwitterTracker,
 } from '../trackers';
 import { BaseTracker, EventTracker } from '../trackers/base';
-import { Impression } from '../trackers/ecommerce/ga';
+import { GAEcommerceTracker, Impression } from '../trackers/ga/ecommerce';
 
 const ALL_TRACKERS = [
   BeaconTracker,

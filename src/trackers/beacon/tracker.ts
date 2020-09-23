@@ -1,9 +1,9 @@
 import URL from 'url-parse';
 
-import { PVID, RUID } from '../uid';
-import { UIDFactory } from '../uid/factory';
-import { BaseTracker, PageMeta } from './base';
-import { Archiveable, Displayable, Impression, Purchasable } from './ecommerce';
+import { PVID, RUID } from '../../uid';
+import { UIDFactory } from '../../uid/factory';
+import { BaseTracker, PageMeta } from '../base';
+import { Archiveable, Displayable, Purchasable } from '../../ecommerce';
 
 export interface BeaconOptions {
   beaconSrc?: string;
