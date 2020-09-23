@@ -12,9 +12,9 @@ export interface Purchasable {
   purchase(): void;
 }
 
-export interface Archiveable<T> {
-  add(to: T): void;
-  remove(from: T): void;
+export interface Archiveable {
+  add(to: 'cart' | 'wishlist'): void;
+  remove(from: 'cart' | 'wishlist'): void;
 }
 
 export interface EcommerceTracker {
@@ -23,4 +23,8 @@ export interface EcommerceTracker {
   sendPurchase(tId: string, ...items: Purchasable[]): void;
 
   sendDisplay(...items: Displayable[]): void;
+
+  sendAdd(to: 'cart' | 'wishlist', ...items: Archiveable[]): void;
+
+  sendRemove(from: 'cart' | 'wishlist', ...items: Archiveable[]): void;
 }

@@ -1,5 +1,5 @@
 import { DeviceType, MainTrackerOptions } from '../index';
-import { Archiveable, Impression, Purchasable } from './ecommerce';
+import { Archiveable, Displayable, Impression, Purchasable } from './ecommerce';
 
 /* eslint-disable camelcase */
 export interface PageMeta {
@@ -21,11 +21,13 @@ export interface EventTracker {
 
   sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
 
-  sendImpression(items: Impression[], ts?: Date): void;
+  sendImpression(items: Displayable[], ts?: Date): void;
 
   sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void;
 
   sendPurchase(tId: string, items: Purchasable[], ts?: Date): void;
+
+  sendAddToCart(items: Archiveable[], ts?: Date): void;
 }
 
 export abstract class BaseTracker implements EventTracker {
@@ -41,7 +43,7 @@ export abstract class BaseTracker implements EventTracker {
 
   public abstract sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
 
-  public abstract sendImpression(items: Impression[], ts?: Date): void;
+  public abstract sendImpression(items: Displayable[], ts?: Date): void;
 
   public abstract sendStartSubscription(
     args?: Record<string, unknown>,
@@ -53,7 +55,13 @@ export abstract class BaseTracker implements EventTracker {
     ts?: Date,
   ): void;
 
-  public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {}
+  public abstract sendPurchase(
+    tId: string,
+    items: Purchasable[],
+    ts?: Date,
+  ): void;
+
+  public abstract sendAddToCart(items: Archiveable[], ts?: Date): void;
 
   public abstract isInitialized(): boolean;
 

@@ -1,6 +1,6 @@
 import { loadKakao } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Impression } from './ecommerce';
+import { Archiveable, Displayable, Impression, Purchasable } from './ecommerce';
 
 declare let kakaoPixel: (trackingId: string) => KakaoPixel;
 
@@ -51,11 +51,15 @@ export class KakaoTracker extends BaseTracker {
     this.tracker.signUp();
   }
 
-  public sendImpression(items: Impression[], ts?: Date): void {
+  public sendImpression(items: Displayable[], ts?: Date): void {
     this.tracker.viewContent();
   }
 
   public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendAddToCart(items: Archiveable[], ts?: Date): void {}
+
+  public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {}
 
   public sendEvent(
     name: string,
