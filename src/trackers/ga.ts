@@ -1,5 +1,6 @@
 import { loadGA } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
+import { GAEcommerceTracker, Impression, Purchasable } from './ecommerce';
 
 interface GAFields extends UniversalAnalytics.FieldsObject {
   allowAdFeatures?: boolean;
@@ -16,12 +17,11 @@ export class GATracker extends BaseTracker {
     super();
   }
 
+  private ecommerceTracker: GAEcommerceTracker;
+
   private refinePath(originalPath: string): string {
     const refiners: Array<(path: string) => string> = [
-      path => (this.options.pathPrefix ? this.options.pathPrefix + path : path),
-
-      // Pathname in some browsers doesn't start with slash character (/)
-      // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449
+      path => (this.options.pathPrefix ? this.options.pathPrefix + path : path), // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449 // Pathname in some browsers doesn't start with slash character (/)
 
       path => (path.startsWith('/') ? path : `/${path}`),
     ];
@@ -36,6 +36,9 @@ export class GATracker extends BaseTracker {
     } else {
       ga('create', this.options.trackingId, 'auto');
     }
+    ga('require', 'ec');
+
+    this.ecommerceTracker = new GAEcommerceTracker();
   }
 
   public isInitialized(): boolean {
@@ -75,12 +78,18 @@ export class GATracker extends BaseTracker {
 
   public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
 
-  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
-
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 
   public sendStartSubscription(
     args?: Record<string, unknown>,
     ts?: Date,
   ): void {}
+
+  public sendImpression(items: Impression[], ts?: Date): void {
+    this.ecommerceTracker.sendDisplay(...items);
+  }
+
+  public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {
+    this.ecommerceTracker.sendPurchase(tId, ...items);
+  }
 }

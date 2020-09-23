@@ -3,6 +3,7 @@ import URL from 'url-parse';
 import { PVID, RUID } from '../uid';
 import { UIDFactory } from '../uid/factory';
 import { BaseTracker, PageMeta } from './base';
+import { Impression } from './ecommerce';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -106,7 +107,7 @@ export class BeaconTracker extends BaseTracker {
 
   public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
 
-  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendImpression(items: Impression[], ts?: Date): void {}
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 

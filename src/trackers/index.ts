@@ -5,3 +5,4 @@ export * from './tagmanager';
 export * from './gtag';
 export * from './kakao';
 export * from './twitter';
+export * from './ecommerce';

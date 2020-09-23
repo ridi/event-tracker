@@ -18,6 +18,7 @@ import {
   TwitterTracker,
 } from './trackers';
 import { BaseTracker, EventTracker, PageMeta } from './trackers/base';
+import { Impression } from './trackers/ecommerce/ga';
 
 export enum DeviceType {
   PC = 'pc',
@@ -181,8 +182,8 @@ export class Tracker {
   }
 
   @pushEventToQueue()
-  public sendImpression(): EventParameters {
-    return [];
+  public sendImpression(items: Impression[]): EventParameters {
+    return [items];
   }
 
   @pushEventToQueue()

@@ -1,5 +1,6 @@
 import { loadPixel } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
+import { Impression } from './ecommerce';
 
 export interface PixelOptions {
   pixelId: string | string[];
@@ -48,7 +49,7 @@ export class PixelTracker extends BaseTracker {
     ts?: Date,
   ): void {}
 
-  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendImpression(items: Impression[], ts?: Date): void {}
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 

@@ -1,6 +1,7 @@
 import { DeviceType, MainTrackerOptions, Tracker } from '../index';
 import {
   BeaconTracker,
+  GAEcommerceTracker,
   GATracker,
   KakaoTracker,
   PixelTracker,
@@ -8,6 +9,7 @@ import {
   TwitterTracker,
 } from '../trackers';
 import { BaseTracker, EventTracker } from '../trackers/base';
+import { Impression } from '../trackers/ecommerce/ga';
 
 const ALL_TRACKERS = [
   BeaconTracker,
@@ -276,7 +278,7 @@ it('Test TwitterTracker', async () => {
   t.throttledFlush = t.flush.bind(t);
 
   t.sendPageView('href');
-  t.sendImpression();
+  t.sendImpression([new Impression('12', 'name')]);
   t.sendSignUp();
   t.sendStartSubscription();
 
@@ -297,4 +299,17 @@ it('Test TwitterTracker', async () => {
     'selectStartSubscriptionPid',
     { tw_sale_amount: 0, tw_order_quantity: 0 },
   );
+});
+
+it('Test GA', async () => {
+  const t = new TestableTracker();
+  t.mocking(ALL_TRACKERS.excludes(GATracker), 'sendImpression');
+  await t.initialize();
+  const gaTracker = t.getTrackerInstance(GATracker);
+
+  // @ts-ignore
+
+  gaTracker.ecommerceTracker = new GAEcommerceTracker();
+
+  t.sendImpression([new Impression('id', 'name')]);
 });
