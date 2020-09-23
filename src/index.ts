@@ -1,5 +1,5 @@
-import throttle from "lodash/throttle";
-import URL from "url-parse";
+import throttle from 'lodash/throttle';
+import URL from 'url-parse';
 
 import {
   BeaconOptions,
@@ -15,14 +15,14 @@ import {
   TagManagerOptions,
   TagManagerTracker,
   TwitterOptions,
-  TwitterTracker
-} from "./trackers";
-import {BaseTracker, EventTracker, PageMeta} from "./trackers/base";
+  TwitterTracker,
+} from './trackers';
+import { BaseTracker, EventTracker, PageMeta } from './trackers/base';
 
 export enum DeviceType {
-  PC = "pc",
-  Mobile = "mobile",
-  Paper = "paper"
+  PC = 'pc',
+  Mobile = 'mobile',
+  Paper = 'paper',
 }
 
 export type ServiceProp = Record<string, string>;
@@ -57,39 +57,50 @@ interface QueueItem {
   ts: Date;
 }
 
-
 function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
-  return (target: any, propertyKey: keyof EventTracker, descriptor: PropertyDescriptor) => {
-
+  return (
+    target: any,
+    propertyKey: keyof EventTracker,
+    descriptor: PropertyDescriptor,
+  ) => {
     consumerMethodName = consumerMethodName || propertyKey;
 
     const originalMethod = descriptor.value;
 
-    descriptor.value = function () {
-      const context = this;
-      const eventParams: EventParameters = originalMethod.apply(context, arguments);
+    const newMethod = function() {
+      const eventParams: EventParameters = originalMethod.apply(
+        this,
+        arguments,
+      );
       const eventRecord: QueueItem = {
         eventParams,
         consumerMethodName,
-        ts: new Date()
+        ts: new Date(),
       };
 
-      context.eventQueue.push(eventRecord);
-      context.count("eventTrackerQueue");
+      this.eventQueue.push(eventRecord);
+      this.count('eventTrackerQueue');
 
-      if (context.initialized) {
-        context.throttledFlush();
+      if (this.initialized) {
+        this.throttledFlush();
       }
     };
+    descriptor.value = newMethod;
 
     return descriptor;
   };
 }
 
 export class Tracker {
+  protected trackers: BaseTracker[] = [];
+
+  private eventQueue: QueueItem[] = [];
+
+  private initialized = false;
+
+  private readonly throttledFlush: () => void;
 
   constructor(private options: MainTrackerOptions) {
-
     if (options.gaOptions) {
       this.trackers.push(new GATracker(options.gaOptions));
     }
@@ -114,142 +125,54 @@ export class Tracker {
       this.trackers.push(new TwitterTracker(options.twitterOptions));
     }
 
-    for (const tracker of this.trackers) {
-      tracker.setMainOptions(options);
-    }
-
-
-    this.throttledFlush = throttle(() => this.flush(), options.throttleWait || 1000);
-  }
-
-  private eventQueue: QueueItem[] = [];
-
-  private initialized = false;
-
-  private readonly throttledFlush: () => void;
-
-  protected trackers: BaseTracker[] = [];
-
-  private initializedTrackers(): BaseTracker[] {
-    return this.trackers.filter(t => t.isInitialized());
-  }
-
-  private getPageMeta(href: string, referrer: string = ""): PageMeta {
-    const url = new URL(href, {}, true);
-
-    const path = url.pathname;
-
-    return {
-      page: url.pathname.split("/")[1] || "index",
-      device: this.options.deviceType,
-      query_params: url.query,
-      path,
-      href,
-      referrer
-    };
-  }
-
-  private log(message: string): void {
-    if (this.options.debug) {
-      console.log(`[@ridi/event-tracker] ${message}`);
-    }
-  }
-
-  private logEvent(eventType: string, meta: object = {}): void {
-    if (this.options.debug) {
-      console.group(`[@ridi/event-tracker] Sending '${eventType}' event`);
-      for (const [key, value] of Object.entries(meta)) {
-        console.log(`${key}\t ${JSON.stringify(value)}`);
-      }
-      console.groupEnd();
-    }
-  }
-
-  private count(key: string): void {
-    if (this.options.debug) {
-      document.body.dataset[key] = String(Number(document.body.dataset[key] || 0) + 1);
-    }
-  }
-
-  private flush(): void {
-    const queue = this.eventQueue;
-    if (this.options.debug) {
-      console.group("[@ridi/event-tracker] Flushing events...");
-    }
-    while (queue.length) {
-      const item = queue.shift();
-
-      this.runTrackersMethod(item);
-
-    }
-    if (this.options.debug) {
-      console.groupEnd();
-    }
-  }
-
-  private runTrackersMethod(item: QueueItem): void {
-    item.eventParams.push(item.ts);
-
-
-    this.initializedTrackers().forEach(t => {
-      const trackerMethod = (t)[item.consumerMethodName];
-      const args = Object.values(item.eventParams);
-
-      trackerMethod.apply(t, args);
-
-      this.logEvent(item.consumerMethodName, args);
-      this.count("eventTrackerSent");
+    this.trackers.forEach(t => {
+      t.setMainOptions(options);
     });
-  }
 
+    this.throttledFlush = throttle(
+      () => this.flush(),
+      options.throttleWait || 1000,
+    );
+  }
 
   public set(options: ChangeableTrackerOptions): void {
     this.options = {
       ...this.options,
-      ...options
+      ...options,
     };
 
-    for (const tracker of this.trackers) {
-      tracker.setMainOptions(this.options);
-    }
+    this.trackers.forEach(t => t.setMainOptions(this.options));
   }
 
   public async initialize(): Promise<void> {
-    this.log("Initialize");
+    this.log('Initialize');
 
     await Promise.all(
       this.trackers
-        .filter((t) => !t.isInitialized())
-        .map((t) => t.initialize())
-        .map((p) => p.catch(error => null))
+        .filter(t => !t.isInitialized())
+        .map(t => t.initialize())
+        .map(p => p.catch(error => null)),
     );
 
     if (!this.initialized) {
       this.flush();
-      window.addEventListener("unload", (event) => {
+      window.addEventListener('unload', event => {
         this.flush();
       });
       this.initialized = true;
     }
-
   }
 
   @pushEventToQueue()
   public sendPageView(href: string, referrer?: string): EventParameters {
     const pageMeta = this.getPageMeta(href, referrer);
 
-    return [
-      pageMeta,
-    ];
-
+    return [pageMeta];
   }
 
   @pushEventToQueue()
   public sendEvent(name: string, data: any = {}): EventParameters {
-    return [
-      name,
-      data,
-    ];
+    return [name, data];
   }
 
   @pushEventToQueue()
@@ -270,8 +193,77 @@ export class Tracker {
   @pushEventToQueue()
   public sendSignUp(): EventParameters {
     return [];
+  }
 
+  private initializedTrackers(): BaseTracker[] {
+    return this.trackers.filter(t => t.isInitialized());
+  }
+
+  private getPageMeta(href: string, referrer = ''): PageMeta {
+    const url = new URL(href, {}, true);
+
+    const path = url.pathname;
+
+    return {
+      page: url.pathname.split('/')[1] || 'index',
+      device: this.options.deviceType,
+      query_params: url.query,
+      path,
+      href,
+      referrer,
+    };
+  }
+
+  private log(message: string): void {
+    if (this.options.debug) {
+      console.log(`[@ridi/event-tracker] ${message}`);
+    }
+  }
+
+  private logEvent(eventType: string, meta: object = {}): void {
+    if (this.options.debug) {
+      console.group(`[@ridi/event-tracker] Sending '${eventType}' event`);
+      Object.entries(meta).forEach(([key, value]) => {
+        console.log(`${key}\t ${JSON.stringify(value)}`);
+      });
+      console.groupEnd();
+    }
+  }
+
+  private count(key: string): void {
+    if (this.options.debug) {
+      document.body.dataset[key] = String(
+        Number(document.body.dataset[key] || 0) + 1,
+      );
+    }
+  }
+
+  private flush(): void {
+    const queue = this.eventQueue;
+    if (this.options.debug) {
+      console.group('[@ridi/event-tracker] Flushing events...');
+    }
+    while (queue.length) {
+      const item = queue.shift();
+
+      this.runTrackersMethod(item);
+    }
+    if (this.options.debug) {
+      console.groupEnd();
+    }
+  }
+
+  private runTrackersMethod(item: QueueItem): void {
+    item.eventParams.push(item.ts);
+
+    this.initializedTrackers().forEach(t => {
+      const trackerMethod = t[item.consumerMethodName];
+      const args = Object.values(item.eventParams);
+
+      trackerMethod.apply(t, args);
+
+      this.logEvent(item.consumerMethodName, args);
+      this.count('eventTrackerSent');
+    });
   }
 }
-
-

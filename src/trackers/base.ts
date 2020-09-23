@@ -1,5 +1,6 @@
-import {DeviceType, MainTrackerOptions} from "../index";
+import { DeviceType, MainTrackerOptions } from '../index';
 
+/* eslint-disable camelcase */
 export interface PageMeta {
   page: string;
   device: DeviceType;
@@ -8,55 +9,55 @@ export interface PageMeta {
   href: string;
   referrer: string;
 }
+/* eslint-enable camelcase */
 
 export interface EventTracker {
   sendPageView(pageMeta: PageMeta, ts?: Date): void;
 
-  sendEvent(name: string, data?: object, ts?: Date): void;
+  sendEvent(name: string, data?: Record<string, unknown>, ts?: Date): void;
 
-  sendSignUp(args?: object, ts?: Date): void;
+  sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
 
-  sendStartSubscription(args?: object, ts?:Date ): void;
+  sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
 
-  sendImpression(args?: object, ts?:Date): void;
+  sendImpression(args?: Record<string, unknown>, ts?: Date): void;
 
-  sendAddPaymentInfo(args?: object, ts?:Date): void;
-
+  sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void;
 }
 
 export abstract class BaseTracker implements EventTracker {
-
   public mainOptions: MainTrackerOptions;
 
-  // tslint:disable:no-empty
+  public abstract sendPageView(pageMeta: PageMeta, ts?: Date): void;
 
-  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
-  }
+  public abstract sendEvent(
+    name: string,
+    data?: Record<string, unknown>,
+    ts?: Date,
+  ): void;
 
-  public sendEvent(name: string, data?: object, ts?: Date): void {
-  }
+  public abstract sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
 
-  public sendSignUp(args?: object, ts?:Date): void {
-  }
+  public abstract sendImpression(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void;
 
-  public sendImpression(args?: object, ts?:Date): void {
-  }
+  public abstract sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void;
 
-  public sendStartSubscription(args?: object, ts?:Date): void {
-  }
-
-  public sendAddPaymentInfo(args?: object, ts?:Date): void {
-  }
-
-  // tslint:enable:no-empty
+  public abstract sendAddPaymentInfo(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void;
 
   public abstract isInitialized(): boolean;
 
-  public async abstract initialize(): Promise<void>;
+  public abstract async initialize(): Promise<void>;
 
   public setMainOptions(newOptions: MainTrackerOptions): void {
     this.mainOptions = newOptions;
   }
-
-
 }
