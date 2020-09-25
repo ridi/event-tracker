@@ -1,10 +1,5 @@
 import { DeviceType, MainTrackerOptions } from '../index';
-import {
-  Archiveable,
-  Viewable,
-  Purchasable,
-  EcommerceTracker,
-} from '../ecommerce';
+import { EcommerceTracker } from '../ecommerce';
 import { Product, PurchaseInfo } from '../ecommerce/model';
 
 /* eslint-disable camelcase */
@@ -81,5 +76,5 @@ export abstract class BaseTracker implements EventTracker, EcommerceTracker {
 
   public abstract sendRemoveFromCart(items: Product[], ts?: Date): void;
 
-  public abstract sendSearch(items: Product[], ts?: Date): void;
+  public abstract sendSearch(searchTerm: string, ts?: Date): void;
 }

@@ -26,5 +26,5 @@ export interface EcommerceTracker {
 
   sendRemoveFromCart(items: Product[], ts?: Date): void;
 
-  sendSearch(items: Product[], ts?: Date): void;
+  sendSearch(searchTerm: string, ts?: Date): void;
 }

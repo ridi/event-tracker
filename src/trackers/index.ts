@@ -1,5 +1,5 @@
-export * from './beacon/tracker';
-export * from './ga/tracker';
+export * from './beacon';
+export * from './ga';
 export * from './pixel';
 export * from './tagmanager';
 export * from './gtag/tracker';

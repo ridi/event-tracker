@@ -1,4 +1,9 @@
-import { DeviceType, MainTrackerOptions, Tracker } from '../index';
+import {
+  DeviceType,
+  EventTrackerMethodNames,
+  MainTrackerOptions,
+  Tracker,
+} from '../index';
 import {
   BeaconTracker,
   GATracker,
@@ -7,8 +12,7 @@ import {
   TagManagerTracker,
   TwitterTracker,
 } from '../trackers';
-import { BaseTracker, EventTracker } from '../trackers/base';
-import { GAEcommerceTracker, Impression } from '../trackers/ga/ecommerce';
+import { BaseTracker } from '../trackers/base';
 
 const ALL_TRACKERS = [
   BeaconTracker,
@@ -96,7 +100,7 @@ class TestableTracker extends Tracker {
 
   public mocking(
     trackers: Array<new (...args: any[]) => BaseTracker>,
-    methodName: keyof EventTracker,
+    methodName: EventTrackerMethodNames,
     mockImpl: () => void = () => true,
   ) {
     const mockingTargetTrackers = this.getTrackerInstances(...trackers);
@@ -107,7 +111,7 @@ class TestableTracker extends Tracker {
 
   public mockingAll(
     trackers: Array<new (...args: any[]) => BaseTracker>,
-    methodNames: Array<keyof EventTracker>,
+    methodNames: Array<EventTrackerMethodNames>,
     mockImpl: () => void = () => true,
   ) {
     return methodNames.map(m => this.mocking(trackers, m, mockImpl));
@@ -277,7 +281,7 @@ it('Test TwitterTracker', async () => {
   t.throttledFlush = t.flush.bind(t);
 
   t.sendPageView('href');
-  t.sendImpression([new Impression('12', 'name')]);
+  t.sendImpression([]);
   t.sendSignUp();
   t.sendStartSubscription();
 
@@ -298,17 +302,4 @@ it('Test TwitterTracker', async () => {
     'selectStartSubscriptionPid',
     { tw_sale_amount: 0, tw_order_quantity: 0 },
   );
-});
-
-it('Test GA', async () => {
-  const t = new TestableTracker();
-  t.mocking(ALL_TRACKERS.excludes(GATracker), 'sendImpression');
-  await t.initialize();
-  const gaTracker = t.getTrackerInstance(GATracker);
-
-  // @ts-ignore
-
-  gaTracker.ecommerceTracker = new GAEcommerceTracker();
-
-  t.sendImpression([new Impression('id', 'name')]);
 });

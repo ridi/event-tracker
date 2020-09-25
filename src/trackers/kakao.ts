@@ -79,7 +79,7 @@ export class KakaoTracker extends BaseTracker {
 
   public sendRemoveFromCart(items: Product[], ts?: Date): void {}
 
-  public sendSearch(items: Product[], ts?: Date): void {}
+  public sendSearch(searchTerm: string, ts?: Date): void {}
 
   public sendEvent(
     name: string,

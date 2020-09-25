@@ -4,7 +4,7 @@ import URL from 'url-parse';
 import {
   BeaconOptions,
   BeaconTracker,
-  Viewable,
+  EcommerceTracker,
   GAOptions,
   GATracker,
   GTagOptions,
@@ -19,6 +19,7 @@ import {
   TwitterTracker,
 } from './trackers';
 import { BaseTracker, EventTracker, PageMeta } from './trackers/base';
+import { Product } from './ecommerce/model';
 
 export enum DeviceType {
   PC = 'pc',
@@ -50,20 +51,24 @@ export interface ChangeableTrackerOptions {
   serviceProps?: ServiceProp;
 }
 
-type EventParameters = Parameters<EventTracker[keyof EventTracker]>;
+type EventParameters =
+  | Parameters<EventTracker[keyof EventTracker]>
+  | Parameters<EcommerceTracker[keyof EcommerceTracker]>;
+
+export type EventTrackerMethodNames =
+  | keyof EventTracker
+  | keyof EcommerceTracker;
 
 interface QueueItem {
-  consumerMethodName: keyof EventTracker;
+  consumerMethodName: EventTrackerMethodNames;
   eventParams: EventParameters;
   ts: Date;
 }
 
-function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
-  return (
-    target: any,
-    propertyKey: keyof EventTracker,
-    descriptor: PropertyDescriptor,
-  ) => {
+function pushEventToQueue<T extends EventTrackerMethodNames>(
+  consumerMethodName?: T,
+) {
+  return (target: any, propertyKey: T, descriptor: PropertyDescriptor) => {
     consumerMethodName = consumerMethodName || propertyKey;
 
     const originalMethod = descriptor.value;
@@ -182,7 +187,7 @@ export class Tracker {
   }
 
   @pushEventToQueue()
-  public sendImpression(items: Viewable[]): EventParameters {
+  public sendImpression(items: Product[]): EventParameters {
     return [items];
   }
 
