@@ -1,7 +1,6 @@
 import { loadGA } from '../../utils/externalServices';
 import { BaseTracker, PageMeta } from '../base';
-import { Archiveable, Displayable, Purchasable } from '../../ecommerce';
-import { GAEcommerceTracker } from './ecommerce';
+import { Product, PurchaseInfo } from '../../ecommerce/model';
 
 interface GAFields extends UniversalAnalytics.FieldsObject {
   allowAdFeatures?: boolean;
@@ -13,12 +12,15 @@ export interface GAOptions {
   fields?: GAFields;
 }
 
+/**
+ * @deprecated Use GTagTracker Instead
+ * @see GTagTracker
+ */
+
 export class GATracker extends BaseTracker {
   constructor(private options: GAOptions) {
     super();
   }
-
-  private ecommerceTracker: GAEcommerceTracker;
 
   private refinePath(originalPath: string): string {
     const refiners: Array<(path: string) => string> = [
@@ -37,9 +39,6 @@ export class GATracker extends BaseTracker {
     } else {
       ga('create', this.options.trackingId, 'auto');
     }
-    ga('require', 'ec');
-
-    this.ecommerceTracker = new GAEcommerceTracker();
   }
 
   public isInitialized(): boolean {
@@ -77,24 +76,38 @@ export class GATracker extends BaseTracker {
     ga('send', fields);
   }
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendImpression(items: Product[], ts?: Date): void {}
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
 
   public sendStartSubscription(
     args?: Record<string, unknown>,
     ts?: Date,
   ): void {}
 
-  public sendImpression(items: Displayable[], ts?: Date): void {
-    this.ecommerceTracker.sendDisplay(...items);
-  }
+  public sendAddToCart(items: Product[], ts?: Date): void {}
 
-  public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {
-    this.ecommerceTracker.sendPurchase(tId, ...items);
-  }
+  public sendClick(items: Product[], ts?: Date): void {}
 
-  public sendAddToCart(items: Archiveable[], ts?: Date): void {
-    this.ecommerceTracker.sendAdd('cart', ...items);
-  }
+  public sendItemView(items: Product[], ts?: Date): void {}
+
+  public sendItemViewFromList(items: Product[], ts?: Date): void {}
+
+  public sendPurchase(
+    purchaseInfo: PurchaseInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {}
+
+  public sendRefund(
+    purchaseInfo: PurchaseInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {}
+
+  public sendRemoveFromCart(items: Product[], ts?: Date): void {}
+
+  public sendSearch(items: Product[], ts?: Date): void {}
 }

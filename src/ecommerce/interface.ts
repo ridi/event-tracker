@@ -1,30 +1,30 @@
-export interface Displayable {
-  display(isLastItem: boolean): void;
-}
-
-export interface Clickable {
-  click(): void;
-}
-
-export interface Purchasable {
-  readonly price: number;
-  readonly quantity: number;
-  purchase(): void;
-}
-
-export interface Archiveable {
-  add(to: 'cart' | 'wishlist'): void;
-  remove(from: 'cart' | 'wishlist'): void;
-}
+import { Product, PurchaseInfo } from './model';
 
 export interface EcommerceTracker {
-  sendClick(...items: Clickable[]): void;
+  sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
 
-  sendPurchase(tId: string, ...items: Purchasable[]): void;
+  /**
+   * @deprecated Use sendItemView instead.
+   * @see sendItemView
+   */
 
-  sendDisplay(...items: Displayable[]): void;
+  sendImpression(items: Product[], ts?: Date): void;
 
-  sendAdd(to: 'cart' | 'wishlist', ...items: Archiveable[]): void;
+  sendItemView(items: Product[], ts?: Date): void;
 
-  sendRemove(from: 'cart' | 'wishlist', ...items: Archiveable[]): void;
+  sendItemViewFromList(items: Product[], ts?: Date): void;
+
+  sendClick(items: Product[], ts?: Date): void;
+
+  sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void;
+
+  sendPurchase(purchaseInfo: PurchaseInfo, items: Product[], ts?: Date): void;
+
+  sendRefund(purchaseInfo: PurchaseInfo, items: Product[], ts?: Date): void;
+
+  sendAddToCart(items: Product[], ts?: Date): void;
+
+  sendRemoveFromCart(items: Product[], ts?: Date): void;
+
+  sendSearch(items: Product[], ts?: Date): void;
 }

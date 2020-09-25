@@ -33,6 +33,7 @@ module.exports = {
     'func-names': 0,
     '@typescript-eslint/no-empty-function': 1,
     'max-classes-per-file': ['error', 10],
+    'lines-around-comment': 0,
   },
   ignorePatterns: ['**/node_modules/**'],
 };

@@ -2,7 +2,7 @@ import { MainTrackerOptions } from '..';
 
 import { loadTagManager } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Archiveable, Displayable, Purchasable } from '../ecommerce';
+import { Product, PurchaseInfo } from '../ecommerce/model';
 
 export interface TagManagerOptions {
   trackingId: string;
@@ -65,18 +65,38 @@ export class TagManagerTracker extends BaseTracker {
     this.dataLayer.push(data);
   }
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
-
-  public sendImpression(items: Displayable[], ts?: Date): void {}
+  public sendImpression(items: Product[], ts?: Date): void {}
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 
-  public sendAddToCart(items: Archiveable[], ts?: Date): void {}
-
-  public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {}
+  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
 
   public sendStartSubscription(
     args?: Record<string, unknown>,
     ts?: Date,
   ): void {}
+
+  public sendAddToCart(items: Product[], ts?: Date): void {}
+
+  public sendClick(items: Product[], ts?: Date): void {}
+
+  public sendItemView(items: Product[], ts?: Date): void {}
+
+  public sendItemViewFromList(items: Product[], ts?: Date): void {}
+
+  public sendPurchase(
+    purchaseInfo: PurchaseInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {}
+
+  public sendRefund(
+    purchaseInfo: PurchaseInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {}
+
+  public sendRemoveFromCart(items: Product[], ts?: Date): void {}
+
+  public sendSearch(items: Product[], ts?: Date): void {}
 }

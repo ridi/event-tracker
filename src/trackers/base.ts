@@ -1,5 +1,11 @@
 import { DeviceType, MainTrackerOptions } from '../index';
-import { Archiveable, Displayable, Purchasable } from '../ecommerce';
+import {
+  Archiveable,
+  Viewable,
+  Purchasable,
+  EcommerceTracker,
+} from '../ecommerce';
+import { Product, PurchaseInfo } from '../ecommerce/model';
 
 /* eslint-disable camelcase */
 export interface PageMeta {
@@ -18,19 +24,9 @@ export interface EventTracker {
   sendEvent(name: string, data?: Record<string, unknown>, ts?: Date): void;
 
   sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
-
-  sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
-
-  sendImpression(items: Displayable[], ts?: Date): void;
-
-  sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void;
-
-  sendPurchase(tId: string, items: Purchasable[], ts?: Date): void;
-
-  sendAddToCart(items: Archiveable[], ts?: Date): void;
 }
 
-export abstract class BaseTracker implements EventTracker {
+export abstract class BaseTracker implements EventTracker, EcommerceTracker {
   public mainOptions: MainTrackerOptions;
 
   public abstract sendPageView(pageMeta: PageMeta, ts?: Date): void;
@@ -43,7 +39,7 @@ export abstract class BaseTracker implements EventTracker {
 
   public abstract sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
 
-  public abstract sendImpression(items: Displayable[], ts?: Date): void;
+  public abstract sendImpression(items: Product[], ts?: Date): void;
 
   public abstract sendStartSubscription(
     args?: Record<string, unknown>,
@@ -55,14 +51,6 @@ export abstract class BaseTracker implements EventTracker {
     ts?: Date,
   ): void;
 
-  public abstract sendPurchase(
-    tId: string,
-    items: Purchasable[],
-    ts?: Date,
-  ): void;
-
-  public abstract sendAddToCart(items: Archiveable[], ts?: Date): void;
-
   public abstract isInitialized(): boolean;
 
   public abstract async initialize(): Promise<void>;
@@ -70,4 +58,28 @@ export abstract class BaseTracker implements EventTracker {
   public setMainOptions(newOptions: MainTrackerOptions): void {
     this.mainOptions = newOptions;
   }
+
+  public abstract sendAddToCart(items: Product[], ts?: Date): void;
+
+  public abstract sendClick(items: Product[], ts?: Date): void;
+
+  public abstract sendItemView(items: Product[], ts?: Date): void;
+
+  public abstract sendItemViewFromList(items: Product[], ts?: Date): void;
+
+  public abstract sendPurchase(
+    purchaseInfo: PurchaseInfo,
+    items: Product[],
+    ts?: Date,
+  ): void;
+
+  public abstract sendRefund(
+    purchaseInfo: PurchaseInfo,
+    items: Product[],
+    ts?: Date,
+  ): void;
+
+  public abstract sendRemoveFromCart(items: Product[], ts?: Date): void;
+
+  public abstract sendSearch(items: Product[], ts?: Date): void;
 }

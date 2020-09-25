@@ -3,7 +3,7 @@ import URL from 'url-parse';
 import { PVID, RUID } from '../../uid';
 import { UIDFactory } from '../../uid/factory';
 import { BaseTracker, PageMeta } from '../base';
-import { Archiveable, Displayable, Purchasable } from '../../ecommerce';
+import { Product, PurchaseInfo } from '../../ecommerce/model';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -105,20 +105,40 @@ export class BeaconTracker extends BaseTracker {
     this.sendBeacon(name, this.lastPageMeta, data, ts);
   }
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
-
-  public sendImpression(items: Displayable[], ts?: Date): void {}
+  public sendImpression(items: Product[], ts?: Date): void {}
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+
+  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
 
   public sendStartSubscription(
     args?: Record<string, unknown>,
     ts?: Date,
   ): void {}
 
-  public sendAddToCart(items: Archiveable[], ts?: Date): void {}
+  public sendAddToCart(items: Product[], ts?: Date): void {}
 
-  public sendPurchase(tId: string, items: Purchasable[], ts?: Date): void {}
+  public sendClick(items: Product[], ts?: Date): void {}
+
+  public sendItemView(items: Product[], ts?: Date): void {}
+
+  public sendItemViewFromList(items: Product[], ts?: Date): void {}
+
+  public sendPurchase(
+    purchaseInfo: PurchaseInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {}
+
+  public sendRefund(
+    purchaseInfo: PurchaseInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {}
+
+  public sendRemoveFromCart(items: Product[], ts?: Date): void {}
+
+  public sendSearch(items: Product[], ts?: Date): void {}
 }
 
 enum BeaconEventName {

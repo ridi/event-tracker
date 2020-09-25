@@ -4,7 +4,7 @@ import URL from 'url-parse';
 import {
   BeaconOptions,
   BeaconTracker,
-  Displayable,
+  Viewable,
   GAOptions,
   GATracker,
   GTagOptions,
@@ -182,7 +182,7 @@ export class Tracker {
   }
 
   @pushEventToQueue()
-  public sendImpression(items: Displayable[]): EventParameters {
+  public sendImpression(items: Viewable[]): EventParameters {
     return [items];
   }
 
