@@ -72,7 +72,7 @@ export class GTagTracker extends BaseTracker {
   }
 
   public sendImpression(items: Product[], ts?: Date): void {
-    this.sendItemView(items, ts);
+    this.sendItemViewFromList(items, ts);
   }
 
   public sendStartSubscription(
