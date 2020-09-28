@@ -3,7 +3,13 @@ import URL from 'url-parse';
 import { PVID, RUID } from '../../uid';
 import { UIDFactory } from '../../uid/factory';
 import { BaseTracker, PageMeta } from '../base';
-import { Product, PurchaseInfo, UIElement } from '../../ecommerce/model';
+import {
+  Product,
+  Promotion,
+  PurchaseInfo,
+  UIElement,
+} from '../../ecommerce/model';
+import { EcommerceTracker } from '../../ecommerce';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -16,10 +22,7 @@ export class BeaconTracker extends BaseTracker {
     use = true,
   }: BeaconOptions) {
     super();
-    this.options = {
-      beaconSrc,
-      use,
-    };
+    this.options = { beaconSrc, use };
   }
 
   private options: BeaconOptions;
@@ -139,6 +142,12 @@ export class BeaconTracker extends BaseTracker {
   public sendRemoveFromCart(items: Product[], ts?: Date): void {}
 
   public sendSearch(searchTerm: string, ts?: Date): void {}
+
+  public sendViewPromotion(
+    promotion: Promotion,
+    items?: [Product][],
+    ts?: Date,
+  ): void {}
 }
 
 enum BeaconEventName {

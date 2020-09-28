@@ -1,6 +1,11 @@
 import { loadKakao } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Product, PurchaseInfo, UIElement } from '../ecommerce/model';
+import {
+  Product,
+  Promotion,
+  PurchaseInfo,
+  UIElement,
+} from '../ecommerce/model';
 
 declare let kakaoPixel: (trackingId: string) => KakaoPixel;
 
@@ -84,6 +89,12 @@ export class KakaoTracker extends BaseTracker {
   public sendEvent(
     name: string,
     data?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
+
+  public sendViewPromotion(
+    promotion: Promotion,
+    items?: [Product][],
     ts?: Date,
   ): void {}
 }
