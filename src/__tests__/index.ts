@@ -139,7 +139,6 @@ it('BeaconTracker sends PageView event with serviceProps', async () => {
   const sendBeaconMock = jest.fn();
 
   // @ts-ignore
-
   BeaconTracker.prototype.sendBeacon = sendBeaconMock;
   t.sendPageView(href, referrer);
 
@@ -227,7 +226,6 @@ it('GATracker should send pageview event', async () => {
   await t.initialize();
 
   // @ts-ignore
-
   window.ga = jest.fn();
   t.sendPageView(href, referrer);
 
@@ -262,22 +260,17 @@ it('Test TwitterTracker', async () => {
   const twitterTracker = t.getTrackerInstance(TwitterTracker);
 
   // @ts-ignore
-
   twitterTracker.twttr = { conversion: {} };
-
   // @ts-ignore
-
   twitterTracker.twttr.conversion.trackPid = trackPidMock;
 
   // @ts-ignore
-
   twitterTracker.twq = twqMock;
 
   await t.initialize();
 
   /* Need to disable flush throttling when sending event multiple times in one test cases */
   // @ts-ignore
-
   t.throttledFlush = t.flush.bind(t);
 
   t.sendPageView('href');
