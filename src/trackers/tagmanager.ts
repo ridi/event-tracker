@@ -2,7 +2,7 @@ import { MainTrackerOptions } from '..';
 
 import { loadTagManager } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Product, PurchaseInfo } from '../ecommerce/model';
+import { Product, PurchaseInfo, UIElement } from '../ecommerce/model';
 
 export interface TagManagerOptions {
   trackingId: string;
@@ -78,7 +78,7 @@ export class TagManagerTracker extends BaseTracker {
 
   public sendAddToCart(items: Product[], ts?: Date): void {}
 
-  public sendClick(items: Product[], ts?: Date): void {}
+  public sendClick(items: UIElement[], ts?: Date): void {}
 
   public sendItemView(items: Product[], ts?: Date): void {}
 

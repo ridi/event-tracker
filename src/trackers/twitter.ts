@@ -3,7 +3,7 @@ import {
   loadTwitterUniversal,
 } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Product, PurchaseInfo } from '../ecommerce/model';
+import { Product, PurchaseInfo, UIElement } from '../ecommerce/model';
 
 declare let twq: any;
 declare let twttr: any;
@@ -74,7 +74,7 @@ export class TwitterTracker extends BaseTracker {
 
   public sendAddToCart(items: Product[], ts?: Date): void {}
 
-  public sendClick(items: Product[], ts?: Date): void {}
+  public sendClick(items: UIElement[], ts?: Date): void {}
 
   public sendItemView(items: Product[], ts?: Date): void {}
 

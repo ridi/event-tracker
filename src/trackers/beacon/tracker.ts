@@ -3,7 +3,7 @@ import URL from 'url-parse';
 import { PVID, RUID } from '../../uid';
 import { UIDFactory } from '../../uid/factory';
 import { BaseTracker, PageMeta } from '../base';
-import { Product, PurchaseInfo } from '../../ecommerce/model';
+import { Product, PurchaseInfo, UIElement } from '../../ecommerce/model';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -118,7 +118,7 @@ export class BeaconTracker extends BaseTracker {
 
   public sendAddToCart(items: Product[], ts?: Date): void {}
 
-  public sendClick(items: Product[], ts?: Date): void {}
+  public sendClick(items: UIElement[], ts?: Date): void {}
 
   public sendItemView(items: Product[], ts?: Date): void {}
 

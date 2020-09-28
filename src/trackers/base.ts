@@ -1,6 +1,6 @@
 import { DeviceType, MainTrackerOptions } from '../index';
 import { EcommerceTracker } from '../ecommerce';
-import { Product, PurchaseInfo } from '../ecommerce/model';
+import { Product, PurchaseInfo, UIElement } from '../ecommerce/model';
 
 /* eslint-disable camelcase */
 export interface PageMeta {
@@ -56,7 +56,7 @@ export abstract class BaseTracker implements EventTracker, EcommerceTracker {
 
   public abstract sendAddToCart(items: Product[], ts?: Date): void;
 
-  public abstract sendClick(items: Product[], ts?: Date): void;
+  public abstract sendClick(items: UIElement[], ts?: Date): void;
 
   public abstract sendItemView(items: Product[], ts?: Date): void;
 

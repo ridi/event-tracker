@@ -1,6 +1,6 @@
 import { loadPixel } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { Product, PurchaseInfo } from '../ecommerce/model';
+import { Product, PurchaseInfo, UIElement } from '../ecommerce/model';
 
 export interface PixelOptions {
   pixelId: string | string[];
@@ -60,7 +60,7 @@ export class PixelTracker extends BaseTracker {
 
   public sendAddToCart(items: Product[], ts?: Date): void {}
 
-  public sendClick(items: Product[], ts?: Date): void {}
+  public sendClick(items: UIElement[], ts?: Date): void {}
 
   public sendItemView(items: Product[], ts?: Date): void {}
 

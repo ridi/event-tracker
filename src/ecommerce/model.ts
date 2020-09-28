@@ -35,3 +35,11 @@ export interface Promotion {
   readonly creativeName?: string;
   readonly positionSlot?: number;
 }
+
+/**
+ * @example carousel, banner
+ */
+
+export interface UIElement {
+  readonly section: string;
+}

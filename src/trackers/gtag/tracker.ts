@@ -1,6 +1,6 @@
 import { loadGTag } from '../../utils/externalServices';
 import { BaseTracker, PageMeta } from '../base';
-import { Product, PurchaseInfo } from '../../ecommerce/model';
+import { Product, PurchaseInfo, UIElement } from '../../ecommerce/model';
 
 export interface GTagOptions {
   trackingId: string;
@@ -74,7 +74,9 @@ export class GTagTracker extends BaseTracker {
     });
   }
 
-  public sendClick(items: Product[], ts?: Date): void {}
+  public sendClick(items: UIElement[], ts?: Date): void {
+    // TODO: Add Custom Event
+  }
 
   public sendItemView(items: Product[], ts?: Date): void {
     gtag('event', 'view_item', { items });
