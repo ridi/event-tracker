@@ -1,12 +1,12 @@
 import { loadGTag } from '../../utils/externalServices';
 import { BaseTracker, PageMeta } from '../base';
 import {
+  PaymentInfo,
   Product,
   Promotion,
   PurchaseInfo,
   UIElement,
 } from '../../ecommerce/model';
-import { EcommerceTracker } from '../../ecommerce';
 
 export interface GTagOptions {
   trackingId: string;
@@ -54,8 +54,15 @@ export class GTagTracker extends BaseTracker {
     gtag('event', name, data);
   }
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {
-    gtag('event', 'add_payment_info');
+  public sendAddPaymentInfo(
+    payInfo: PaymentInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {
+    gtag('event', 'add_payment_info', {
+      payInfo,
+      items,
+    });
   }
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {

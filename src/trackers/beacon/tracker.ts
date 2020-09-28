@@ -4,6 +4,7 @@ import { PVID, RUID } from '../../uid';
 import { UIDFactory } from '../../uid/factory';
 import { BaseTracker, PageMeta } from '../base';
 import {
+  PaymentInfo,
   Product,
   Promotion,
   PurchaseInfo,
@@ -112,7 +113,11 @@ export class BeaconTracker extends BaseTracker {
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendAddPaymentInfo(
+    payInfo: PaymentInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {}
 
   public sendStartSubscription(
     args?: Record<string, unknown>,

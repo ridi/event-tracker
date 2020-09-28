@@ -1,6 +1,7 @@
 import { DeviceType, MainTrackerOptions } from '../index';
 import { EcommerceTracker } from '../ecommerce';
 import {
+  PaymentInfo,
   Product,
   Promotion,
   PurchaseInfo,
@@ -47,7 +48,8 @@ export abstract class BaseTracker implements EventTracker, EcommerceTracker {
   ): void;
 
   public abstract sendAddPaymentInfo(
-    args?: Record<string, unknown>,
+    payInfo: PaymentInfo,
+    items: Product[],
     ts?: Date,
   ): void;
 

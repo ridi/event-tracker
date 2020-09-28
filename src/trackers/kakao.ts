@@ -1,6 +1,7 @@
 import { loadKakao } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
 import {
+  PaymentInfo,
   Product,
   Promotion,
   PurchaseInfo,
@@ -60,7 +61,11 @@ export class KakaoTracker extends BaseTracker {
     this.tracker.viewContent();
   }
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendAddPaymentInfo(
+    payInfo: PaymentInfo,
+    items: Product[],
+    ts?: Date,
+  ): void {}
 
   public sendAddToCart(items: Product[], ts?: Date): void {}
 

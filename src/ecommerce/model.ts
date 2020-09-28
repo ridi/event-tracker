@@ -43,3 +43,9 @@ export interface Promotion {
 export interface UIElement {
   readonly section: string;
 }
+
+export interface PaymentInfo {
+  readonly coupon?: string;
+  readonly paymentType: string;
+  readonly value: number;
+}

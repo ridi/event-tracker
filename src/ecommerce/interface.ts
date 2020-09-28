@@ -1,4 +1,10 @@
-import { Product, Promotion, PurchaseInfo, UIElement } from './model';
+import {
+  PaymentInfo,
+  Product,
+  Promotion,
+  PurchaseInfo,
+  UIElement,
+} from './model';
 
 export interface EcommerceTracker {
   sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
@@ -16,7 +22,7 @@ export interface EcommerceTracker {
 
   sendClick(items: UIElement[], ts?: Date): void;
 
-  sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void;
+  sendAddPaymentInfo(payInfo: PaymentInfo, items: Product[], ts?: Date): void;
 
   sendPurchase(purchaseInfo: PurchaseInfo, items: Product[], ts?: Date): void;
 
