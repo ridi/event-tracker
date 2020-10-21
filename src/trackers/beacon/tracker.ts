@@ -5,12 +5,11 @@ import { UIDFactory } from '../../uid/factory';
 import { BaseTracker, PageMeta } from '../base';
 import {
   PaymentInfo,
-  Product,
+  Item,
   Promotion,
   PurchaseInfo,
   UIElement,
 } from '../../ecommerce/model';
-import { EcommerceTracker } from '../../ecommerce';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -109,13 +108,13 @@ export class BeaconTracker extends BaseTracker {
     this.sendBeacon(name, this.lastPageMeta, data, ts);
   }
 
-  public sendImpression(items: Product[], ts?: Date): void {}
+  public sendImpression(items: Item[], ts?: Date): void {}
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 
   public sendAddPaymentInfo(
     payInfo: PaymentInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {}
 
@@ -124,33 +123,33 @@ export class BeaconTracker extends BaseTracker {
     ts?: Date,
   ): void {}
 
-  public sendAddToCart(items: Product[], ts?: Date): void {}
+  public sendAddToCart(items: Item[], ts?: Date): void {}
 
   public sendClick(items: UIElement[], ts?: Date): void {}
 
-  public sendItemView(items: Product[], ts?: Date): void {}
+  public sendItemView(items: Item[], ts?: Date): void {}
 
-  public sendItemViewFromList(items: Product[], ts?: Date): void {}
+  public sendItemViewFromList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
     purchaseInfo: PurchaseInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {}
 
   public sendRefund(
     purchaseInfo: PurchaseInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {}
 
-  public sendRemoveFromCart(items: Product[], ts?: Date): void {}
+  public sendRemoveFromCart(items: Item[], ts?: Date): void {}
 
   public sendSearch(searchTerm: string, ts?: Date): void {}
 
   public sendViewPromotion(
     promotion: Promotion,
-    items?: [Product][],
+    items?: [Item][],
     ts?: Date,
   ): void {}
 }

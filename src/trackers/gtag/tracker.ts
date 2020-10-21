@@ -2,7 +2,7 @@ import { loadGTag } from '../../utils/externalServices';
 import { BaseTracker, PageMeta } from '../base';
 import {
   PaymentInfo,
-  Product,
+  Item,
   Promotion,
   PurchaseInfo,
   UIElement,
@@ -56,7 +56,7 @@ export class GTagTracker extends BaseTracker {
 
   public sendAddPaymentInfo(
     payInfo: PaymentInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {
     gtag('event', 'add_payment_info', {
@@ -71,7 +71,7 @@ export class GTagTracker extends BaseTracker {
     });
   }
 
-  public sendImpression(items: Product[], ts?: Date): void {
+  public sendImpression(items: Item[], ts?: Date): void {
     this.sendItemViewFromList(items, ts);
   }
 
@@ -80,7 +80,7 @@ export class GTagTracker extends BaseTracker {
     ts?: Date,
   ): void {}
 
-  public sendAddToCart(items: Product[], ts?: Date): void {
+  public sendAddToCart(items: Item[], ts?: Date): void {
     gtag('event', 'add_to_cart', {
       value: items.map(p => p.price).reduce((pre, cur) => pre + cur),
       items,
@@ -91,17 +91,17 @@ export class GTagTracker extends BaseTracker {
     // TODO: Add Custom Event
   }
 
-  public sendItemView(items: Product[], ts?: Date): void {
+  public sendItemView(items: Item[], ts?: Date): void {
     gtag('event', 'view_item', { items });
   }
 
-  public sendItemViewFromList(items: Product[], ts?: Date): void {
+  public sendItemViewFromList(items: Item[], ts?: Date): void {
     gtag('event', 'view_item_list', { items });
   }
 
   public sendPurchase(
     purchaseInfo: PurchaseInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {
     gtag('event', 'purchase', {
@@ -112,7 +112,7 @@ export class GTagTracker extends BaseTracker {
 
   public sendRefund(
     purchaseInfo: PurchaseInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {
     gtag('event', 'refund', {
@@ -121,7 +121,7 @@ export class GTagTracker extends BaseTracker {
     });
   }
 
-  public sendRemoveFromCart(items: Product[], ts?: Date): void {
+  public sendRemoveFromCart(items: Item[], ts?: Date): void {
     gtag('event', 'remove_from_cart', {
       value: items.map(p => p.price).reduce((pre, cur) => pre + cur),
       items,
@@ -132,7 +132,7 @@ export class GTagTracker extends BaseTracker {
 
   public sendViewPromotion(
     promotion: Promotion,
-    items?: [Product][],
+    items?: [Item][],
     ts?: Date,
   ): void {}
 }

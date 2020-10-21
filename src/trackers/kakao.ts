@@ -2,7 +2,7 @@ import { loadKakao } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
 import {
   PaymentInfo,
-  Product,
+  Item,
   Promotion,
   PurchaseInfo,
   UIElement,
@@ -57,37 +57,37 @@ export class KakaoTracker extends BaseTracker {
     this.tracker.signUp();
   }
 
-  public sendImpression(items: Product[], ts?: Date): void {
+  public sendImpression(items: Item[], ts?: Date): void {
     this.tracker.viewContent();
   }
 
   public sendAddPaymentInfo(
     payInfo: PaymentInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {}
 
-  public sendAddToCart(items: Product[], ts?: Date): void {}
+  public sendAddToCart(items: Item[], ts?: Date): void {}
 
   public sendClick(items: UIElement[], ts?: Date): void {}
 
-  public sendItemView(items: Product[], ts?: Date): void {}
+  public sendItemView(items: Item[], ts?: Date): void {}
 
-  public sendItemViewFromList(items: Product[], ts?: Date): void {}
+  public sendItemViewFromList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
     purchaseInfo: PurchaseInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {}
 
   public sendRefund(
     purchaseInfo: PurchaseInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void {}
 
-  public sendRemoveFromCart(items: Product[], ts?: Date): void {}
+  public sendRemoveFromCart(items: Item[], ts?: Date): void {}
 
   public sendSearch(searchTerm: string, ts?: Date): void {}
 
@@ -99,7 +99,7 @@ export class KakaoTracker extends BaseTracker {
 
   public sendViewPromotion(
     promotion: Promotion,
-    items?: [Product][],
+    items?: [Item][],
     ts?: Date,
   ): void {}
 }

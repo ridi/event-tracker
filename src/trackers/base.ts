@@ -2,7 +2,7 @@ import { DeviceType, MainTrackerOptions } from '../index';
 import { EcommerceTracker } from '../ecommerce';
 import {
   PaymentInfo,
-  Product,
+  Item,
   Promotion,
   PurchaseInfo,
   UIElement,
@@ -40,7 +40,7 @@ export abstract class BaseTracker implements EventTracker, EcommerceTracker {
 
   public abstract sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
 
-  public abstract sendImpression(items: Product[], ts?: Date): void;
+  public abstract sendImpression(items: Item[], ts?: Date): void;
 
   public abstract sendStartSubscription(
     args?: Record<string, unknown>,
@@ -49,7 +49,7 @@ export abstract class BaseTracker implements EventTracker, EcommerceTracker {
 
   public abstract sendAddPaymentInfo(
     payInfo: PaymentInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void;
 
@@ -61,33 +61,33 @@ export abstract class BaseTracker implements EventTracker, EcommerceTracker {
     this.mainOptions = newOptions;
   }
 
-  public abstract sendAddToCart(items: Product[], ts?: Date): void;
+  public abstract sendAddToCart(items: Item[], ts?: Date): void;
 
   public abstract sendClick(items: UIElement[], ts?: Date): void;
 
-  public abstract sendItemView(items: Product[], ts?: Date): void;
+  public abstract sendItemView(items: Item[], ts?: Date): void;
 
-  public abstract sendItemViewFromList(items: Product[], ts?: Date): void;
+  public abstract sendItemViewFromList(items: Item[], ts?: Date): void;
 
   public abstract sendPurchase(
     purchaseInfo: PurchaseInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void;
 
   public abstract sendRefund(
     purchaseInfo: PurchaseInfo,
-    items: Product[],
+    items: Item[],
     ts?: Date,
   ): void;
 
-  public abstract sendRemoveFromCart(items: Product[], ts?: Date): void;
+  public abstract sendRemoveFromCart(items: Item[], ts?: Date): void;
 
   public abstract sendSearch(searchTerm: string, ts?: Date): void;
 
   public abstract sendViewPromotion(
     promotion: Promotion,
-    items?: [Product][],
+    items?: [Item][],
     ts?: Date,
   ): void;
 }
