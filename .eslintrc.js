@@ -8,7 +8,14 @@ module.exports = {
     '@ridi/eslint-config/typescript',
     '@ridi/eslint-config/prettier',
   ],
-  overrides: [],
+  overrides: [
+    {
+      files: ['src/**/models/*.ts'],
+      rules: {
+        camelcase: 0,
+      },
+    },
+  ],
   rules: {
     'no-console': 0,
     semi: [2, 'always'],
@@ -36,5 +43,5 @@ module.exports = {
     'max-classes-per-file': ['error', 10],
     'lines-around-comment': 0,
   },
-  ignorePatterns: ['**/node_modules/**'],
+  ignorePatterns: ['**/node_modules/**', '**/dist/**'],
 };

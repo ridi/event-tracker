@@ -1,2 +1,2 @@
 export * from './interface';
-export * from './legacy';
+export * from './models';

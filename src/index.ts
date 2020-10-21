@@ -9,6 +9,7 @@ import {
   GATracker,
   GTagOptions,
   GTagTracker,
+  Item,
   KakaoOptions,
   KakaoTracker,
   PixelOptions,
@@ -19,7 +20,6 @@ import {
   TwitterTracker,
 } from './trackers';
 import { BaseTracker, EventTracker, PageMeta } from './trackers/base';
-import { Item } from './ecommerce/model';
 
 export enum DeviceType {
   PC = 'pc',
@@ -32,7 +32,7 @@ export type ServiceProp = Record<string, string>;
 export interface MainTrackerOptions {
   debug?: boolean;
   development?: boolean;
-  userId?: string;
+  uId?: number;
   deviceType: DeviceType;
   serviceProps?: ServiceProp;
   gaOptions?: GAOptions;
@@ -45,11 +45,10 @@ export interface MainTrackerOptions {
   twitterOptions?: TwitterOptions;
 }
 
-export interface ChangeableTrackerOptions {
-  userId?: string;
-  deviceType?: DeviceType;
-  serviceProps?: ServiceProp;
-}
+type ChangeableTrackerOptions = Pick<
+  MainTrackerOptions,
+  'uId' | 'deviceType' | 'serviceProps'
+>;
 
 type EventParameters =
   | Parameters<EventTracker[keyof EventTracker]>
@@ -171,9 +170,7 @@ export class Tracker {
 
   @pushEventToQueue()
   public sendPageView(href: string, referrer?: string): EventParameters {
-    const pageMeta = this.getPageMeta(href, referrer);
-
-    return [pageMeta];
+    return [this.getPageMeta(href, referrer)];
   }
 
   @pushEventToQueue()

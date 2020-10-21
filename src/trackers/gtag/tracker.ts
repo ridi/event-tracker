@@ -1,12 +1,7 @@
 import { loadGTag } from '../../utils/externalServices';
 import { BaseTracker, PageMeta } from '../base';
-import {
-  PaymentInfo,
-  Item,
-  Promotion,
-  PurchaseInfo,
-  UIElement,
-} from '../../ecommerce/model';
+import { PurchaseInfo } from '../../ecommerce/models/transaction';
+import { Item, Promotion } from '../../ecommerce/models';
 
 export interface GTagOptions {
   trackingId: string;
@@ -55,20 +50,15 @@ export class GTagTracker extends BaseTracker {
   }
 
   public sendAddPaymentInfo(
-    payInfo: PaymentInfo,
-    items: Item[],
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    gtag('event', 'add_payment_info', {
-      payInfo,
-      items,
-    });
+    gtag('event', 'add_payment_info', { purchaseInfo });
   }
 
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {
-    gtag('event', 'sign_up', {
-      method: 'ridi',
-    });
+    gtag('event', 'sign_up', { method: 'ridi' });
   }
 
   public sendImpression(items: Item[], ts?: Date): void {
@@ -87,10 +77,6 @@ export class GTagTracker extends BaseTracker {
     });
   }
 
-  public sendClick(items: UIElement[], ts?: Date): void {
-    // TODO: Add Custom Event
-  }
-
   public sendItemView(items: Item[], ts?: Date): void {
     gtag('event', 'view_item', { items });
   }
@@ -100,14 +86,11 @@ export class GTagTracker extends BaseTracker {
   }
 
   public sendPurchase(
+    transactionId: string,
     purchaseInfo: PurchaseInfo,
-    items: Item[],
     ts?: Date,
   ): void {
-    gtag('event', 'purchase', {
-      purchaseInfo,
-      items,
-    });
+    gtag('event', 'purchase', { purchaseInfo });
   }
 
   public sendRefund(
@@ -115,10 +98,7 @@ export class GTagTracker extends BaseTracker {
     items: Item[],
     ts?: Date,
   ): void {
-    gtag('event', 'refund', {
-      purchaseInfo,
-      items,
-    });
+    gtag('event', 'refund', { purchaseInfo, items });
   }
 
   public sendRemoveFromCart(items: Item[], ts?: Date): void {
@@ -132,7 +112,7 @@ export class GTagTracker extends BaseTracker {
 
   public sendViewPromotion(
     promotion: Promotion,
-    items?: [Item][],
+    items?: Item[],
     ts?: Date,
   ): void {}
 }

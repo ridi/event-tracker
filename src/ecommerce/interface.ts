@@ -1,4 +1,5 @@
-import { PaymentInfo, Item, Promotion, PurchaseInfo, UIElement } from './model';
+import { PurchaseInfo } from './models/transaction';
+import { Item, Promotion } from './models';
 
 export interface EcommerceTracker {
   sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
@@ -14,11 +15,19 @@ export interface EcommerceTracker {
 
   sendItemViewFromList(items: Item[], ts?: Date): void;
 
-  sendClick(items: UIElement[], ts?: Date): void;
+  sendAddPaymentInfo(
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
+    ts?: Date,
+  ): void;
 
-  sendAddPaymentInfo(payInfo: PaymentInfo, items: Item[], ts?: Date): void;
+  sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void;
 
-  sendPurchase(purchaseInfo: PurchaseInfo, items: Item[], ts?: Date): void;
+  sendPurchase(
+    transactionId: string,
+    purchaseInfo: PurchaseInfo,
+    ts?: Date,
+  ): void;
 
   sendRefund(purchaseInfo: PurchaseInfo, items: Item[], ts?: Date): void;
 
@@ -28,5 +37,5 @@ export interface EcommerceTracker {
 
   sendSearch(searchTerm: string, ts?: Date): void;
 
-  sendViewPromotion(promotion: Promotion, items?: [Item][], ts?: Date): void;
+  sendViewPromotion(promotion: Promotion, items?: Item[], ts?: Date): void;
 }

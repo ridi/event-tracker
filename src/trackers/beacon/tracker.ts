@@ -1,15 +1,11 @@
 import URL from 'url-parse';
 
+import _ from 'lodash';
 import { PVID, RUID } from '../../uid';
 import { UIDFactory } from '../../uid/factory';
 import { BaseTracker, PageMeta } from '../base';
-import {
-  PaymentInfo,
-  Item,
-  Promotion,
-  PurchaseInfo,
-  UIElement,
-} from '../../ecommerce/model';
+import { PurchaseInfo } from '../../ecommerce/models/transaction';
+import { Item, Promotion } from '../../ecommerce/models';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -58,14 +54,16 @@ export class BeaconTracker extends BaseTracker {
     if (ts == null) {
       ts = new Date();
     }
+
+    data = _.mapKeys(data, (v, k) => _.snakeCase(k));
+
     const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
 
     const log: BeaconLog = {
       event: eventName,
-      user_id: this.mainOptions.userId,
-      u_id: this.mainOptions.userId,
+      uid: this.mainOptions.uId,
       ruid: this.ruid.value,
-      pvid: this.pvid.value,
+      view_id: this.pvid.value,
       ...pageMeta,
       path: `${pageMeta.path}${search}`,
       data,
@@ -85,18 +83,13 @@ export class BeaconTracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.pvid = new UIDFactory(PVID).create();
-    this.sendBeacon(
-      BeaconEventName.PageView,
-      pageMeta,
-      this.mainOptions.serviceProps,
-      ts,
-    );
+    this.sendBeacon('pageView', pageMeta, this.mainOptions.serviceProps, ts);
     this.lastPageMeta = pageMeta;
   }
 
   public sendEvent(
     name: string,
-    data: Record<string, unknown> = {},
+    data: Record<string, any> = {},
     ts?: Date,
   ): void {
     if (this.lastPageMeta === undefined) {
@@ -110,13 +103,28 @@ export class BeaconTracker extends BaseTracker {
 
   public sendImpression(items: Item[], ts?: Date): void {}
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {
+    this.sendEvent('signUp', {}, ts);
+  }
 
   public sendAddPaymentInfo(
-    payInfo: PaymentInfo,
-    items: Item[],
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
     ts?: Date,
-  ): void {}
+  ): void {
+    this.sendEvent(
+      'addPaymentInfo',
+      {
+        paymentType,
+        ...purchaseInfo,
+      },
+      ts,
+    );
+  }
+
+  public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
+    this.sendEvent('beginCheckout', purchaseInfo, ts);
+  }
 
   public sendStartSubscription(
     args?: Record<string, unknown>,
@@ -125,17 +133,17 @@ export class BeaconTracker extends BaseTracker {
 
   public sendAddToCart(items: Item[], ts?: Date): void {}
 
-  public sendClick(items: UIElement[], ts?: Date): void {}
-
   public sendItemView(items: Item[], ts?: Date): void {}
 
   public sendItemViewFromList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
+    transactionId: string,
     purchaseInfo: PurchaseInfo,
-    items: Item[],
     ts?: Date,
-  ): void {}
+  ): void {
+    this.sendEvent('purchase', purchaseInfo, ts);
+  }
 
   public sendRefund(
     purchaseInfo: PurchaseInfo,
@@ -149,22 +157,18 @@ export class BeaconTracker extends BaseTracker {
 
   public sendViewPromotion(
     promotion: Promotion,
-    items?: [Item][],
+    items?: Item[],
     ts?: Date,
   ): void {}
 }
 
-enum BeaconEventName {
-  PageView = 'pageView',
-}
 /* eslint-disable camelcase */
 interface BeaconLog extends PageMeta {
-  event: string;
-  user_id: string;
-  u_id: string;
-  ruid: string;
-  pvid: string;
-  data: Record<string, unknown>;
-  ts: number;
+  readonly event: string;
+  readonly uid: number;
+  readonly ruid?: string;
+  readonly view_id: string;
+  readonly data: Record<string, any>;
+  readonly ts: number;
 }
 /* eslint-enable camelcase */

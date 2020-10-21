@@ -1,12 +1,7 @@
 import { loadKakao } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import {
-  PaymentInfo,
-  Item,
-  Promotion,
-  PurchaseInfo,
-  UIElement,
-} from '../ecommerce/model';
+import { PurchaseInfo } from '../ecommerce/models/transaction';
+import { Item, Promotion } from '../ecommerce/models';
 
 declare let kakaoPixel: (trackingId: string) => KakaoPixel;
 
@@ -62,22 +57,20 @@ export class KakaoTracker extends BaseTracker {
   }
 
   public sendAddPaymentInfo(
-    payInfo: PaymentInfo,
-    items: Item[],
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {}
 
   public sendAddToCart(items: Item[], ts?: Date): void {}
-
-  public sendClick(items: UIElement[], ts?: Date): void {}
 
   public sendItemView(items: Item[], ts?: Date): void {}
 
   public sendItemViewFromList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
+    transactionId: string,
     purchaseInfo: PurchaseInfo,
-    items: Item[],
     ts?: Date,
   ): void {}
 
@@ -99,7 +92,7 @@ export class KakaoTracker extends BaseTracker {
 
   public sendViewPromotion(
     promotion: Promotion,
-    items?: [Item][],
+    items?: Item[],
     ts?: Date,
   ): void {}
 }

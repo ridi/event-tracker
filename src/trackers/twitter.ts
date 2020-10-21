@@ -3,14 +3,8 @@ import {
   loadTwitterUniversal,
 } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import {
-  PaymentInfo,
-  Item,
-  Promotion,
-  PurchaseInfo,
-  UIElement,
-} from '../ecommerce/model';
-import { EcommerceTracker } from '../ecommerce';
+import { EcommerceTracker, Item, Promotion } from '../ecommerce';
+import { PurchaseInfo } from '../ecommerce/models/transaction';
 
 declare let twq: any;
 declare let twttr: any;
@@ -78,22 +72,20 @@ export class TwitterTracker extends BaseTracker {
   }
 
   public sendAddPaymentInfo(
-    payInfo: PaymentInfo,
-    items: Item[],
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {}
 
   public sendAddToCart(items: Item[], ts?: Date): void {}
-
-  public sendClick(items: UIElement[], ts?: Date): void {}
 
   public sendItemView(items: Item[], ts?: Date): void {}
 
   public sendItemViewFromList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
+    transactionId: string,
     purchaseInfo: PurchaseInfo,
-    items: Item[],
     ts?: Date,
   ): void {}
 
@@ -109,7 +101,7 @@ export class TwitterTracker extends BaseTracker {
 
   public sendViewPromotion(
     promotion: Promotion,
-    items?: [Item][],
+    items?: Item[],
     ts?: Date,
   ): void {}
 }

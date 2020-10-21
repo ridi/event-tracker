@@ -1,12 +1,7 @@
 import { loadGA } from '../../utils/externalServices';
 import { BaseTracker, PageMeta } from '../base';
-import {
-  PaymentInfo,
-  Item,
-  Promotion,
-  PurchaseInfo,
-  UIElement,
-} from '../../ecommerce/model';
+import { PurchaseInfo } from '../../ecommerce/models/transaction';
+import { Item, Promotion } from '../../ecommerce/models';
 
 interface GAFields extends UniversalAnalytics.FieldsObject {
   allowAdFeatures?: boolean;
@@ -30,9 +25,13 @@ export class GATracker extends BaseTracker {
 
   private refinePath(originalPath: string): string {
     const refiners: Array<(path: string) => string> = [
-      path => (this.options.pathPrefix ? this.options.pathPrefix + path : path), // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449 // Pathname in some browsers doesn't start with slash character (/)
-
-      path => (path.startsWith('/') ? path : `/${path}`),
+      path => (this.options.pathPrefix ? this.options.pathPrefix + path : path),
+      path =>
+        path.startsWith('/')
+          ? path
+          : `/${
+              path // Ref: https://app.asana.com/0/inbox/463186034180509/765912307342230/766156873493449 // Pathname in some browsers doesn't start with slash character (/)
+            }`,
     ];
 
     return refiners.reduce((value, refiner) => refiner(value), originalPath);
@@ -87,8 +86,8 @@ export class GATracker extends BaseTracker {
   public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
 
   public sendAddPaymentInfo(
-    payInfo: PaymentInfo,
-    items: Item[],
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {}
 
@@ -99,15 +98,13 @@ export class GATracker extends BaseTracker {
 
   public sendAddToCart(items: Item[], ts?: Date): void {}
 
-  public sendClick(items: UIElement[], ts?: Date): void {}
-
   public sendItemView(items: Item[], ts?: Date): void {}
 
   public sendItemViewFromList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
+    transactionId: string,
     purchaseInfo: PurchaseInfo,
-    items: Item[],
     ts?: Date,
   ): void {}
 
@@ -123,7 +120,7 @@ export class GATracker extends BaseTracker {
 
   public sendViewPromotion(
     promotion: Promotion,
-    items?: [Item][],
+    items?: Item[],
     ts?: Date,
   ): void {}
 }
