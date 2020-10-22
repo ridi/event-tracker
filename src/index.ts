@@ -20,6 +20,7 @@ import {
   TwitterTracker,
 } from './trackers';
 import { BaseTracker, EventTracker, PageMeta } from './trackers/base';
+import { PurchaseInfo } from './ecommerce/models/transaction';
 
 export enum DeviceType {
   PC = 'pc',
@@ -179,6 +180,41 @@ export class Tracker {
   }
 
   @pushEventToQueue()
+  public sendSignUp(method: string): EventParameters {
+    return [method];
+  }
+
+  @pushEventToQueue()
+  public sendBeginCheckout(purchaseInfo: PurchaseInfo): EventParameters {
+    return [purchaseInfo];
+  }
+
+  @pushEventToQueue()
+  public sendAddPaymentInfo(
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
+  ): EventParameters {
+    return [paymentType, purchaseInfo];
+  }
+
+  @pushEventToQueue()
+  public sendPurchase(
+    transactionId: string,
+    purchaseInfo: PurchaseInfo,
+  ): EventParameters {
+    return [transactionId, purchaseInfo];
+  }
+
+  @pushEventToQueue()
+  public sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
+  ): EventParameters {
+    return [screenName, previousScreenName, referrer];
+  }
+
+  @pushEventToQueue()
   public sendStartSubscription(): EventParameters {
     return [];
   }
@@ -186,16 +222,6 @@ export class Tracker {
   @pushEventToQueue()
   public sendImpression(items: Item[]): EventParameters {
     return [items];
-  }
-
-  @pushEventToQueue()
-  public sendAddPaymentInfo(): EventParameters {
-    return [];
-  }
-
-  @pushEventToQueue()
-  public sendSignUp(): EventParameters {
-    return [];
   }
 
   private initializedTrackers(): BaseTracker[] {
