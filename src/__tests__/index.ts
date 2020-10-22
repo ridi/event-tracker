@@ -275,7 +275,7 @@ it('Test TwitterTracker', async () => {
 
   t.sendPageView('href');
   t.sendImpression([]);
-  t.sendSignUp();
+  t.sendSignUp('method');
   t.sendStartSubscription();
 
   jest.runOnlyPendingTimers();
