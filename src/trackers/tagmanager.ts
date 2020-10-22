@@ -2,7 +2,7 @@ import { MainTrackerOptions } from '..';
 
 import { loadTagManager } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { EcommerceTracker, Item, Promotion } from '../ecommerce';
+import { Item, Promotion } from '../ecommerce';
 import { PurchaseInfo } from '../ecommerce/models/transaction';
 
 export interface TagManagerOptions {

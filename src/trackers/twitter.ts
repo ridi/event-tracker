@@ -3,7 +3,7 @@ import {
   loadTwitterUniversal,
 } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
-import { EcommerceTracker, Item, Promotion } from '../ecommerce';
+import { Item, Promotion } from '../ecommerce';
 import { PurchaseInfo } from '../ecommerce/models/transaction';
 
 declare let twq: any;

@@ -1,11 +1,11 @@
 import URL from 'url-parse';
 
 import _ from 'lodash';
-import { PVID, RUID } from '../../uid';
-import { UIDFactory } from '../../uid/factory';
-import { BaseTracker, PageMeta } from '../base';
-import { PurchaseInfo } from '../../ecommerce/models/transaction';
-import { Item, Promotion } from '../../ecommerce/models';
+import { PVID, RUID } from '../uid';
+import { UIDFactory } from '../uid/factory';
+import { BaseTracker, PageMeta } from './base';
+import { PurchaseInfo } from '../ecommerce/models/transaction';
+import { Item, Promotion } from '../ecommerce/models';
 
 export interface BeaconOptions {
   beaconSrc?: string;

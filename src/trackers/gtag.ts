@@ -1,7 +1,7 @@
-import { loadGTag } from '../../utils/externalServices';
-import { BaseTracker, PageMeta } from '../base';
-import { PurchaseInfo } from '../../ecommerce/models/transaction';
-import { Item, Promotion } from '../../ecommerce/models';
+import { loadGTag } from '../utils/externalServices';
+import { BaseTracker, PageMeta } from './base';
+import { PurchaseInfo } from '../ecommerce/models/transaction';
+import { Item, Promotion } from '../ecommerce/models';
 
 export interface GTagOptions {
   trackingId: string;
