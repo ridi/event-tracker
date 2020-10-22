@@ -47,7 +47,7 @@ export class TwitterTracker extends BaseTracker {
     this.twq('track', 'pageView');
   }
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {
+  public sendSignUp(method: string, ts?: Date): void {
     this.twttr.conversion.trackPid(this.options.booksSignUpPid, {
       tw_sale_amount: 0,
       tw_order_quantity: 0,

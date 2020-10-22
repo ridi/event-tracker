@@ -50,7 +50,7 @@ export class PixelTracker extends BaseTracker {
 
   public sendImpression(items: Item[], ts?: Date): void {}
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendSignUp(method: string, ts?: Date): void {}
 
   public sendAddPaymentInfo(
     paymentType: string,

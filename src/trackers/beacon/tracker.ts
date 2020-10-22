@@ -103,8 +103,8 @@ export class BeaconTracker extends BaseTracker {
 
   public sendImpression(items: Item[], ts?: Date): void {}
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {
-    this.sendEvent('signUp', {}, ts);
+  public sendSignUp(method: string, ts?: Date): void {
+    this.sendEvent('signUp', { method }, ts);
   }
 
   public sendAddPaymentInfo(
@@ -112,14 +112,7 @@ export class BeaconTracker extends BaseTracker {
     purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    this.sendEvent(
-      'addPaymentInfo',
-      {
-        paymentType,
-        ...purchaseInfo,
-      },
-      ts,
-    );
+    this.sendEvent('addPaymentInfo', { paymentType, ...purchaseInfo }, ts);
   }
 
   public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {

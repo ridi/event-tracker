@@ -41,7 +41,7 @@ export class KakaoTracker extends BaseTracker {
     this.tracker.pageView();
   }
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {
+  public sendSignUp(method: string, ts?: Date): void {
     this.tracker.completeRegistration();
   }
 

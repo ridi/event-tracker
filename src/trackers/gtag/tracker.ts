@@ -57,7 +57,7 @@ export class GTagTracker extends BaseTracker {
     gtag('event', 'add_payment_info', { purchaseInfo });
   }
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {
+  public sendSignUp(method: string, ts?: Date): void {
     gtag('event', 'sign_up', { method: 'ridi' });
   }
 
