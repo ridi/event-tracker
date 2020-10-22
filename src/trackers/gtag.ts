@@ -99,7 +99,14 @@ export class GTagTracker extends BaseTracker {
     purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    gtag('event', 'purchase', { purchaseInfo });
+    gtag('event', 'purchase', {
+      transaction_id: transactionId,
+      ...purchaseInfo,
+    });
+  }
+
+  public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
+    gtag('event', 'begin_checkout', purchaseInfo);
   }
 
   public sendRefund(
