@@ -107,6 +107,19 @@ export class BeaconTracker extends BaseTracker {
     this.sendEvent('signUp', { method }, ts);
   }
 
+  public sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
+    ts?: Date,
+  ): void {
+    this.sendEvent(
+      'screenView',
+      { screenName, previousScreenName, referrer },
+      ts,
+    );
+  }
+
   public sendAddPaymentInfo(
     paymentType: string,
     purchaseInfo: PurchaseInfo,

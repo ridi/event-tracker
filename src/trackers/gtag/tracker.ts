@@ -54,11 +54,20 @@ export class GTagTracker extends BaseTracker {
     purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    gtag('event', 'add_payment_info', { purchaseInfo });
+    gtag('event', 'add_payment_info', { ...purchaseInfo });
   }
 
   public sendSignUp(method: string, ts?: Date): void {
-    gtag('event', 'sign_up', { method: 'ridi' });
+    gtag('event', 'sign_up', { method });
+  }
+
+  public sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
+    ts?: Date,
+  ): void {
+    gtag('event', 'screen_view', { screen_name: screenName });
   }
 
   public sendImpression(items: Item[], ts?: Date): void {
