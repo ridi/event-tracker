@@ -6,6 +6,7 @@ import { UIDFactory } from '../uid/factory';
 import { BaseTracker, PageMeta } from './base';
 import { PurchaseInfo } from '../ecommerce/models/transaction';
 import { Item, Promotion } from '../ecommerce/models';
+import { convertKeyToSnakeCase } from '../utils/util';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -55,7 +56,7 @@ export class BeaconTracker extends BaseTracker {
       ts = new Date();
     }
 
-    data = _.mapKeys(data, (v, k) => _.snakeCase(k));
+    data = convertKeyToSnakeCase(data);
 
     const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
 
