@@ -27,16 +27,16 @@ export interface EcommerceTracker {
 
   /**
    * @deprecated Use sendItemViewFromList instead.
-   * @see sendItemViewFromList
+   * @see sendViewItemFromList
    */
 
   sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
 
   sendImpression(items: Item[], ts?: Date): void;
 
-  sendItemView(items: Item[], ts?: Date): void;
+  sendViewItem(items: Item[], ts?: Date): void;
 
-  sendItemViewFromList(items: Item[], ts?: Date): void;
+  sendViewItemFromList(items: Item[], ts?: Date): void;
 
   sendRefund(purchaseInfo: PurchaseInfo, items: Item[], ts?: Date): void;
 

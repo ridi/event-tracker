@@ -73,27 +73,12 @@ export class GTagTracker extends BaseTracker {
     gtag('event', 'screen_view', { screen_name: screenName });
   }
 
-  public sendImpression(items: Item[], ts?: Date): void {
-    this.sendItemViewFromList(items, ts);
-  }
 
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void {}
-
-  public sendAddToCart(items: Item[], ts?: Date): void {
-    gtag('event', 'add_to_cart', {
-      value: items.map(p => p.price).reduce((pre, cur) => pre + cur),
-      items,
-    });
-  }
-
-  public sendItemView(items: Item[], ts?: Date): void {
+  public sendViewItem(items: Item[], ts?: Date): void {
     gtag('event', 'view_item', { items });
   }
 
-  public sendItemViewFromList(items: Item[], ts?: Date): void {
+  public sendViewItemFromList(items: Item[], ts?: Date): void {
     gtag('event', 'view_item_list', { items });
   }
 
@@ -112,26 +97,7 @@ export class GTagTracker extends BaseTracker {
     gtag('event', 'begin_checkout', purchaseInfo);
   }
 
-  public sendRefund(
-    purchaseInfo: PurchaseInfo,
-    items: Item[],
-    ts?: Date,
-  ): void {
-    gtag('event', 'refund', { purchaseInfo, items });
-  }
-
-  public sendRemoveFromCart(items: Item[], ts?: Date): void {
-    gtag('event', 'remove_from_cart', {
-      value: items.map(p => p.price).reduce((pre, cur) => pre + cur),
-      items,
     });
   }
 
-  public sendSearch(searchTerm: string, ts?: Date): void {}
-
-  public sendViewPromotion(
-    promotion: Promotion,
-    items?: Item[],
-    ts?: Date,
-  ): void {}
 }

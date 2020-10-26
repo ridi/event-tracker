@@ -81,9 +81,9 @@ export class TagManagerTracker extends BaseTracker {
     this.dataLayer.push(data);
   }
 
-  public sendItemView(items: Item[], ts?: Date): void {}
+  public sendViewItem(items: Item[], ts?: Date): void {}
 
-  public sendItemViewFromList(items: Item[], ts?: Date): void {}
+  public sendViewItemFromList(items: Item[], ts?: Date): void {}
 
   public sendScreenView(
     screenName: string,

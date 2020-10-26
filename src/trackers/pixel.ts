@@ -65,9 +65,9 @@ export class PixelTracker extends BaseTracker {
 
   public sendAddToCart(items: Item[], ts?: Date): void {}
 
-  public sendItemView(items: Item[], ts?: Date): void {}
+  public sendViewItem(items: Item[], ts?: Date): void {}
 
-  public sendItemViewFromList(items: Item[], ts?: Date): void {}
+  public sendViewItemFromList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
     transactionId: string,

@@ -1,6 +1,5 @@
 import URL from 'url-parse';
 
-import _ from 'lodash';
 import { PVID, RUID } from '../uid';
 import { UIDFactory } from '../uid/factory';
 import { BaseTracker, PageMeta } from './base';
@@ -133,16 +132,9 @@ export class BeaconTracker extends BaseTracker {
     this.sendEvent('beginCheckout', purchaseInfo, ts);
   }
 
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void {}
+  public sendViewItem(items: Item[], ts?: Date): void {}
 
-  public sendAddToCart(items: Item[], ts?: Date): void {}
-
-  public sendItemView(items: Item[], ts?: Date): void {}
-
-  public sendItemViewFromList(items: Item[], ts?: Date): void {}
+  public sendViewItemFromList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
     transactionId: string,
@@ -151,22 +143,6 @@ export class BeaconTracker extends BaseTracker {
   ): void {
     this.sendEvent('purchase', purchaseInfo, ts);
   }
-
-  public sendRefund(
-    purchaseInfo: PurchaseInfo,
-    items: Item[],
-    ts?: Date,
-  ): void {}
-
-  public sendRemoveFromCart(items: Item[], ts?: Date): void {}
-
-  public sendSearch(searchTerm: string, ts?: Date): void {}
-
-  public sendViewPromotion(
-    promotion: Promotion,
-    items?: Item[],
-    ts?: Date,
-  ): void {}
 }
 
 /* eslint-disable camelcase */
