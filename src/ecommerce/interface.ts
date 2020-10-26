@@ -16,7 +16,9 @@ export interface EcommerceTracker {
     ts?: Date,
   ): void;
 
-  /* TODO: Implement below methods */
+  sendViewItem(items: Item[], ts?: Date): void;
+
+  sendViewItemFromList(items: Item[], ts?: Date): void;
 
   sendScreenView(
     screenName: string,
@@ -24,6 +26,8 @@ export interface EcommerceTracker {
     referrer?: string,
     ts?: Date,
   ): void;
+
+  /* TODO: Implement below methods */
 
   /**
    * @deprecated Use sendItemViewFromList instead.
@@ -33,10 +37,6 @@ export interface EcommerceTracker {
   sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
 
   sendImpression(items: Item[], ts?: Date): void;
-
-  sendViewItem(items: Item[], ts?: Date): void;
-
-  sendViewItemFromList(items: Item[], ts?: Date): void;
 
   sendRefund(purchaseInfo: PurchaseInfo, items: Item[], ts?: Date): void;
 

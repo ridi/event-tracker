@@ -1,7 +1,7 @@
 import { loadGTag } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
 import { PurchaseInfo } from '../ecommerce/models/transaction';
-import { Item, Promotion } from '../ecommerce/models';
+import { Item } from '../ecommerce/models';
 
 export interface GTagOptions {
   trackingId: string;
@@ -57,7 +57,13 @@ export class GTagTracker extends BaseTracker {
     purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    gtag('event', 'add_payment_info', { ...purchaseInfo });
+    gtag('event',
+      'add_payment_info',
+      {
+      payment_type: paymentType,
+        ...purchaseInfo,
+        coupon: purchaseInfo.coupon_name,
+      });
   }
 
   public sendSignUp(method: string, ts?: Date): void {
@@ -72,6 +78,9 @@ export class GTagTracker extends BaseTracker {
   ): void {
     gtag('event', 'screen_view', { screen_name: screenName });
   }
+
+    public sendImpression(items: Item[], ts?: Date): void {}
+
 
 
   public sendViewItem(items: Item[], ts?: Date): void {
@@ -94,10 +103,15 @@ export class GTagTracker extends BaseTracker {
   }
 
   public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
-    gtag('event', 'begin_checkout', purchaseInfo);
-  }
-
+    gtag('event', 'begin_checkout', {
+      ...purchaseInfo,
+      coupon: purchaseInfo.coupon_name,
     });
   }
+
+  public sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
 
 }

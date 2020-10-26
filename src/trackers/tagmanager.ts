@@ -105,4 +105,11 @@ export class TagManagerTracker extends BaseTracker {
   ): void {
     this.sendEvent('Purchase', { transactionId, purchaseInfo }, ts);
   }
+
+  public sendImpression(items: Item[], ts?: Date): void {}
+
+  public sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
 }

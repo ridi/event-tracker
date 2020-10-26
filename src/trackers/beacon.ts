@@ -129,7 +129,7 @@ export class BeaconTracker extends BaseTracker {
   }
 
   public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
-    this.sendEvent('beginCheckout', purchaseInfo, ts);
+    this.sendEvent('beginCheckout', { ...purchaseInfo }, ts);
   }
 
   public sendViewItem(items: Item[], ts?: Date): void {}
@@ -141,8 +141,13 @@ export class BeaconTracker extends BaseTracker {
     purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    this.sendEvent('purchase', purchaseInfo, ts);
+    this.sendEvent('purchase', { transactionId, ...purchaseInfo }, ts);
   }
+
+  public sendStartSubscription(
+    args?: Record<string, unknown>,
+    ts?: Date,
+  ): void {}
 }
 
 /* eslint-disable camelcase */
