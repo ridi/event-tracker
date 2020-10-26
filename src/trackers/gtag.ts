@@ -5,6 +5,7 @@ import { Item, Promotion } from '../ecommerce/models';
 
 export interface GTagOptions {
   trackingId: string;
+  uId?: number;
   autoPageView?: boolean;
   defaultCurrency?: string;
 }
@@ -25,6 +26,8 @@ export class GTagTracker extends BaseTracker {
     await loadGTag(this.options.trackingId);
     gtag('config', this.options.trackingId, {
       send_page_view: this.options.autoPageView,
+      // eslint-disable-next-line prettier/prettier
+      user_id: this.options.uId?.toString(),
     });
     gtag('set', { currency: this.options.defaultCurrency });
   }
