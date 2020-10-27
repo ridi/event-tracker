@@ -132,9 +132,17 @@ export class BeaconTracker extends BaseTracker {
     this.sendEvent('beginCheckout', { ...purchaseInfo }, ts);
   }
 
-  public sendViewItem(items: Item[], ts?: Date): void {}
+  public sendAddToPreference(items: Item[], ts?: Date): void {
+    this.sendEvent('addToPreference', { items }, ts);
+  }
 
-  public sendViewItemFromList(items: Item[], ts?: Date): void {}
+  public sendViewItem(items: Item[], ts?: Date): void {
+    this.sendEvent('viewItem', { items }, ts);
+  }
+
+  public sendAddToNewBookNotification(items: Item[], ts?: Date): void {
+    this.sendEvent('addToNewBookNotification', { items }, ts);
+  }
 
   public sendPurchase(
     transactionId: string,

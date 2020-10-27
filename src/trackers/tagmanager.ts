@@ -68,6 +68,14 @@ export class TagManagerTracker extends BaseTracker {
     this.sendEvent('AddPaymentInfo', { paymentType, ...purchaseInfo }, ts);
   }
 
+  public sendAddToPreference(items: Item[], ts?: Date): void {
+    this.sendEvent('AddToPreference', { items }, ts);
+  }
+
+  public sendAddToNewBookNotification(items: Item[], ts?: Date): void {
+    this.sendEvent('AddToNewBookNotification', { items }, ts);
+  }
+
   public sendEvent(
     name: string,
     data: Record<string, any> = {},
@@ -81,7 +89,9 @@ export class TagManagerTracker extends BaseTracker {
     this.dataLayer.push(data);
   }
 
-  public sendViewItem(items: Item[], ts?: Date): void {}
+  public sendViewItem(items: Item[], ts?: Date): void {
+    this.sendEvent('ViewItem', { items }, ts);
+  }
 
   public sendViewItemFromList(items: Item[], ts?: Date): void {}
 

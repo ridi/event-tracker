@@ -79,8 +79,7 @@ export class GTagTracker extends BaseTracker {
     gtag('event', 'screen_view', { screen_name: screenName });
   }
 
-    public sendImpression(items: Item[], ts?: Date): void {}
-
+  public sendImpression(items: Item[], ts?: Date): void {}
 
 
   public sendViewItem(items: Item[], ts?: Date): void {
@@ -90,6 +89,7 @@ export class GTagTracker extends BaseTracker {
   public sendViewItemFromList(items: Item[], ts?: Date): void {
     gtag('event', 'view_item_list', { items });
   }
+
 
   public sendPurchase(
     transactionId: string,

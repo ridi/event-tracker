@@ -18,23 +18,20 @@ export interface EcommerceTracker {
 
   sendViewItem(items: Item[], ts?: Date): void;
 
+  sendAddToPreference(items: Item[], ts?: Date): void;
+
+  sendAddToNewBookNotification(items: Item[], ts?: Date): void;
+
   sendViewItemFromList(items: Item[], ts?: Date): void;
 
-  sendScreenView(
-    screenName: string,
-    previousScreenName: string,
-    referrer?: string,
-    ts?: Date,
-  ): void;
-
   /* TODO: Implement below methods */
+
+  sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
 
   /**
    * @deprecated Use sendItemViewFromList instead.
    * @see sendViewItemFromList
    */
-
-  sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
 
   sendImpression(items: Item[], ts?: Date): void;
 

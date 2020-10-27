@@ -15,6 +15,13 @@ export interface PageMeta {
 export interface EventTracker {
   sendPageView(pageMeta: PageMeta, ts?: Date): void;
 
+  sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
+    ts?: Date,
+  ): void;
+
   sendEvent(name: string, data?: Record<string, unknown>, ts?: Date): void;
 
   sendSignUp(method: string, ts?: Date): void;
