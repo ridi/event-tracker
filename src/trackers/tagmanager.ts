@@ -49,7 +49,7 @@ export class TagManagerTracker extends BaseTracker {
   }
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
-    this.sendEvent('PageView', pageMeta, ts);
+    this.sendEvent('PageView', { ...pageMeta }, ts);
   }
 
   public sendSignUp(method: string, ts?: Date): void {
@@ -57,7 +57,7 @@ export class TagManagerTracker extends BaseTracker {
   }
 
   public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
-    this.sendEvent('BeginCheckout', purchaseInfo, ts);
+    this.sendEvent('BeginCheckout', { ...purchaseInfo }, ts);
   }
 
   public sendAddPaymentInfo(
@@ -82,7 +82,7 @@ export class TagManagerTracker extends BaseTracker {
     ts?: Date,
   ): void {
     data = convertKeyToSnakeCase(data);
-    this.dataLayer.push({ event: name, data });
+    this.dataLayer.push({ event: name, event_params: data });
   }
 
   private pushDataLayer(data: Record<string, any>): void {
@@ -113,7 +113,7 @@ export class TagManagerTracker extends BaseTracker {
     purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    this.sendEvent('Purchase', { transactionId, purchaseInfo }, ts);
+    this.sendEvent('Purchase', { transactionId, ...purchaseInfo }, ts);
   }
 
   public sendImpression(items: Item[], ts?: Date): void {}
