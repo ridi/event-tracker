@@ -83,7 +83,7 @@ export class BeaconTracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.pvid = new UIDFactory(PVID).create();
-    this.sendBeacon('pageView', pageMeta, this.mainOptions.serviceProps, ts);
+    this.sendBeacon('PageView', pageMeta, this.mainOptions.serviceProps, ts);
     this.lastPageMeta = pageMeta;
   }
 
@@ -104,7 +104,7 @@ export class BeaconTracker extends BaseTracker {
   public sendImpression(items: Item[], ts?: Date): void {}
 
   public sendSignUp(method: string, ts?: Date): void {
-    this.sendEvent('signUp', { method }, ts);
+    this.sendEvent('SignUp', { method }, ts);
   }
 
   public sendScreenView(
@@ -114,7 +114,7 @@ export class BeaconTracker extends BaseTracker {
     ts?: Date,
   ): void {
     this.sendEvent(
-      'screenView',
+      'ScreenView',
       { screenName, previousScreenName, referrer },
       ts,
     );
@@ -125,23 +125,23 @@ export class BeaconTracker extends BaseTracker {
     purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    this.sendEvent('addPaymentInfo', { paymentType, ...purchaseInfo }, ts);
+    this.sendEvent('AddPaymentInfo', { paymentType, ...purchaseInfo }, ts);
   }
 
   public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
-    this.sendEvent('beginCheckout', { ...purchaseInfo }, ts);
+    this.sendEvent('BeginCheckout', { ...purchaseInfo }, ts);
   }
 
   public sendAddToPreference(items: Item[], ts?: Date): void {
-    this.sendEvent('addToPreference', { items }, ts);
+    this.sendEvent('AddToPreference', { items }, ts);
   }
 
   public sendViewItem(items: Item[], ts?: Date): void {
-    this.sendEvent('viewItem', { items }, ts);
+    this.sendEvent('ViewItem', { items }, ts);
   }
 
   public sendAddToNewBookNotification(items: Item[], ts?: Date): void {
-    this.sendEvent('addToNewBookNotification', { items }, ts);
+    this.sendEvent('AddToNewBookNotification', { items }, ts);
   }
 
   public sendPurchase(
@@ -149,7 +149,7 @@ export class BeaconTracker extends BaseTracker {
     purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {
-    this.sendEvent('purchase', { transactionId, ...purchaseInfo }, ts);
+    this.sendEvent('Purchase', { transactionId, ...purchaseInfo }, ts);
   }
 
   public sendStartSubscription(
