@@ -63,8 +63,6 @@ export class PixelTracker extends BaseTracker {
     ts?: Date,
   ): void {}
 
-  public sendAddToCart(items: Item[], ts?: Date): void {}
-
   public sendViewItem(items: Item[], ts?: Date): void {}
 
   public sendViewItemList(items: Item[], ts?: Date): void {}
@@ -72,22 +70,6 @@ export class PixelTracker extends BaseTracker {
   public sendPurchase(
     transactionId: string,
     purchaseInfo: PurchaseInfo,
-    ts?: Date,
-  ): void {}
-
-  public sendRefund(
-    purchaseInfo: PurchaseInfo,
-    items: Item[],
-    ts?: Date,
-  ): void {}
-
-  public sendRemoveFromCart(items: Item[], ts?: Date): void {}
-
-  public sendSearch(searchTerm: string, ts?: Date): void {}
-
-  public sendViewPromotion(
-    promotion: Promotion,
-    items?: Item[],
     ts?: Date,
   ): void {}
 }

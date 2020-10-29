@@ -37,14 +37,4 @@ export interface EcommerceTracker {
    */
 
   sendImpression(items: Item[], ts?: Date): void;
-
-  sendRefund(purchaseInfo: PurchaseInfo, items: Item[], ts?: Date): void;
-
-  sendAddToCart(items: Item[], ts?: Date): void;
-
-  sendRemoveFromCart(items: Item[], ts?: Date): void;
-
-  sendSearch(searchTerm: string, ts?: Date): void;
-
-  sendViewPromotion(promotion: Promotion, items?: Item[], ts?: Date): void;
 }
