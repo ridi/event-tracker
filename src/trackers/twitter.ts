@@ -16,6 +16,9 @@ export interface TwitterOptions {
   impressionPid: string;
 }
 
+/**
+ * @deprecated Use GTM provided tag
+ */
 export class TwitterTracker extends BaseTracker {
   constructor(private options: TwitterOptions) {
     super();
@@ -81,7 +84,7 @@ export class TwitterTracker extends BaseTracker {
 
   public sendViewItem(items: Item[], ts?: Date): void {}
 
-  public sendViewItemFromList(items: Item[], ts?: Date): void {}
+  public sendViewItemList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
     transactionId: string,

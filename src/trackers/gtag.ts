@@ -5,7 +5,6 @@ import { Item } from '../ecommerce/models';
 
 export interface GTagOptions {
   trackingId: string;
-  uId?: number;
   autoPageView?: boolean;
   defaultCurrency?: string;
 }
@@ -27,7 +26,7 @@ export class GTagTracker extends BaseTracker {
     gtag('config', this.options.trackingId, {
       send_page_view: this.options.autoPageView,
       // eslint-disable-next-line prettier/prettier
-      user_id: this.options.uId?.toString(),
+      user_id: this.mainOptions.uId?.toString(),
     });
     gtag('set', { currency: this.options.defaultCurrency });
   }
@@ -86,7 +85,7 @@ export class GTagTracker extends BaseTracker {
     gtag('event', 'view_item', { items });
   }
 
-  public sendViewItemFromList(items: Item[], ts?: Date): void {
+  public sendViewItemList(items: Item[], ts?: Date): void {
     gtag('event', 'view_item_list', { items });
   }
 

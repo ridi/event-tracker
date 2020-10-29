@@ -22,15 +22,18 @@ export interface EcommerceTracker {
 
   sendAddToNewBookNotification(items: Item[], ts?: Date): void;
 
-  sendViewItemFromList(items: Item[], ts?: Date): void;
+  sendViewContent(item: Item, ts?: Date): void;
 
-  /* TODO: Implement below methods */
+  sendViewItemList(items: Item[], ts?: Date): void;
 
+  /**
+   * @deprecated
+   */
   sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
 
   /**
-   * @deprecated Use sendItemViewFromList instead.
-   * @see sendViewItemFromList
+   * @deprecated Use sendItemViewFList instead.
+   * @see sendViewItemList
    */
 
   sendImpression(items: Item[], ts?: Date): void;

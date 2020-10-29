@@ -100,7 +100,7 @@ export class GATracker extends BaseTracker {
 
   public sendViewItem(items: Item[], ts?: Date): void {}
 
-  public sendViewItemFromList(items: Item[], ts?: Date): void {}
+  public sendViewItemList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
     transactionId: string,
