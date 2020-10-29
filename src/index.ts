@@ -185,6 +185,10 @@ export class Tracker {
   }
 
   @pushEventToQueue()
+  public sendLogin(method: string): EventParameters {
+    return [method];
+  }
+  @pushEventToQueue()
   public sendBeginCheckout(purchaseInfo: PurchaseInfo): EventParameters {
     return [purchaseInfo];
   }

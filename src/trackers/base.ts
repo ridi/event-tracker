@@ -25,6 +25,8 @@ export interface EventTracker {
   sendEvent(name: string, data?: Record<string, unknown>, ts?: Date): void;
 
   sendSignUp(method: string, ts?: Date): void;
+
+  sendLogin(method: string, ts?: Date): void;
 }
 
 // https://github.com/Microsoft/TypeScript/issues/4670#issuecomment-326585615

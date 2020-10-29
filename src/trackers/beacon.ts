@@ -101,6 +101,10 @@ export class BeaconTracker extends BaseTracker {
     this.sendBeacon(name, this.lastPageMeta, data, ts);
   }
 
+  public sendLogin(method: string, ts?: Date): void {
+    this.sendEvent('Login', ts);
+  }
+
   public sendImpression(items: Item[], ts?: Date): void {}
 
   public sendSignUp(method: string, ts?: Date): void {
