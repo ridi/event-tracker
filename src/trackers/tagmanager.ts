@@ -31,6 +31,10 @@ export class TagManagerTracker extends BaseTracker {
     return window.dataLayer;
   }
 
+  private pushDataLayer(data: Record<string, any>): void {
+    this.dataLayer.push(data);
+  }
+
   public setMainOptions(newOptions: MainTrackerOptions): void {
     super.setMainOptions(newOptions);
 
@@ -44,6 +48,15 @@ export class TagManagerTracker extends BaseTracker {
     this.tagCalled = true;
   }
 
+  public sendEvent(
+    name: string,
+    data: Record<string, any> = {},
+    ts?: Date,
+  ): void {
+    data = convertKeyToSnakeCase(data);
+    this.pushDataLayer({ event: name, event_params: data, ts });
+  }
+
   public isInitialized(): boolean {
     return this.tagCalled;
   }
@@ -52,8 +65,25 @@ export class TagManagerTracker extends BaseTracker {
     this.sendEvent('PageView', { ...pageMeta }, ts);
   }
 
+  public sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
+    ts?: Date,
+  ): void {
+    this.sendEvent(
+      'ScreenView',
+      { screenName, previousScreenName, referrer },
+      ts,
+    );
+  }
+
   public sendSignUp(method: string, ts?: Date): void {
     this.sendEvent('SignUp', { method }, ts);
+  }
+
+  public sendLogin(method: string, ts?: Date): void {
+    this.sendEvent('Login', { method }, ts);
   }
 
   public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
@@ -76,37 +106,15 @@ export class TagManagerTracker extends BaseTracker {
     this.sendEvent('AddToNewBookNotification', { items }, ts);
   }
 
-  public sendEvent(
-    name: string,
-    data: Record<string, any> = {},
-    ts?: Date,
-  ): void {
-    data = convertKeyToSnakeCase(data);
-    this.dataLayer.push({ event: name, event_params: data });
-  }
-
-  private pushDataLayer(data: Record<string, any>): void {
-    this.dataLayer.push(data);
-  }
-
   public sendViewItem(items: Item[], ts?: Date): void {
     this.sendEvent('ViewItem', { items }, ts);
   }
 
-  public sendViewItemFromList(items: Item[], ts?: Date): void {}
-
-  public sendScreenView(
-    screenName: string,
-    previousScreenName: string,
-    referrer?: string,
-    ts?: Date,
-  ): void {
-    this.sendEvent(
-      'ScreenView',
-      { screenName, previousScreenName, referrer },
-      ts,
-    );
+  public sendViewContent(item: Item, ts?: Date): void {
+    this.sendEvent('ViewContent', { item }, ts);
   }
+
+  public sendViewItemList(items: Item[], ts?: Date): void {}
 
   public sendPurchase(
     transactionId: string,

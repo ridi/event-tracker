@@ -144,6 +144,10 @@ export class BeaconTracker extends BaseTracker {
     this.sendEvent('ViewItem', { items }, ts);
   }
 
+  public sendViewContent(item: Item, ts?: Date): void {
+    this.sendEvent('ViewContent', { item }, ts);
+  }
+
   public sendAddToNewBookNotification(items: Item[], ts?: Date): void {
     this.sendEvent('AddToNewBookNotification', { items }, ts);
   }

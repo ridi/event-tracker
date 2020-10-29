@@ -170,13 +170,22 @@ export class Tracker {
   }
 
   @pushEventToQueue()
+  public sendEvent(name: string, data: any = {}): EventParameters {
+    return [name, data];
+  }
+
+  @pushEventToQueue()
   public sendPageView(href: string, referrer?: string): EventParameters {
     return [this.getPageMeta(href, referrer)];
   }
 
   @pushEventToQueue()
-  public sendEvent(name: string, data: any = {}): EventParameters {
-    return [name, data];
+  public sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
+  ): EventParameters {
+    return [screenName, previousScreenName, referrer];
   }
 
   @pushEventToQueue()
@@ -188,6 +197,7 @@ export class Tracker {
   public sendLogin(method: string): EventParameters {
     return [method];
   }
+
   @pushEventToQueue()
   public sendBeginCheckout(purchaseInfo: PurchaseInfo): EventParameters {
     return [purchaseInfo];
@@ -210,12 +220,13 @@ export class Tracker {
   }
 
   @pushEventToQueue()
-  public sendScreenView(
-    screenName: string,
-    previousScreenName: string,
-    referrer?: string,
-  ): EventParameters {
-    return [screenName, previousScreenName, referrer];
+  public sendViewItem(items: Item[], ts?: Date): EventParameters {
+    return [items];
+  }
+
+  @pushEventToQueue()
+  public sendViewContent(item: Item, ts?: Date): EventParameters {
+    return [item];
   }
 
   @pushEventToQueue()
