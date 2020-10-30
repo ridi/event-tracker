@@ -36,10 +36,13 @@ export class TagManagerTracker extends BaseTracker {
   }
 
   public setMainOptions(newOptions: MainTrackerOptions): void {
-    super.setMainOptions(newOptions);
+    if (this.mainOptions) {
+      this.sendEvent('OptionsChanged', newOptions);
+    } else {
+      this.pushDataLayer(newOptions);
+    }
 
-    this.pushDataLayer(newOptions);
-    this.sendEvent('OptionsChanged', newOptions);
+    super.setMainOptions(newOptions);
   }
 
   public async initialize(): Promise<void> {

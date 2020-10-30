@@ -272,9 +272,7 @@ it.skip('Test TwitterTracker', async () => {
   t.throttledFlush = t.flush.bind(t);
 
   t.sendPageView('href');
-  t.sendImpression([]);
   t.sendSignUp('method');
-  t.sendStartSubscription();
 
   jest.runOnlyPendingTimers();
 
