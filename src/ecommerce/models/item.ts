@@ -18,6 +18,6 @@ export interface Item extends Partial<Promotion> {
   readonly price?: number;
   readonly currency?: Currency;
   readonly index?: number;
-  readonly item_list_id: string;
-  readonly item_list_name: string;
+  readonly item_list_id?: string;
+  readonly item_list_name?: string;
 }
