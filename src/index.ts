@@ -229,16 +229,6 @@ export class Tracker {
     return [item];
   }
 
-  @pushEventToQueue()
-  public sendStartSubscription(): EventParameters {
-    return [];
-  }
-
-  @pushEventToQueue()
-  public sendImpression(items: Item[]): EventParameters {
-    return [items];
-  }
-
   private initializedTrackers(): BaseTracker[] {
     return this.trackers.filter(t => t.isInitialized());
   }
