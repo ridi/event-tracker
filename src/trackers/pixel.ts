@@ -1,5 +1,7 @@
 import { loadPixel } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
+import { Item, Promotion } from '../ecommerce';
+import { PurchaseInfo } from '../ecommerce/models/transaction';
 
 export interface PixelOptions {
   pixelId: string | string[];
@@ -40,20 +42,27 @@ export class PixelTracker extends BaseTracker {
     }
   }
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
-
   public sendEvent(
     name: string,
     data?: Record<string, unknown>,
     ts?: Date,
   ): void {}
 
-  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendSignUp(method: string, ts?: Date): void {}
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendAddPaymentInfo(
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
+    ts?: Date,
+  ): void {}
 
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
+  public sendViewItem(items: Item[], ts?: Date): void {}
+
+  public sendViewItemList(items: Item[], ts?: Date): void {}
+
+  public sendPurchase(
+    transactionId: string,
+    purchaseInfo: PurchaseInfo,
     ts?: Date,
   ): void {}
 }

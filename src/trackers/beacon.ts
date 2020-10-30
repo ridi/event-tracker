@@ -3,6 +3,9 @@ import URL from 'url-parse';
 import { PVID, RUID } from '../uid';
 import { UIDFactory } from '../uid/factory';
 import { BaseTracker, PageMeta } from './base';
+import { PurchaseInfo } from '../ecommerce/models/transaction';
+import { Item, Promotion } from '../ecommerce/models';
+import { convertKeyToSnakeCase } from '../utils/util';
 
 export interface BeaconOptions {
   beaconSrc?: string;
@@ -15,10 +18,7 @@ export class BeaconTracker extends BaseTracker {
     use = true,
   }: BeaconOptions) {
     super();
-    this.options = {
-      beaconSrc,
-      use,
-    };
+    this.options = { beaconSrc, use };
   }
 
   private options: BeaconOptions;
@@ -54,14 +54,16 @@ export class BeaconTracker extends BaseTracker {
     if (ts == null) {
       ts = new Date();
     }
+
+    data = convertKeyToSnakeCase(data);
+
     const search = `?${URL.qs.stringify(pageMeta.query_params)}`;
 
     const log: BeaconLog = {
       event: eventName,
-      user_id: this.mainOptions.userId,
-      u_id: this.mainOptions.userId,
+      uid: this.mainOptions.uId,
       ruid: this.ruid.value,
-      pvid: this.pvid.value,
+      view_id: this.pvid.value,
       ...pageMeta,
       path: `${pageMeta.path}${search}`,
       data,
@@ -81,18 +83,13 @@ export class BeaconTracker extends BaseTracker {
 
   public sendPageView(pageMeta: PageMeta, ts?: Date): void {
     this.pvid = new UIDFactory(PVID).create();
-    this.sendBeacon(
-      BeaconEventName.PageView,
-      pageMeta,
-      this.mainOptions.serviceProps,
-      ts,
-    );
+    this.sendBeacon('PageView', pageMeta, this.mainOptions.serviceProps, ts);
     this.lastPageMeta = pageMeta;
   }
 
   public sendEvent(
     name: string,
-    data: Record<string, unknown> = {},
+    data: Record<string, any> = {},
     ts?: Date,
   ): void {
     if (this.lastPageMeta === undefined) {
@@ -104,29 +101,71 @@ export class BeaconTracker extends BaseTracker {
     this.sendBeacon(name, this.lastPageMeta, data, ts);
   }
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendLogin(method: string, ts?: Date): void {
+    this.sendEvent('Login', ts);
+  }
 
-  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendSignUp(method: string, ts?: Date): void {
+    this.sendEvent('SignUp', { method }, ts);
+  }
 
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
-
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
+  public sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
     ts?: Date,
-  ): void {}
+  ): void {
+    this.sendEvent(
+      'ScreenView',
+      { screenName, previousScreenName, referrer },
+      ts,
+    );
+  }
+
+  public sendAddPaymentInfo(
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
+    ts?: Date,
+  ): void {
+    this.sendEvent('AddPaymentInfo', { paymentType, ...purchaseInfo }, ts);
+  }
+
+  public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
+    this.sendEvent('BeginCheckout', { ...purchaseInfo }, ts);
+  }
+
+  public sendAddToPreference(items: Item[], ts?: Date): void {
+    this.sendEvent('AddToPreference', { items }, ts);
+  }
+
+  public sendViewItem(items: Item[], ts?: Date): void {
+    this.sendEvent('ViewItem', { items }, ts);
+  }
+
+  public sendViewContent(item: Item, ts?: Date): void {
+    this.sendEvent('ViewContent', { item }, ts);
+  }
+
+  public sendAddToNewBookNotification(items: Item[], ts?: Date): void {
+    this.sendEvent('AddToNewBookNotification', { items }, ts);
+  }
+
+  public sendPurchase(
+    transactionId: string,
+    purchaseInfo: PurchaseInfo,
+    ts?: Date,
+  ): void {
+    this.sendEvent('Purchase', { transactionId, ...purchaseInfo }, ts);
+  }
 }
 
-enum BeaconEventName {
-  PageView = 'pageView',
-}
 /* eslint-disable camelcase */
 interface BeaconLog extends PageMeta {
-  event: string;
-  user_id: string;
-  u_id: string;
-  ruid: string;
-  pvid: string;
-  data: Record<string, unknown>;
-  ts: number;
+  readonly event: string;
+  readonly uid: number;
+  readonly ruid?: string;
+  readonly view_id: string;
+  readonly data: Record<string, any>;
+  readonly ts: number;
 }
 /* eslint-enable camelcase */

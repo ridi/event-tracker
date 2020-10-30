@@ -1,4 +1,5 @@
 import { DeviceType, MainTrackerOptions } from '../index';
+import { EcommerceTracker } from '../ecommerce';
 
 /* eslint-disable camelcase */
 export interface PageMeta {
@@ -14,44 +15,25 @@ export interface PageMeta {
 export interface EventTracker {
   sendPageView(pageMeta: PageMeta, ts?: Date): void;
 
+  sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
+    ts?: Date,
+  ): void;
+
   sendEvent(name: string, data?: Record<string, unknown>, ts?: Date): void;
 
-  sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
+  sendSignUp(method: string, ts?: Date): void;
 
-  sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
-
-  sendImpression(args?: Record<string, unknown>, ts?: Date): void;
-
-  sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void;
+  sendLogin(method: string, ts?: Date): void;
 }
 
-export abstract class BaseTracker implements EventTracker {
+// https://github.com/Microsoft/TypeScript/issues/4670#issuecomment-326585615
+export interface BaseTracker extends EventTracker, EcommerceTracker {}
+
+export abstract class BaseTracker implements EventTracker, EcommerceTracker {
   public mainOptions: MainTrackerOptions;
-
-  public abstract sendPageView(pageMeta: PageMeta, ts?: Date): void;
-
-  public abstract sendEvent(
-    name: string,
-    data?: Record<string, unknown>,
-    ts?: Date,
-  ): void;
-
-  public abstract sendSignUp(args?: Record<string, unknown>, ts?: Date): void;
-
-  public abstract sendImpression(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void;
-
-  public abstract sendStartSubscription(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void;
-
-  public abstract sendAddPaymentInfo(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void;
 
   public abstract isInitialized(): boolean;
 

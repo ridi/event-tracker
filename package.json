@@ -1,6 +1,6 @@
 {
   "name": "@ridi/event-tracker",
-  "version": "0.10.2",
+  "version": "0.11.0-alpha.7",
   "description": "",
   "main": "dist/cjs/index.js",
   "typings": "dist/typings/index.d.ts",
@@ -12,7 +12,7 @@
     "build": "npm run clean && npm run build:cjs && npm run build:umd",
     "build:cjs": "tsc",
     "build:umd": "webpack",
-    "deploy": "npm run build && npm publish -access public"
+    "deploy": "npm run build && npm publish -access public && npm install"
   },
   "pre-commit": [
     "lint"
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@ridi/eslint-config": "^5.1.0",
     "@types/facebook-pixel": "0.0.19",
+    "@types/gtag.js": "0.0.3",
     "@types/jest": "^24.0.12",
     "@types/js-cookie": "^2.2.4",
     "@types/url-parse": "^1.4.1",

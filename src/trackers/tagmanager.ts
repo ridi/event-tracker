@@ -2,6 +2,9 @@ import { MainTrackerOptions } from '..';
 
 import { loadTagManager } from '../utils/externalServices';
 import { BaseTracker, PageMeta } from './base';
+import { Item } from '../ecommerce';
+import { PurchaseInfo } from '../ecommerce/models/transaction';
+import { convertKeyToSnakeCase } from '../utils/util';
 
 export interface TagManagerOptions {
   trackingId: string;
@@ -28,11 +31,18 @@ export class TagManagerTracker extends BaseTracker {
     return window.dataLayer;
   }
 
-  public setMainOptions(newOptions: MainTrackerOptions): void {
-    super.setMainOptions(newOptions);
+  private pushDataLayer(data: Record<string, any>): void {
+    this.dataLayer.push(data);
+  }
 
-    this.pushDataLayer(newOptions);
-    this.sendEvent('Options Changed', newOptions);
+  public setMainOptions(newOptions: MainTrackerOptions): void {
+    if (this.mainOptions) {
+      this.sendEvent('OptionsChanged', newOptions);
+    } else {
+      this.pushDataLayer(newOptions);
+    }
+
+    super.setMainOptions(newOptions);
   }
 
   public async initialize(): Promise<void> {
@@ -41,37 +51,79 @@ export class TagManagerTracker extends BaseTracker {
     this.tagCalled = true;
   }
 
-  public isInitialized(): boolean {
-    return this.tagCalled;
-  }
-
-  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
-    this.sendEvent('Page View', pageMeta, ts);
-  }
-
   public sendEvent(
     name: string,
     data: Record<string, any> = {},
     ts?: Date,
   ): void {
-    this.dataLayer.push({
-      event: name,
-      data,
-    });
+    data = convertKeyToSnakeCase(data);
+    this.pushDataLayer({ event: name, event_params: data, ts });
   }
 
-  private pushDataLayer(data: Record<string, any>): void {
-    this.dataLayer.push(data);
+  public isInitialized(): boolean {
+    return this.tagCalled;
   }
 
-  public sendAddPaymentInfo(args?: Record<string, unknown>, ts?: Date): void {}
+  public sendPageView(pageMeta: PageMeta, ts?: Date): void {
+    this.sendEvent('PageView', { ...pageMeta }, ts);
+  }
 
-  public sendImpression(args?: Record<string, unknown>, ts?: Date): void {}
-
-  public sendSignUp(args?: Record<string, unknown>, ts?: Date): void {}
-
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
+  public sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
     ts?: Date,
-  ): void {}
+  ): void {
+    this.sendEvent(
+      'ScreenView',
+      { screenName, previousScreenName, referrer },
+      ts,
+    );
+  }
+
+  public sendSignUp(method: string, ts?: Date): void {
+    this.sendEvent('SignUp', { method }, ts);
+  }
+
+  public sendLogin(method: string, ts?: Date): void {
+    this.sendEvent('Login', { method }, ts);
+  }
+
+  public sendBeginCheckout(purchaseInfo: PurchaseInfo, ts?: Date): void {
+    this.sendEvent('BeginCheckout', { ...purchaseInfo }, ts);
+  }
+
+  public sendAddPaymentInfo(
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
+    ts?: Date,
+  ): void {
+    this.sendEvent('AddPaymentInfo', { paymentType, ...purchaseInfo }, ts);
+  }
+
+  public sendAddToPreference(items: Item[], ts?: Date): void {
+    this.sendEvent('AddToPreference', { items }, ts);
+  }
+
+  public sendAddToNewBookNotification(items: Item[], ts?: Date): void {
+    this.sendEvent('AddToNewBookNotification', { items }, ts);
+  }
+
+  public sendViewItem(items: Item[], ts?: Date): void {
+    this.sendEvent('ViewItem', { items }, ts);
+  }
+
+  public sendViewContent(item: Item, ts?: Date): void {
+    this.sendEvent('ViewContent', { item }, ts);
+  }
+
+  public sendViewItemList(items: Item[], ts?: Date): void {}
+
+  public sendPurchase(
+    transactionId: string,
+    purchaseInfo: PurchaseInfo,
+    ts?: Date,
+  ): void {
+    this.sendEvent('Purchase', { transactionId, ...purchaseInfo }, ts);
+  }
 }

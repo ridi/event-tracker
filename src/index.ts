@@ -4,10 +4,12 @@ import URL from 'url-parse';
 import {
   BeaconOptions,
   BeaconTracker,
+  EcommerceTracker,
   GAOptions,
   GATracker,
   GTagOptions,
   GTagTracker,
+  Item,
   KakaoOptions,
   KakaoTracker,
   PixelOptions,
@@ -18,6 +20,7 @@ import {
   TwitterTracker,
 } from './trackers';
 import { BaseTracker, EventTracker, PageMeta } from './trackers/base';
+import { PurchaseInfo } from './ecommerce/models/transaction';
 
 export enum DeviceType {
   PC = 'pc',
@@ -30,7 +33,7 @@ export type ServiceProp = Record<string, string>;
 export interface MainTrackerOptions {
   debug?: boolean;
   development?: boolean;
-  userId?: string;
+  uId?: number;
   deviceType: DeviceType;
   serviceProps?: ServiceProp;
   gaOptions?: GAOptions;
@@ -43,26 +46,29 @@ export interface MainTrackerOptions {
   twitterOptions?: TwitterOptions;
 }
 
-export interface ChangeableTrackerOptions {
-  userId?: string;
-  deviceType?: DeviceType;
-  serviceProps?: ServiceProp;
-}
+type ChangeableTrackerOptions = Pick<
+  MainTrackerOptions,
+  'uId' | 'deviceType' | 'serviceProps'
+>;
 
-type EventParameters = Parameters<EventTracker[keyof EventTracker]>;
+type EventParameters =
+  | Parameters<EventTracker[keyof EventTracker]>
+  | Parameters<EcommerceTracker[keyof EcommerceTracker]>;
+
+export type EventTrackerMethodNames =
+  | keyof EventTracker
+  | keyof EcommerceTracker;
 
 interface QueueItem {
-  consumerMethodName: keyof EventTracker;
+  consumerMethodName: EventTrackerMethodNames;
   eventParams: EventParameters;
   ts: Date;
 }
 
-function pushEventToQueue(consumerMethodName?: keyof EventTracker) {
-  return (
-    target: any,
-    propertyKey: keyof EventTracker,
-    descriptor: PropertyDescriptor,
-  ) => {
+function pushEventToQueue<T extends EventTrackerMethodNames>(
+  consumerMethodName?: T,
+) {
+  return (target: any, propertyKey: T, descriptor: PropertyDescriptor) => {
     consumerMethodName = consumerMethodName || propertyKey;
 
     const originalMethod = descriptor.value;
@@ -164,35 +170,63 @@ export class Tracker {
   }
 
   @pushEventToQueue()
-  public sendPageView(href: string, referrer?: string): EventParameters {
-    const pageMeta = this.getPageMeta(href, referrer);
-
-    return [pageMeta];
-  }
-
-  @pushEventToQueue()
   public sendEvent(name: string, data: any = {}): EventParameters {
     return [name, data];
   }
 
   @pushEventToQueue()
-  public sendStartSubscription(): EventParameters {
-    return [];
+  public sendPageView(href: string, referrer?: string): EventParameters {
+    return [this.getPageMeta(href, referrer)];
   }
 
   @pushEventToQueue()
-  public sendImpression(): EventParameters {
-    return [];
+  public sendScreenView(
+    screenName: string,
+    previousScreenName: string,
+    referrer?: string,
+  ): EventParameters {
+    return [screenName, previousScreenName, referrer];
   }
 
   @pushEventToQueue()
-  public sendAddPaymentInfo(): EventParameters {
-    return [];
+  public sendSignUp(method: string): EventParameters {
+    return [method];
   }
 
   @pushEventToQueue()
-  public sendSignUp(): EventParameters {
-    return [];
+  public sendLogin(method: string): EventParameters {
+    return [method];
+  }
+
+  @pushEventToQueue()
+  public sendBeginCheckout(purchaseInfo: PurchaseInfo): EventParameters {
+    return [purchaseInfo];
+  }
+
+  @pushEventToQueue()
+  public sendAddPaymentInfo(
+    paymentType: string,
+    purchaseInfo: PurchaseInfo,
+  ): EventParameters {
+    return [paymentType, purchaseInfo];
+  }
+
+  @pushEventToQueue()
+  public sendPurchase(
+    transactionId: string,
+    purchaseInfo: PurchaseInfo,
+  ): EventParameters {
+    return [transactionId, purchaseInfo];
+  }
+
+  @pushEventToQueue()
+  public sendViewItem(items: Item[], ts?: Date): EventParameters {
+    return [items];
+  }
+
+  @pushEventToQueue()
+  public sendViewContent(item: Item, ts?: Date): EventParameters {
+    return [item];
   }
 
   private initializedTrackers(): BaseTracker[] {
