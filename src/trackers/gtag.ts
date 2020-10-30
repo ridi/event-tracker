@@ -78,9 +78,6 @@ export class GTagTracker extends BaseTracker {
     gtag('event', 'screen_view', { screen_name: screenName });
   }
 
-  public sendImpression(items: Item[], ts?: Date): void {}
-
-
   public sendViewItem(items: Item[], ts?: Date): void {
     gtag('event', 'view_item', { items });
   }

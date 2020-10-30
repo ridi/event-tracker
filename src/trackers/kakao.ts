@@ -45,17 +45,6 @@ export class KakaoTracker extends BaseTracker {
     this.tracker.completeRegistration();
   }
 
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void {
-    this.tracker.signUp();
-  }
-
-  public sendImpression(items: Item[], ts?: Date): void {
-    this.tracker.viewContent();
-  }
-
   public sendAddPaymentInfo(
     paymentType: string,
     purchaseInfo: PurchaseInfo,

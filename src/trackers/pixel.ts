@@ -48,18 +48,11 @@ export class PixelTracker extends BaseTracker {
     ts?: Date,
   ): void {}
 
-  public sendImpression(items: Item[], ts?: Date): void {}
-
   public sendSignUp(method: string, ts?: Date): void {}
 
   public sendAddPaymentInfo(
     paymentType: string,
     purchaseInfo: PurchaseInfo,
-    ts?: Date,
-  ): void {}
-
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
     ts?: Date,
   ): void {}
 

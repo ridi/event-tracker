@@ -105,8 +105,6 @@ export class BeaconTracker extends BaseTracker {
     this.sendEvent('Login', ts);
   }
 
-  public sendImpression(items: Item[], ts?: Date): void {}
-
   public sendSignUp(method: string, ts?: Date): void {
     this.sendEvent('SignUp', { method }, ts);
   }
@@ -159,11 +157,6 @@ export class BeaconTracker extends BaseTracker {
   ): void {
     this.sendEvent('Purchase', { transactionId, ...purchaseInfo }, ts);
   }
-
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void {}
 }
 
 /* eslint-disable camelcase */

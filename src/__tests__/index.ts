@@ -249,9 +249,7 @@ it.skip('Test TwitterTracker', async () => {
 
   t.mockingAll(ALL_TRACKERS.excludes(TwitterTracker), [
     'sendPageView',
-    'sendImpression',
     'sendSignUp',
-    'sendStartSubscription',
   ]);
 
   const trackPidMock = jest.fn();

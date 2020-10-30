@@ -25,16 +25,4 @@ export interface EcommerceTracker {
   sendViewContent(item: Item, ts?: Date): void;
 
   sendViewItemList(items: Item[], ts?: Date): void;
-
-  /**
-   * @deprecated
-   */
-  sendStartSubscription(args?: Record<string, unknown>, ts?: Date): void;
-
-  /**
-   * @deprecated Use sendItemViewFList instead.
-   * @see sendViewItemList
-   */
-
-  sendImpression(items: Item[], ts?: Date): void;
 }

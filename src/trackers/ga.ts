@@ -89,11 +89,6 @@ export class GATracker extends BaseTracker {
     ts?: Date,
   ): void {}
 
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void {}
-
   public sendViewItem(items: Item[], ts?: Date): void {}
 
   public sendViewItemList(items: Item[], ts?: Date): void {}

@@ -57,23 +57,6 @@ export class TwitterTracker extends BaseTracker {
     });
   }
 
-  public sendStartSubscription(
-    args?: Record<string, unknown>,
-    ts?: Date,
-  ): void {
-    this.twttr.conversion.trackPid(this.options.selectStartSubscriptionPid, {
-      tw_sale_amount: 0,
-      tw_order_quantity: 0,
-    });
-  }
-
-  public sendImpression(items: Item[], ts?: Date): void {
-    this.twttr.conversion.trackPid(this.options.impressionPid, {
-      tw_sale_amount: 0,
-      tw_order_quantity: 0,
-    });
-  }
-
   public sendAddPaymentInfo(
     paymentType: string,
     purchaseInfo: PurchaseInfo,
