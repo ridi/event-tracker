@@ -59,7 +59,7 @@ export class BeaconTracker extends BaseTracker {
     const log: BeaconLog = {
       event: eventName,
       user_id: this.mainOptions.userId,
-      u_id: this.mainOptions.userId,
+      u_idx: this.mainOptions.uIdx,
       ruid: this.ruid.value,
       pvid: this.pvid.value,
       ...pageMeta,
@@ -123,7 +123,7 @@ enum BeaconEventName {
 interface BeaconLog extends PageMeta {
   event: string;
   user_id: string;
-  u_id: string;
+  u_idx: number;
   ruid: string;
   pvid: string;
   data: Record<string, unknown>;
