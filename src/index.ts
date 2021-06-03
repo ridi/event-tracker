@@ -32,6 +32,7 @@ export interface MainTrackerOptions {
   development?: boolean;
   userId?: string;
   deviceType: DeviceType;
+  uIdx?: number;
   serviceProps?: ServiceProp;
   gaOptions?: GAOptions;
   beaconOptions?: BeaconOptions;
@@ -47,6 +48,7 @@ export interface ChangeableTrackerOptions {
   userId?: string;
   deviceType?: DeviceType;
   serviceProps?: ServiceProp;
+  uIdx?: number;
 }
 
 type EventParameters = Parameters<EventTracker[keyof EventTracker]>;
