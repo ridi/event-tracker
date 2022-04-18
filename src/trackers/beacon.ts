@@ -95,10 +95,19 @@ export class BeaconTracker extends BaseTracker {
     data: Record<string, unknown> = {},
     ts?: Date,
   ): void {
-    if (this.lastPageMeta === undefined) {
-      throw Error(
-        '[@ridi/event-tracker] Please call sendPageView method first.',
-      );
+    if (this.lastPageMeta === undefined && window && document) {
+      const url = new URL(window.location.href, window.location, true);
+
+      const path = url.pathname;
+
+      this.lastPageMeta = {
+        page: path.split('/')[1] || 'index',
+        device: this.mainOptions.deviceType,
+        query_params: url.query,
+        path,
+        href: window.location.href,
+        referrer: document.referrer,
+      };
     }
 
     this.sendBeacon(name, this.lastPageMeta, data, ts);
