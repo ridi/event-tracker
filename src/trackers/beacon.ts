@@ -61,7 +61,7 @@ export class BeaconTracker extends BaseTracker {
       user_id: this.mainOptions.userId,
       u_idx: this.mainOptions.uIdx,
       ruid: this.ruid.value,
-      pvid: this.pvid.value,
+      pvid: undefined,
       ...pageMeta,
       path: `${pageMeta.path}${search}`,
       data,
